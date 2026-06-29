@@ -10,14 +10,15 @@ the object is the pure integral `1/(s−1)` — ζ's pole, but **no non-trivial
 zeros at all**. As `K → ∞` you recover `ζ(s)`, and the zeros appear and condense
 onto `Re s = ½`.
 
-> **What this is — and isn't.** This is a *computational / experimental-mathematics*
-> study: a unified, reproducible re-derivation that threads several **known**
-> endpoints (`1/(s−1)`, `ζ(s)`, the half-shifted `(2^s−1)ζ(s) = ζ(s,½)`, and the
-> general `ζ(s,α)`) onto one explicit discreteness-restoration knob. It is **not** a
-> new theorem about where zeros live. The individual ingredients are classical;
-> the contribution is the synthesis, the unifying `O(1/K)` rate law, and a couple
-> of spectral readings. Prior art is cited explicitly (see *Relation to known
-> work* below).
+## What this is — and isn't
+
+This is a *computational / experimental-mathematics* study: a unified,
+reproducible re-derivation that threads several **known** endpoints (`1/(s−1)`,
+`ζ(s)`, the half-shifted `(2^s−1)ζ(s) = ζ(s,½)`, and the general `ζ(s,α)`) onto
+one explicit discreteness-restoration knob. It is **not** a new theorem about
+where zeros live. The individual ingredients are classical; the contribution is
+the synthesis, the unifying `O(1/K)` rate law, and a couple of spectral
+readings. Prior art is cited explicitly (see *Relation to known work* below).
 
 ## The arc (six modules)
 
