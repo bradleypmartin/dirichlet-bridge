@@ -65,9 +65,16 @@ for pytest.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→
   `maass_loader`), `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`.
+- `figstyle.py` — shared Matplotlib font bump (`figstyle.enlarge()`); each driver
+  calls it before plotting so the embedded figures stay legible when scaled down in
+  the preprint. The dense/long-title figures (`rate_law`, `eta_two_component`,
+  `warp_coordinate`) override `axes.titlesize`/`figure.titlesize` locally so titles
+  don't overrun. Changing sizes here means re-running `python repro.py`.
 
 `data/riemann_zeros.csv` — cached non-trivial zeros (the **only** runtime data
-dependency). `tests/` — one test module per driver.
+dependency). `tests/` — one test module per driver. `paper/` — the arXiv preprint
+(#5): `main.tex`, `references.bib`, `make_arxiv.py`, built `main.pdf`; figures are
+referenced from `bridge/figures/` via `\graphicspath` (not copied).
 
 ## Gotchas
 - The flat `bridge/` layout is deliberate: bare imports (`import harmonic_bridge`,
@@ -89,8 +96,12 @@ dependency). `tests/` — one test module per driver.
 - **#3 — Repo extraction — DONE** (this repo).
 - **#4 — Presentation & reproducibility** (open): `RESULTS.md` walkthrough,
   one-command figure regen, and the self-bootstrap-header cleanup above.
-- **#5 — arXiv preprint** (open): methods/experimental-math framing; its inputs
-  (citations, framing, figures) come from #2 and the drivers.
+- **#5 — arXiv preprint** (open): **draft complete in `paper/`** — `main.tex`
+  (14-page methods/experimental-math write-up), a verified `references.bib` (30
+  entries), `make_arxiv.py` packager, and a built `main.pdf`. Build with
+  `tectonic main.tex` from `paper/` (Tectonic + Poppler live in `~/.local/bin` /
+  installed via winget). Framing/citations come from #2; the 9 figures are pulled
+  straight from `bridge/figures/` via `\graphicspath`, so no figure is duplicated.
 - **#6 — Senior-collaborator outreach** (open): one-pager + draft email; depends
   on #2/#4/#5.
 

@@ -70,6 +70,7 @@ bridge/        the six drivers + the vendored spectral-statistics helpers (flat;
   figures/     generated PNGs (gitignored)
 data/          riemann_zeros.csv (cached non-trivial zeros)
 tests/         one test module per driver
+paper/         arXiv preprint: LaTeX source, references.bib, built PDF
 conftest.py    puts bridge/ on sys.path for pytest
 ```
 
@@ -95,8 +96,11 @@ than claiming them:
   *rearranges* an always-infinite zero set toward all-real — a categorically
   different deformation from this *creation-from-a-zeroless-endpoint* knob.
 
-A full annotated bibliography (`references.bib`) and a figure-by-figure walkthrough
-accompany the preprint.
+The preprint (LaTeX source, the annotated `references.bib`, and the built PDF)
+lives in [`paper/`](paper/) — a computational / experimental-mathematics write-up
+of the whole arc. See [`paper/README.md`](paper/README.md) to build it (one
+command with [Tectonic](https://tectonic-typesetting.github.io/)) or to package an
+arXiv upload.
 
 ## Provenance
 
