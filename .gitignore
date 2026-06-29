@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Per-machine virtual environment
+.venv/
+venv/
+
+# Generated artifacts (figures + text dumps the drivers rewrite)
+bridge/figures/*.png
+*.txt
+!requirements.txt
