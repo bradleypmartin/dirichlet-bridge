@@ -10,7 +10,7 @@ the object is the pure integral `1/(s−1)` — ζ's pole, but **no non-trivial
 zeros at all**. As `K → ∞` you recover `ζ(s)`, and the zeros appear and condense
 onto `Re s = ½`.
 
-## What this is — and isn't
+## Summary and scope
 
 This is a *computational / experimental-mathematics* study: a unified,
 reproducible re-derivation that threads several **known** endpoints (`1/(s−1)`,
