@@ -294,6 +294,8 @@ def _main():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import figstyle
+    figstyle.enlarge()
 
     _print_identities()
 
@@ -337,7 +339,7 @@ def _main():
     ax[0].set_xlabel(r"$\sigma=\mathrm{Re}\,s$")
     ax[0].set_ylabel(r"$t=\mathrm{Im}\,s$")
     ax[0].set_title(r"zeros of $\zeta(s,\alpha)$: clean lines vs scatter")
-    ax[0].legend(fontsize=7.5, loc="upper right")
+    ax[0].legend(loc="upper right")
     ax[0].set_xlim(-0.5, 2.4)
 
     # panel 1: the sweep -- (alpha, sigma) of every zero; clean verticals at 1/2 and 1
@@ -349,13 +351,13 @@ def _main():
     ax[1].axhline(0.5, ls="-", lw=0.8, color="0.6")
     ax[1].axhline(0.0, ls=":", lw=0.8, color="0.6")
     ax[1].axhline(1.0, ls="--", lw=0.8, color="0.75", label=r"$\sigma=1$ (S-W edge)")
-    ax[1].text(0.5, 1.05, r"clean", ha="center", fontsize=8, color="C2")
-    ax[1].text(1.0, 1.05, r"clean", ha="center", fontsize=8, color="C2")
+    ax[1].text(0.5, 1.05, r"clean", ha="center", fontsize=12, color="C2")
+    ax[1].text(1.0, 1.05, r"clean", ha="center", fontsize=12, color="C2")
     ax[1].set_xlabel(r"phase $\alpha$")
     ax[1].set_ylabel(r"$\sigma$ of zeros ($2<t<22$)")
     ax[1].set_title(r"sweep: $\sigma$-locus vs $\alpha$ (clean only at $\frac{1}{2},1$)")
     ax[1].set_ylim(-0.45, 1.18)
-    ax[1].legend(fontsize=8, loc="lower right")
+    ax[1].legend(loc="lower right")
 
     # panel 2: the warp anchor -- warp_complete_alpha -> zeta(s, alpha), both O(1/K)
     ax[2].loglog(Ks, conv[0.5], "-o", color="C0", label=r"$\alpha=\frac{1}{2}$ (clean target)")
@@ -366,11 +368,10 @@ def _main():
     ax[2].set_xlabel("K")
     ax[2].set_ylabel(r"$|\mathrm{warp}_\alpha^{(K)}+\alpha^{-s}-\zeta(s,\alpha)|$")
     ax[2].set_title(r"warp anchors the target, any $\alpha$ ($O(1/K)$)")
-    ax[2].legend(fontsize=8)
+    ax[2].legend()
 
     fig.suptitle(r"General-phase $n+\alpha$ warp $\to\ \zeta(s,\alpha)$: clean strings only at "
-                 r"$\alpha\in\{0,\frac{1}{2},1\}$ (Davenport-Heilbronn / Saias-Weingartner)",
-                 fontsize=12)
+                 r"$\alpha\in\{0,\frac{1}{2},1\}$ (Davenport-Heilbronn / Saias-Weingartner)")
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)

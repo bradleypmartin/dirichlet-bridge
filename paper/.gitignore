@@ -1,0 +1,16 @@
+# LaTeX build intermediates
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# arXiv packaging output (regenerate with `python make_arxiv.py`)
+arxiv/
+arxiv.tar.gz
+
+# main.pdf IS committed (the issue-#5 deliverable); do not ignore it.

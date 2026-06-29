@@ -38,6 +38,7 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 import warp_bridge as wb  # noqa: E402  (the canonical warp_phi, for the cross-check)
+import figstyle           # noqa: E402  (larger fonts for the embedded figure)
 
 
 def phi_K(x, K):
@@ -99,6 +100,11 @@ def _validate():
 # figure
 # --------------------------------------------------------------------------
 def _figure():
+    figstyle.enlarge()
+    # panel titles here are long (the warp-coordinate formula, the Gibbs note, the
+    # Fourier sum), so keep them a touch smaller than the global style to stay within
+    # each panel's width while remaining much larger than before.
+    plt.rcParams["axes.titlesize"] = 12
     fig, ax = plt.subplots(1, 3, figsize=(16, 5))
     Ks = [1, 2, 4, 8, 16]
     colors = plt.cm.viridis(np.linspace(0.12, 0.82, len(Ks)))
@@ -114,7 +120,7 @@ def _figure():
     ax[0].set_title(r"warp coordinate $n^*=x+\phi_K(x)$: linear $\to$ midpoint staircase")
     ax[0].set_xlabel(r"$x$"); ax[0].set_ylabel(r"$n^*(x)$")
     ax[0].set_xlim(0, 4); ax[0].set_ylim(0, 4)
-    ax[0].legend(fontsize=7.5, loc="upper left")
+    ax[0].legend(fontsize=11, loc="upper left")
 
     # ---- panel (b): zoom on one cell edge -- the Gibbs overshoot ("the little jumps") ----
     xz = np.linspace(1.55, 2.45, 5000)
@@ -126,7 +132,7 @@ def _figure():
     ax[1].axvline(2.0, color="0.7", lw=0.8, ls=":")
     ax[1].set_title(r"zoom on a step edge ($x=2$): the Gibbs overshoot")
     ax[1].set_xlabel(r"$x$"); ax[1].set_ylabel(r"$n^*(x)$")
-    ax[1].legend(fontsize=8, loc="upper left")
+    ax[1].legend(loc="upper left")
 
     # ---- panel (c): the driving Fourier sum phi_K -- the sawtooth with its wobble ----
     xs = np.linspace(0.0, 2.0, 6000)
@@ -136,10 +142,10 @@ def _figure():
                label=r"$\frac{1}{2}-\{x\}$  (limit)")
     ax[2].set_title(r"the driving sum $\phi_K(x)=\sum_{k=1}^K \frac{\sin(2\pi k x)}{\pi k}$")
     ax[2].set_xlabel(r"$x$"); ax[2].set_ylabel(r"$\phi_K(x)$")
-    ax[2].legend(fontsize=8, loc="upper right")
+    ax[2].legend(loc="upper right")
 
     fig.suptitle(r"Restoring discreteness bends the coordinate: the $n^*$-warp from linear "
-                 r"$x$ to the cell-midpoint staircase", fontsize=13)
+                 r"$x$ to the cell-midpoint staircase")
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)

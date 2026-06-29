@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""Assemble a self-contained arXiv upload for the preprint.
+
+arXiv builds from a flat source tree and cannot follow the ``../`` path to the
+canonical figures in ``../bridge/figures/``. This script copies ``main.tex``,
+``references.bib`` (and ``main.bbl`` if a local build has produced one) into a
+clean ``arxiv/`` directory, copies every figure referenced by ``main.tex`` into
+``arxiv/figures/``, and writes a ``arxiv.tar.gz`` ready to upload.
+
+Run from the ``paper/`` directory:  ``python make_arxiv.py``
+
+Python 3.9 compatible (matches the rest of the repo).
+"""
+import re
+import shutil
+import tarfile
+from pathlib import Path
+from typing import List
+
+HERE = Path(__file__).resolve().parent          # paper/
+REPO = HERE.parent                              # repo root
+FIG_SRC = REPO / "bridge" / "figures"
+OUT = HERE / "arxiv"
+OUT_FIG = OUT / "figures"
+
+
+def referenced_figures(tex: str) -> List[str]:
+    """Filenames in every \\includegraphics{...} of the source."""
+    names = re.findall(r"\\includegraphics(?:\[[^\]]*\])?\{([^}]+)\}", tex)
+    # strip any directory prefix; graphicspath resolves the basename
+    return sorted({Path(n).name for n in names})
+
+
+def main() -> None:
+    main_tex = HERE / "main.tex"
+    if not main_tex.exists():
+        raise SystemExit("main.tex not found; run from the paper/ directory.")
+
+    if OUT.exists():
+        shutil.rmtree(OUT)
+    OUT_FIG.mkdir(parents=True)
+
+    tex = main_tex.read_text(encoding="utf-8")
+    shutil.copy2(main_tex, OUT / "main.tex")
+
+    bib = HERE / "references.bib"
+    if bib.exists():
+        shutil.copy2(bib, OUT / "references.bib")
+    else:
+        print("WARNING: references.bib not found — bibliography will be empty.")
+
+    # Including the .bbl makes arXiv robust even if it skips the BibTeX pass.
+    bbl = HERE / "main.bbl"
+    if bbl.exists():
+        shutil.copy2(bbl, OUT / "main.bbl")
+    else:
+        print("note: no main.bbl yet (run `tectonic main.tex` first to generate one).")
+
+    missing = []
+    for name in referenced_figures(tex):
+        src = FIG_SRC / name
+        if src.exists():
+            shutil.copy2(src, OUT_FIG / name)
+        else:
+            missing.append(name)
+    if missing:
+        raise SystemExit(
+            "Missing figures (regenerate with `python ../repro.py`): "
+            + ", ".join(missing)
+        )
+
+    # Build the tarball.
+    tar_path = HERE / "arxiv.tar.gz"
+    with tarfile.open(tar_path, "w:gz") as tar:
+        for p in sorted(OUT.rglob("*")):
+            if p.is_file():
+                tar.add(p, arcname=str(p.relative_to(OUT)))
+
+    n_fig = len(list(OUT_FIG.glob("*")))
+    print(f"Wrote {OUT}/ ({n_fig} figures) and {tar_path.name}.")
+    print("Upload arxiv.tar.gz to arXiv, or upload the contents of arxiv/ directly.")
+
+
+if __name__ == "__main__":
+    main()
