@@ -1,13 +1,12 @@
-"""Unit tests for the general-phase n+alpha warp -> Hurwitz zeta(s, alpha) (issue #122,
-knowledge/sum-integral/discrete-continuous-bridge.md sec 2c, 4, 8).
+"""Unit tests for the general-phase n+alpha warp -> Hurwitz zeta(s, alpha).
 
-Phase-2 follow-up of epic #116: pin the n*-warp to a general phase n+alpha (not just the
-midpoint n+1/2 of #119) and demonstrate the Saias-Weingartner P*L dichotomy -- only the
+The general-phase follow-up: pin the n*-warp to a general phase n+alpha (not just the
+midpoint n+1/2) and demonstrate the Saias-Weingartner P*L dichotomy -- only the
 privileged phases alpha in {0, 1/2, 1} give zeros on clean vertical lines; every generic
 alpha is Davenport-Heilbronn-scattered. The checks:
 
 * the phase is a DC shift -- phi_K^(alpha) = (alpha - 1/2) + phi_K;
-* alpha = 1/2 reproduces Phase 2 exactly (warp_alpha == warp_bridge.warp_K, completion ==
+* alpha = 1/2 reproduces the midpoint warp exactly (warp_alpha == warp_bridge.warp_K, completion ==
   warp_half_K);
 * the completion is the general-alpha load-bearing half-cell alpha^{-s} (-> 2^s at 1/2);
 * the K=0 endpoint is phase-deformed (alpha + 1/2)^{1-s}/(s-1) -- bland only at alpha=1/2;
@@ -18,7 +17,7 @@ alpha is Davenport-Heilbronn-scattered. The checks:
 
 The full-K limits, the quadrature cross-check, and the (zero-finding / continuation) payoff
 tests are marked `slow` (deselected by default); the fast suite keeps the cheap algebraic
-building blocks -- the DC shift, the Phase-2 reduction, the completion, the endpoint.
+building blocks -- the DC shift, the midpoint-warp reduction, the completion, the endpoint.
 """
 from __future__ import annotations
 
@@ -38,7 +37,7 @@ SHORT = [1, 2, 4, 8, 16, 32]
 # fast algebraic building blocks
 # --------------------------------------------------------------------------
 def test_warp_phi_alpha_is_dc_shift():
-    """phi_K^(alpha)(u) = (alpha - 1/2) + phi_K(u): a pure DC shift of the Phase-2 sawtooth."""
+    """phi_K^(alpha)(u) = (alpha - 1/2) + phi_K(u): a pure DC shift of the midpoint-warp sawtooth."""
     for u in (0.17, 0.5, 0.83):
         for K in (0, 3, 8):
             for a in (0.3, 0.5, 0.9):
@@ -49,7 +48,7 @@ def test_warp_phi_alpha_is_dc_shift():
 
 def test_alpha_half_reduces_to_phase2():
     """alpha = 1/2 (DC shift 0) reproduces warp_bridge: warp_alpha == warp_K, completion
-    == warp_half_K -- the general module contains Phase 2 as a special case."""
+    == warp_half_K -- the general module contains the midpoint warp as a special case."""
     for s in [mp.mpc(2, 1), mp.mpc(0.5, 14.134725), mp.mpc(1.3, 7)]:
         for K in (3, 12):
             assert abs(wa.warp_alpha(s, K, 0.5) - wb.warp_K(s, K)) < mp.mpf("1e-20")
@@ -58,7 +57,7 @@ def test_alpha_half_reduces_to_phase2():
 
 def test_completion_is_the_alpha_half_cell():
     """warp_complete_alpha - warp_alpha == alpha^{-s} (the restored m=0 cell at alpha);
-    at alpha = 1/2 this half-cell is (1/2)^{-s} = 2^s, #119's load-bearing term."""
+    at alpha = 1/2 this half-cell is (1/2)^{-s} = 2^s, the midpoint warp's load-bearing term."""
     for a in (0.3, 0.5, 0.7, 1.0):
         for s in [mp.mpc(0.6, 12), mp.mpc(1.3, 7)]:
             assert abs((wa.warp_complete_alpha(s, 5, a) - wa.warp_alpha(s, 5, a))
@@ -118,7 +117,7 @@ def test_fast_warp_matches_hurwitz():
 
 @pytest.mark.slow
 def test_warp_alpha_stable_at_high_tau():
-    """#130 regression: warp_alpha shares warp_bridge's grid+moment evaluator and inherits the
+    """Regression: warp_alpha shares warp_bridge's grid+moment evaluator and inherits the
     same high-|Im s| fix (|Im s|-scaled working precision / moment count / GL degree). Above the
     old ~110 breakdown it stays bounded and matches the transparent warp_alpha_hurwitz (raised
     precision), for the clean (1/2) and a generic (0.3) phase alike."""

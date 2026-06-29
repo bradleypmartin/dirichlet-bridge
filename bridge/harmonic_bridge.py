@@ -1,15 +1,15 @@
-r"""Harmonic interpolation  zeta^{(K)} / eta^{(K)}: the zero-migration map (issue #118).
+r"""Harmonic interpolation  zeta^{(K)} / eta^{(K)}: the zero-migration map.
 
-Phase 1 of the discrete <-> continuous bridge (epic #116). Phase 0 (cont_eta.py,
-#117) built the *continuous* eta integral F(s) = int_1^inf cos(pi x) x^{-s} dx and
+The additive-comb stage of the discrete <-> continuous bridge. The continuous
+endpoint (cont_eta.py) built the *continuous* eta integral F(s) = int_1^inf cos(pi x) x^{-s} dx and
 showed it has off-critical zeros (Re -> 3/2) obeying a Riemann-von Mangoldt law.
 Here we restore discreteness *one Fourier harmonic at a time* and watch the zeros
 move: build interpolants zeta^{(K)} / eta^{(K)} running from a bland/ground
 endpoint (K = 0) to the genuine Dirichlet object (K -> infinity), and track each
 zero as a curve parameterized by K -- the zero-migration map.
 
-The two routes (knowledge/sum-integral/discrete-continuous-bridge.md sec 2)
----------------------------------------------------------------------------
+The two routes
+--------------
 (a) Euler-Maclaurin with the periodic-Bernoulli sawtooth  B~_1(x) = {x} - 1/2 =
     -sum_k sin(2 pi k x)/(pi k).  For g(x) = x^{-s},
 
@@ -17,7 +17,7 @@ The two routes (knowledge/sum-integral/discrete-continuous-bridge.md sec 2)
 
     so truncating the sine series at K harmonics gives `zeta_K` (closed form via the
     incomplete-gamma "moments" S(omega,a) = int_1^inf sin(omega x) x^{-a} dx). This
-    is the literal realization of #116's "Fourier series of 1-n on [0,1]".
+    is the literal realization of the "Fourier series of 1-n on [0,1]".
 
 (b) Abel-Plana with the Bose kernel  1/(e^{2 pi x}-1) = sum_{k>=1} e^{-2 pi k x},
     truncated at K, gives `zeta_K_bose` (a clean, exponentially damped quadrature --
@@ -31,8 +31,8 @@ and the Abel-Plana comb are one harmonic decomposition in two integral guises, s
 `zeta_K` (fast closed form) and `zeta_K_bose` (independent quadrature) compute the
 same object; we keep the latter as a cross-check.
 
-The eta side, and how it continues #117
----------------------------------------
+The eta side, and how it continues the continuous endpoint
+----------------------------------------------------------
 Euler-Maclaurin on the alternating sum eta(s) = -sum cos(pi n) n^{-s} (with
 h(x) = cos(pi x) x^{-s}, so int_1^inf h dx = F(s)) gives
 
@@ -41,11 +41,11 @@ h(x) = cos(pi x) x^{-s}, so int_1^inf h dx = F(s)) gives
 the sawtooth modes D_k living at the *odd* multiples (2k +/- 1) pi -- the eta comb's
 fundamental is the cos(pi x) already inside F. The **ground state K = 0 is
 -F(s) + 1/2**. Note the +1/2: it is the n=1 half-weight, and it is *load-bearing* --
-it moves the ground-state zeros off the #117 F-zero string (where F = 0, Re ~ 1.8)
-down to Re ~ 0.7 (where F = 1/2) *before any harmonic is switched on*. So #117's
-zeros are the zeros of the integrand F, a Phase-0 landmark; the bridge's own K=0
-zeros are a different, already-closer string. (The half-weight is the sec-6
-watch-out, and this is exactly where it bites.)
+it moves the ground-state zeros off the F-zero string (where F = 0, Re ~ 1.8)
+down to Re ~ 0.7 (where F = 1/2) *before any harmonic is switched on*. So the
+continuous endpoint's zeros are the zeros of the integrand F, an upstream landmark;
+the bridge's own K=0 zeros are a different, already-closer string. (The half-weight
+is a known watch-out, and this is exactly where it bites.)
 
 (`eta_K_bose` is the alternating Abel-Plana, expanding 1/(2 sinh(pi x)) =
 sum_{k>=0} e^{-(2k+1) pi x} -- an *odd*-pi Bose comb, a co-convergent twin; both
@@ -67,12 +67,11 @@ downward). The findings:
     half onto Re = 1/2 (the genuine zeta zeros) and half onto Re = 1 (the zeros of
     the prefactor 1 - 2^{1-s}, at t = 2 pi m / ln 2). No net birth/death: eta's two
     zero densities (t/2pi)ln(t/2pi e) [critical line] + (t ln2/2pi) [prefactor] sum
-    to (t/2pi)ln(t/pi e) -- exactly the #117 Riemann-von Mangoldt density of the
+    to (t/2pi)ln(t/pi e) -- exactly the Riemann-von Mangoldt density of the
     ground string, so the migration is a (near-)bijection of ground zeros onto the
     two target lines (the counting check in _main witnesses this).
 
-Math write-up: ../knowledge/sum-integral/harmonic-comb-migration.md (Phase 1, #118).
-Run directly to validate + plot: writes sum_integral/figures/harmonic_bridge.png.
+Run directly to validate + plot: writes bridge/figures/harmonic_bridge.png.
 """
 import sys
 from pathlib import Path
@@ -80,15 +79,14 @@ from typing import List, Optional, Tuple
 
 import mpmath as mp
 
-# repo root + sibling source dirs on sys.path so the bare cross-import of cont_eta
-# (same folder) resolves when run directly (pytest uses the root conftest.py). #107.
-_ROOT = Path(__file__).resolve().parents[1]
-for _d in ("", "maass", "krein", "prime_zero", "legacy", "cone_interface", "sum_integral"):
-    _p = str(_ROOT / _d) if _d else str(_ROOT)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+# This module sits in a flat source dir alongside its bare cross-imports; put that
+# directory on sys.path so a direct ``python harmonic_bridge.py`` run resolves them
+# (pytest gets the same path from the root conftest.py).
+_HERE = str(Path(__file__).resolve().parent)
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
 
-import cont_eta as ce  # noqa: E402  (Phase 0: F_closed, the K=0 eta anchor; sigma_law)
+import cont_eta as ce  # noqa: E402  (F_closed, the K=0 eta anchor; sigma_law)
 
 mp.mp.dps = 30
 
@@ -106,7 +104,7 @@ def _Emom(omega, a):
 
 
 def Cmom(omega, a):
-    """int_1^inf cos(omega x) x^{-a} dx.  (Cmom(pi, s) == F(s), the #117 object.)"""
+    """int_1^inf cos(omega x) x^{-a} dx.  (Cmom(pi, s) == F(s), the continuous-eta object.)"""
     return (_Emom(omega, a) + _Emom(-omega, a)) / 2
 
 
@@ -149,7 +147,7 @@ def zeta_K_bose(s, K):
 
 
 # --------------------------------------------------------------------------
-# eta side -- route (a) anchored on F (= #117), plus the odd-pi Bose twin
+# eta side -- route (a) anchored on F, plus the odd-pi Bose twin
 # --------------------------------------------------------------------------
 def _Dk(s, k):
     """int_1^inf sin(2 pi k x) h'(x) dx, h = cos(pi x) x^{-s} (the eta sawtooth mode).
@@ -164,7 +162,7 @@ def _Dk(s, k):
 def eta_K(s, K):
     """eta^{(K)}(s) via Euler-Maclaurin on -sum cos(pi n) n^{-s} (route a).
 
-    K = 0 is exactly  -F(s) + 1/2  (the #117 integral + the load-bearing n=1
+    K = 0 is exactly  -F(s) + 1/2  (the continuous-eta integral + the load-bearing n=1
     half-weight); K -> infinity is eta(s).
     """
     s = mp.mpc(s)
@@ -256,7 +254,7 @@ def _print_migration(title, fn, targets, schedule=None):
 
 
 def _print_counting(T=40.0):
-    """Witness the density bijection: #eta-zeros(<T) ~ #117 Riemann-von Mangoldt N(T)."""
+    """Witness the density bijection: #eta-zeros(<T) ~ Riemann-von Mangoldt N(T)."""
     ln2 = float(mp.log(2))
     crit = [float(mp.zetazero(n).imag) for n in range(1, 9)]
     crit = [g for g in crit if g < T]
@@ -266,7 +264,7 @@ def _print_counting(T=40.0):
     print(f"\n== density bijection check (0 < t < {T:.0f}) ==")
     print(f"   eta zeros: {len(crit)} on Re=1/2 (zeta) + {len(pref)} on Re=1 (prefactor)"
           f" = {len(crit) + len(pref)}")
-    print(f"   #117 Riemann-von Mangoldt law N(T) = {rvm:.2f}   "
+    print(f"   Riemann-von Mangoldt law N(T) = {rvm:.2f}   "
           f"(ln(t/2pi e) + ln 2 = ln(t/pi e): prefactor supplies the doubling)")
 
 
@@ -315,18 +313,18 @@ def _main():
         a.set_xlim(0.2, 2.1)
         a.legend(fontsize=8, loc="upper right")
 
-    s117 = ce.sigma_law(25)
+    s_fzero = ce.sigma_law(25)
     _panel(ax[0], zt, r"$\zeta^{(K)}$: zeros born (K=1) $\to\ \sigma=1/2$",
            [(0.5, r"critical line $1/2$", "C2", "-")])
     _panel(ax[1], ep, r"$\eta^{(K)}$: ground $\to\ \sigma=1$ (prefactor)",
            [(1.0, r"$\sigma=1$ ($1-2^{1-s}$)", "C1", "-"),
-            (s117, r"#117 $F$-zeros (Phase 0)", "C3", "--")], mark_ground=True)
+            (s_fzero, r"continuous-$\eta$ $F$-zeros", "C3", "--")], mark_ground=True)
     _panel(ax[2], ec, r"$\eta^{(K)}$: ground $\to\ \sigma=1/2$ (zeta)",
            [(0.5, r"critical line $1/2$", "C2", "-"),
-            (s117, r"#117 $F$-zeros (Phase 0)", "C3", "--")], mark_ground=True)
+            (s_fzero, r"continuous-$\eta$ $F$-zeros", "C3", "--")], mark_ground=True)
 
     fig.suptitle(r"Zero-migration map: restoring discreteness one Fourier harmonic "
-                 r"at a time  ($K=0\to\infty$,  issue #118)", fontsize=12)
+                 r"at a time  ($K=0\to\infty$)", fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)

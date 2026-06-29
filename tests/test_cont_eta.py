@@ -1,7 +1,6 @@
-"""Unit tests for the continuous Dirichlet-eta integral and its zero laws
-(issue #117, knowledge/sum-integral/discrete-continuous-bridge.md sec 0-1).
+"""Unit tests for the continuous Dirichlet-eta integral and its zero laws.
 
-F(s) = int_1^inf cos(pi x) x^{-s} dx, the rich continuous endpoint of epic #116:
+F(s) = int_1^inf cos(pi x) x^{-s} dx, the rich continuous endpoint of the bridge:
 
 * the incomplete-gamma closed form `F_closed` matches the oscillatory-quadrature
   reference `F_quad` to full precision;

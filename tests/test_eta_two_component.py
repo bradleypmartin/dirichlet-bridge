@@ -1,7 +1,6 @@
-"""Unit tests for the eta two-component (crystal x GUE) spectrum (issue #132,
-knowledge/sum-integral/eta-two-component-spectrum.md).
+"""Unit tests for the eta two-component (crystal x GUE) spectrum.
 
-Follow-up from #118 (the eta split) / #124 / #131. The eta zero set on the t-axis is the
+Follow-up from the additive comb (the eta split), the rate law, and the Gram phase. The eta zero set on the t-axis is the
 rigid sigma=1 prefactor comb (t=2 pi k/ln2) superposed with the GUE sigma=1/2 zeta zeros.
 The checks, by lens:
 
@@ -16,7 +15,7 @@ The checks, by lens:
   not Poisson -- the comb is an additive backbone.
 
 Everything uses the cached Riemann zeros (deterministic) and closed-form references; no
-zero-finding is seeded by the zeros (the #132 forward-only discipline).
+zero-finding is seeded by the zeros (the forward-only discipline).
 """
 import math
 
@@ -61,7 +60,7 @@ def test_comb_phase_zero_at_teeth():
 
 
 def test_zeros_per_tooth_reproduces_sequence():
-    """The measured zeta zeros per comb gap reproduce the issue's 1,2,2,3,3,3,4,3."""
+    """The measured zeta zeros per comb gap reproduce the expected 1,2,2,3,3,3,4,3."""
     _, counts, pred = etc.zeros_per_tooth(GAMMAS, 8)
     assert list(counts) == [1, 2, 2, 3, 3, 3, 4, 3]
     # and the prediction log2(t_c/2pi) tracks them to ~1 zero
@@ -116,7 +115,7 @@ def test_phase_modes_are_p2_resonances():
 
 def test_comb_frequencies_are_p2_bragg_peaks():
     """The comb teeth's spectral content m ln2 coincides with the p=2 Bragg peaks of the
-    zeta-zero structure factor (#80B/#84): log(2^m) = m ln2 for the prime powers of 2."""
+    zeta-zero structure factor: log(2^m) = m ln2 for the prime powers of 2."""
     peaks = {n: lg for n, lg, _ in etc.clp.prime_power_peaks(8)}
     for m in (1, 2, 3):
         assert peaks[2 ** m] == pytest.approx(m * LN2, rel=1e-12)

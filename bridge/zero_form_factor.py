@@ -1,11 +1,11 @@
 """Spectral form factor of the Riemann zeros: the GUE face (small tau) and the
-prime face (large u) of one Fourier transform (issue #84).
+prime face (large u) of one Fourier transform.
 
 This is the bridge between the repo's two prime/zero forks:
 
-  * #8  / gue-spacing.md            -- "the Riemann zeros are textbook GUE",
+  * nearest-neighbour spacings            -- "the Riemann zeros are textbook GUE",
                                         measured by nearest-neighbour SPACINGS.
-  * #80B / log-prime-diffraction.md -- the prime comb in the DIFFRACTION
+  * prime diffraction -- the prime comb in the DIFFRACTION
                                         (structure factor) of the zero set.
 
 Both are the same object -- the Fourier transform of the zero point set -- seen
@@ -19,11 +19,11 @@ in two coordinates:
           GUE: K ~ 1*tau   (unitary, broken time-reversal -- the zeros),
           GOE: K ~ 2*tau   (orthogonal, time-reversal invariant).
       Recovering slope 1 (not 2) is a SECOND, two-point-correlation-based
-      confirmation of the unitary class, complementing the surmise fit in #8.
+      confirmation of the unitary class, complementing the surmise fit.
 
   STRUCTURE FACTOR  S(u)  of the *raw* zeros (varying density). Conjugate
       variable u to the raw ordinates gamma. Sharp Bragg peaks at u = log(p^k)
-      (the prime comb of #80B): the resolved short periodic orbits = the primes.
+      (the prime comb): the resolved short periodic orbits = the primes.
 
 The two faces are the SAME transform up to the local unfolding rescale
 u = 2 pi rho(gamma) tau. The catch -- and the real content of the bridge -- is
@@ -35,12 +35,12 @@ individual short orbits), and vice versa. The diagonal -> off-diagonal crossover
 
 Caveat (the repo's recurring trap): a form factor from only ~2000 zeros is noisy;
 the ramp emerges only after unfolding + binning/averaging, the same
-"wrong-unfold / under-averaged-statistic fakes the answer" hazard flagged in
-#36/#48/#49. Nothing here is new about zeta (Montgomery 1973; Berry 1986;
+"wrong-unfold / under-averaged-statistic fakes the answer" hazard seen
+elsewhere. Nothing here is new about zeta (Montgomery 1973; Berry 1986;
 Bogomolny-Keating 1996); the deliverable is the in-repo bridge plus the
 independent-statistic confirmation of the GUE class.
 
-Driver main() writes zero_form_factor.{png,txt}. See knowledge/statistics/zero-form-factor.md.
+Driver main() writes zero_form_factor.{png,txt}.
 """
 
 from __future__ import annotations
@@ -54,14 +54,14 @@ from typing import Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
-# repo root + sibling source dirs (maass/gue_spacing, cone_interface/cone_log_prime)
-# on sys.path so the bare cross-group imports resolve when run directly as a
-# script (pytest gets these from the root conftest.py). See #107.
+# This module sits in a flat source dir alongside its bare cross-imports; put that
+# directory on sys.path so a direct ``python zero_form_factor.py`` run resolves them
+# (pytest gets the same path from the root conftest.py). ``_ROOT`` (repo root) is
+# also used below for the data/output paths.
 _ROOT = Path(__file__).resolve().parents[1]
-for _d in ("", "maass", "krein", "prime_zero", "legacy", "cone_interface"):
-    _p = str(_ROOT / _d) if _d else str(_ROOT)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+_HERE = str(Path(__file__).resolve().parent)
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
 
 from gue_spacing import load_riemann_zeros, unfold_riemann_zeros  # noqa: E402
 import cone_log_prime as P  # noqa: E402
@@ -71,7 +71,7 @@ OUTPUT_TXT = _ROOT / "zero_form_factor.txt"
 OUTPUT_HIGH_PNG = _ROOT / "zero_form_factor_high.png"
 OUTPUT_HIGH_TXT = _ROOT / "zero_form_factor_high.txt"
 
-# Fixed-height windows for the #89 slope-vs-height trend. W0 is the top of the
+# Fixed-height windows for the slope-vs-height trend. W0 is the top of the
 # canonical cache (free); the higher windows are the committed CSVs written by
 # `maass/compute_riemann_zeros.py --start N` (skipped with a note if absent).
 LOW_WINDOW_N = 1000
@@ -253,13 +253,13 @@ def heisenberg_bridge(gammas: np.ndarray) -> dict:
 
 
 # ---------------------------------------------------------------------------
-# The high-height window: where the two faces collapse onto one tau axis (#89)
+# The high-height window: where the two faces collapse onto one tau axis
 # ---------------------------------------------------------------------------
 #
-# #84 had to keep the GUE ramp and the prime comb on SEPARATE axes: the bridge
-# u = 2 pi rho(gamma) tau has a height-dependent rho, so across the full cached
-# cache (gamma 14 .. 2515, rho 0.13 .. 0.95, a factor of ~7) a single prime
-# u = log p smears over a whole band tau ~ 0.12 .. 0.86.
+# The full-cache view had to keep the GUE ramp and the prime comb on SEPARATE
+# axes: the bridge u = 2 pi rho(gamma) tau has a height-dependent rho, so across
+# the full cached cache (gamma 14 .. 2515, rho 0.13 .. 0.95, a factor of ~7) a
+# single prime u = log p smears over a whole band tau ~ 0.12 .. 0.86.
 #
 # Take instead a NARROW WINDOW of consecutive zeros high on the critical line.
 # rho(gamma) = (1/2 pi) log(gamma / 2 pi) grows only logarithmically, so across
@@ -290,7 +290,7 @@ def window_structure_factor(
 ) -> np.ndarray:
     """Structure factor S(u) = |sum_n w_n cos(gamma_n u)|^2 of a window of raw
     zero ordinates, with a window-centred taper w_n. Bragg peaks at u = log(p^k)
-    (the prime comb, #80B) -- the same object as `cone_log_prime`'s, but tapered
+    (the prime comb) -- the same object as `cone_log_prime`'s, but tapered
     in INDEX so it works for a block of zeros at any height (not only near 0)."""
     g = np.asarray(gammas, dtype=float)
     u = np.atleast_1d(np.asarray(u, dtype=float))
@@ -419,10 +419,10 @@ def peak_resolution(res: dict) -> list:
 
 
 def load_high_windows() -> list:
-    """Ordered fixed-height windows (low -> high) for the #89 trend. W0 is the
-    top `LOW_WINDOW_N` of the canonical cache (a low, mildly-varying-density
-    anchor); the higher windows come from the committed window CSVs if present.
-    Returns a list of {label, gammas}."""
+    """Ordered fixed-height windows (low -> high) for the slope-vs-height
+    trend. W0 is the top `LOW_WINDOW_N` of the canonical cache (a low,
+    mildly-varying-density anchor); the higher windows come from the committed
+    window CSVs if present. Returns a list of {label, gammas}."""
     windows: list = []
     cached = np.asarray(load_riemann_zeros(), dtype=float)
     if cached.size >= LOW_WINDOW_N:
@@ -453,7 +453,7 @@ def _compute_all(
     centres, means, errs = bin_form_factor(taus, K, n_bins)
     slope = small_tau_slope(centres, means, 0.05, 0.4)
 
-    # prime face: the raw structure factor (#80B) on the u axis.
+    # prime face: the raw structure factor on the u axis.
     u = np.linspace(0.45, 3.35, 6000)
     S = P.zero_structure_factor(gammas, u, gamma_c=700.0)
 
@@ -483,7 +483,7 @@ def build_summary_text(res: dict) -> str:
     lines: list[str] = []
     lines.append(
         "Spectral form factor of the Riemann zeros: the GUE face (small tau) "
-        "and the prime face (large u) of one Fourier transform (issue #84)."
+        "and the prime face (large u) of one Fourier transform."
     )
     lines.append("")
     lines.append(
@@ -531,10 +531,9 @@ def build_summary_text(res: dict) -> str:
     for r in rows:
         lines.append("  " + fmt.format(*r))
     lines.append("")
-    lines.append("PRIME FACE -- structure factor S(u) of the raw zeros (#80B):")
+    lines.append("PRIME FACE -- structure factor S(u) of the raw zeros:")
     lines.append(
-        "  Sharp Bragg peaks at u = log(p^k) (the prime comb); see "
-        "knowledge/prime-cone/log-prime-diffraction.md."
+        "  Sharp Bragg peaks at u = log(p^k) (the prime comb)."
     )
     lines.append("")
     lines.append("THE BRIDGE -- u = 2 pi rho(gamma) tau (height-dependent):")
@@ -560,11 +559,10 @@ def build_summary_text(res: dict) -> str:
         "Interpretation. The unfolded zeros reproduce the universal GUE ramp-"
         "and-plateau, and the small-tau slope picks the unitary class over the "
         "orthogonal one -- an independent, two-point-correlation confirmation "
-        "of the #8 nearest-neighbour-spacing result. The #80B prime comb is the "
+        "of the nearest-neighbour-spacing result. The prime comb is the "
         "large-u face of the same transform; the diagonal (universal ramp) -> "
         "off-diagonal (prime peaks) crossover is Berry's quantum-chaos picture. "
-        "Noisy at ~2000 zeros: the ramp needs unfolding + binning. See "
-        "knowledge/statistics/zero-form-factor.md."
+        "Noisy at ~2000 zeros: the ramp needs unfolding + binning."
     )
     return "\n".join(lines) + "\n"
 
@@ -650,11 +648,11 @@ def plot_form_factor(res: dict) -> None:
     ax.set_xlabel(r"$u$  (conjugate to the raw ordinates $\gamma$)")
     ax.set_ylabel(r"structure factor  $S(u)$")
     ax.set_title("(c) PRIME FACE: same transform, raw zeros\n"
-                 r"$S(u)$ combs at $u=\log p^k$ (#80B)", fontsize=9.5)
+                 r"$S(u)$ combs at $u=\log p^k$", fontsize=9.5)
 
     fig.suptitle(
         "Spectral form factor of the Riemann zeros: the GUE ramp (small "
-        r"$\tau$) and the prime comb (large $u$) of one transform (issue #84)",
+        r"$\tau$) and the prime comb (large $u$) of one transform",
         fontsize=12,
     )
     fig.tight_layout(rect=(0, 0, 1, 0.94))
@@ -662,15 +660,15 @@ def plot_form_factor(res: dict) -> None:
     plt.close(fig)
 
 
-# #84's slope from the full variable-density cache (gamma 14 .. 2515), the
-# low-height baseline the windows are measured against (knowledge note / #84).
+# The slope from the full variable-density cache (gamma 14 .. 2515), the
+# low-height baseline the windows are measured against.
 FULL_CACHE_SLOPE_84 = 0.855
 
 
 def build_high_summary_text(windows: list, analyses: list) -> str:
     lines: list = []
     lines.append(
-        "Spectral form factor at high height (#89, follow-up to #84): a narrow "
+        "Spectral form factor at high height: a narrow "
         "fixed-height window of zeros collapses the GUE ramp and the prime comb "
         "onto ONE tau axis."
     )
@@ -681,7 +679,7 @@ def build_high_summary_text(windows: list, analyses: list) -> str:
         "the critical line has nearly CONSTANT density. The unfolding bridge "
         "u = 2 pi rho(gamma) tau then becomes a single constant rescale, and a "
         "prime u = log p maps to a SHARP tau_p (not the band tau ~ 0.12 .. 0.86 "
-        "that #84 saw smeared across the factor-of-7 density variation of the "
+        "seen smeared across the factor-of-7 density variation of the "
         "full cache). That is what lets the diagonal (universal ramp) and the "
         "off-diagonal (prime peaks) sit in one figure."
     )
@@ -710,7 +708,7 @@ def build_high_summary_text(windows: list, analyses: list) -> str:
     for r in rows:
         lines.append("  " + fmt.format(*r))
     lines.append(
-        f"  #84 baseline (full variable-density cache, gamma 14..2515): "
+        f"  Baseline (full variable-density cache, gamma 14..2515): "
         f"slope = {FULL_CACHE_SLOPE_84:.3f}."
     )
     lines.append(
@@ -751,13 +749,13 @@ def build_high_summary_text(windows: list, analyses: list) -> str:
         "the universal GUE ramp (the diagonal/all-orbits average) and the sharp "
         "prime peaks at tau_p (the off-diagonal short orbits) live on the same "
         "tau axis -- Berry's diagonal -> off-diagonal crossover in a single "
-        "figure, which #84 could not draw because rho varied across its sample. "
+        "figure, which the full-cache view could not draw because rho varied across its sample. "
         "The ramp slope is read on the cleaner (constant-density) ramp. Ceiling: "
         "float64 keeps the phase honest to gamma ~ 1e6 and mpmath.zetazero costs "
         "~0.5 s/zero, so the reachable height is set by patience, not precision; "
         "the window width trades statistics (more zeros) against density "
-        "constancy (a wider gamma-span), the #84 trade-off now quantified by the "
-        "'rho spread' column. See knowledge/statistics/zero-form-factor.md."
+        "constancy (a wider gamma-span), the trade-off now quantified by the "
+        "'rho spread' column."
     )
     return "\n".join(lines) + "\n"
 
@@ -805,7 +803,8 @@ def plot_high_window(windows: list, analyses: list) -> None:
     # At constant rho the bridge u = (2 pi rhobar) tau is ONE rescale, so the
     # diagonal/universal ramp (left axis, red) and the off-diagonal/arithmetic
     # prime peaks (right axis, blue, at tau_p marked in green) live on one tau
-    # axis -- the figure #84 could not draw. Zoom to where the small primes sit.
+    # axis -- the figure the full-cache view could not draw. Zoom to where the
+    # small primes sit.
     ax = axes[1]
     tau_S, S = show["tau_S"], show["S"]
     tau_view = 0.30
@@ -850,7 +849,7 @@ def plot_high_window(windows: list, analyses: list) -> None:
     ax.axhline(1.0, color="#c2452d", lw=2.0, label="GUE $=1$")
     ax.axhline(2.0, color="#2a8a3e", lw=2.0, ls="--", label="GOE $=2$")
     ax.axhline(FULL_CACHE_SLOPE_84, color="0.55", lw=1.0, ls=":",
-               label=fr"#84 full cache $={FULL_CACHE_SLOPE_84:.2f}$")
+               label=fr"full cache $={FULL_CACHE_SLOPE_84:.2f}$")
     ax.plot(xs, ys, "o-", color="#1f5fa8", ms=7, lw=1.4,
             label="fixed-height windows")
     for a, x, y in zip(analyses, xs, ys):
@@ -867,7 +866,7 @@ def plot_high_window(windows: list, analyses: list) -> None:
 
     fig.suptitle(
         "Spectral form factor at high height: the GUE ramp and the prime comb "
-        r"on one $\tau$ axis (issue #89)", fontsize=12)
+        r"on one $\tau$ axis", fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(OUTPUT_HIGH_PNG, dpi=150)
     plt.close(fig)
@@ -883,7 +882,7 @@ def main() -> None:
     plot_form_factor(res)
     print(f"Wrote {OUTPUT_PNG.name} ({time.time() - t0:.1f}s).")
 
-    # The #89 high-height follow-up: needs the committed window CSVs.
+    # The high-height follow-up: needs the committed window CSVs.
     windows = load_high_windows()
     if len(windows) >= 2:
         t1 = time.time()
@@ -895,7 +894,7 @@ def main() -> None:
         plot_high_window(windows, analyses)
         print(f"Wrote {OUTPUT_HIGH_PNG.name} ({time.time() - t1:.1f}s).")
     else:
-        print("(#89 high-height windows not found -- run "
+        print("(high-height windows not found -- run "
               "`maass/compute_riemann_zeros.py --start 100000 --n-zeros 1500` "
               "and `--start 1000000 --n-zeros 1500` to generate them.)")
 

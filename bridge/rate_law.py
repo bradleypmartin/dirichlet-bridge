@@ -1,7 +1,7 @@
-r"""Unified O(1/K) rate / birth-K law across the three bridge routes (issue #124).
+r"""Unified O(1/K) rate / birth-K law across the three bridge routes.
 
-Follow-up across all of epic #116. Phases 0-2 (cont_eta #117, harmonic_bridge #118,
-warp_bridge #119, warp_alpha #122) each found the zeros converging onto their lines at
+Follow-up across the whole bridge. The earlier stages (cont_eta, harmonic_bridge,
+warp_bridge, warp_alpha) each found the zeros converging onto their lines at
 O(1/K) but described the *approach* only qualitatively -- comb zeros "born high and
 descend (some overshoot)", warp zeros "born low and climb from below". This module makes
 that one analysis: a single leading-rate constant and a single zero-displacement
@@ -16,7 +16,7 @@ B~_1(x) = {x}-1/2 = -Sum_k sin(2 pi k x)/(pi k) -- at K harmonics, so every rout
 leftover is that sawtooth's tail, whose L^2 power is Sum_{k>K} 1/(pi k)^2 ~ 1/(pi^2 K).
 That is why ALL routes are O(1/K). What differs is HOW the route sees the tail:
 
-  * COMB (additive, #118): the tail enters the integrand *linearly*. The k-th sawtooth
+  * COMB (additive): the tail enters the integrand *linearly*. The k-th sawtooth
     mode is  zeta_term(s,k) = (s/pi k) Int_1^inf sin(2 pi k x) x^{-s-1} dx, and endpoint
     integration by parts at the integer frequency (cos 2 pi k = 1, sin 2 pi k = 0) gives
     zeta_term(s,k) = s/(2 pi^2 k^2) + O(1/k^4). Summing the tail:
@@ -27,7 +27,7 @@ That is why ALL routes are O(1/K). What differs is HOW the route sees the tail:
     A CLEAN closed constant  s/(2 pi^2), and -- because the x=1 endpoint of the eta comb
     has the same |cos pi x|=1 -- *identical* for eta (`test_*`). (`rate_comb`)
 
-  * WARP (nonlinear, #119): the tail enters through the *argument*
+  * WARP (nonlinear): the tail enters through the *argument*
     a_K(u) = 3/2 - r_K(u),  r_K(u) = Sum_{k>K} sin(2 pi k u)/(pi k). The sawtooth's zero
     mean kills the linear (first-order) response -- Int_0^1 r_K = 0 -- so the bulk rate is
     *second* order, 1/2 zeta_aa''(s,3/2) Int_0^1 r_K^2 = s(s+1)zeta(s+2,3/2)/(4 pi^2 K)
@@ -62,7 +62,7 @@ This ONE formula covers all five zero families (`ROUTES`), each just a different
 The SIGN of Re a_1 is the approach side (Re a_1 > 0: from above; < 0: from below). For
 the comb it ALTERNATES with the zero (the phase of 1/zeta'(rho) wanders), so some comb
 zeros descend onto 1/2 from above and some from below; for the warp it is uniformly < 0
-(from below). That is the #119 "comb descends / warp climbs" contrast, sharpened: not a
+(from below). That is the "comb descends / warp climbs" contrast, sharpened: not a
 blanket direction but the sign of a computable coefficient.
 
 Overshoot, the sub-leading correction (`disp_coeff2`)
@@ -86,11 +86,11 @@ Birth-K law (`catch_K`)
 |Re a_1|/K < eps, so  catch_K(rho, eps) = |Re a_1(rho)|/eps. Since |a_1| ~
 |rho|/(2 pi^2 |target'(rho)|) and |target'| grows only polylogarithmically, catch_K grows
 (on average -- it fluctuates with |zeta'(rho)|) with the height gamma: higher zeros, being
-denser by the #117 Riemann-von Mangoldt law (local spacing 2 pi/ln(t/pi)), need more
+denser by the Riemann-von Mangoldt law (local spacing 2 pi/ln(t/pi)), need more
 harmonics to resolve. (`catch_K`)
 
-Vertical migration: the Gram phase  arg(a_1) ~ pi delta_n  (#131)
-----------------------------------------------------------------
+Vertical migration: the Gram phase  arg(a_1) ~ pi delta_n
+---------------------------------------------------------
 a_1 is COMPLEX; its imaginary part is the vertical (Im s) migration Im(s_K - rho) ~
 Im(a_1)/K (`vertical_side`). For the comb, the Hardy Z-function collapses the whole
 displacement angle to the zero's position in its Gram interval. With
@@ -101,10 +101,10 @@ zeta'(rho) = -i e^{-i theta(gamma)} Z'(gamma) and sign Z'(gamma_n) = (-1)^{n-1},
 
 A Gram-REGULAR zero has delta_n in (0,1), so sin(pi delta_n) > 0 ALWAYS -> Im a_1 > 0
 (vertical pinned UP), while cos(pi delta_n) changes sign at delta_n = 1/2 -> Re a_1
-ALTERNATES (the #124 'comb approach side alternates', now explained: the zero sits in the
+ALTERNATES (the 'comb approach side alternates', now explained: the zero sits in the
 early/late half of its Gram interval). This is the **axis-duality** sharpened: the comb
 pins the VERTICAL axis (Im a_1 > 0) and lets the horizontal wander; the warp pins the
-HORIZONTAL (Re a_1 < 0 uniformly, #124) and lets the vertical oscillate (`vertical_side`
+HORIZONTAL (Re a_1 < 0 uniformly) and lets the vertical oscillate (`vertical_side`
 over warp_zeta takes both signs -- the warp inherits the wandering phase of its non-closed-
 form C_warp, so there is no comb-style arithmetic rule for it).
 
@@ -115,20 +115,20 @@ first Gram's-law failure. There |Im a_1| ~ |sin(pi delta_n)| is tiny (the soft s
 zero nearly ON a Gram point), so those zeros are the slowest to settle their vertical
 approach. The convention-free criterion sign(Im a_1) = sign((-1)^n sin theta(gamma_n))
 matches over n=1..200 with zero exceptions. So the bridge's vertical migration is a
-**Gram's-law detector**. (Needs zeros up to gamma ~ 400 to see -- comb-only, so the #130
+**Gram's-law detector**. (Needs zeros up to gamma ~ 400 to see -- comb-only, so the
 high-tau warp caveats do not bite the comb result.)
 
-The Phase-0 sigma_law sub-leading (#117 sec 6 open item)
+The continuous-eta sigma_law sub-leading (an open item)
 -------------------------------------------------------
-Separately, the #117 off-line string sigma(t) -> 3/2: its closed-form `cont_eta.sigma_law`
+Separately, the continuous-eta off-line string sigma(t) -> 3/2: its closed-form `cont_eta.sigma_law`
 already realizes the F_asym magnitude balance to O(1/t^2) -- solving that balance
 *exactly* (`sigma_law_exact`) leaves the SAME residual to the true zeros. So the leftover
 drift is not a Stirling/|s-1| approximation but the F_asym *truncation* (the dropped
 higher incomplete-gamma terms of F); it has no clean elementary closed form. A negative
 result that closes the open item: refine F, not the balance.
 
-Three rate-law loose ends (#133)
---------------------------------
+Three rate-law loose ends
+-------------------------
 1. A CLOSED FORM for the warp constant C_warp (`c_warp_closed`). The 1/K warp constant is
    rate_warp_bulk (the global quadratic) + a Gibbs BOUNDARY LAYER. Near each cell edge the
    sawtooth tail r_K does not shrink; it relaxes through the Gibbs profile
@@ -142,16 +142,16 @@ Three rate-law loose ends (#133)
    The -P^2 zeta_aa'' is the QUADRATIC the bulk already counts: subtracting it both avoids
    double-counting AND makes the integrand O(P^4) ~ 1/v^4 (converged by v ~ 20). The naive
    linear-counterterm-only guess double-counts and overshoots ~2-3x. C_warp is a prime-FREE,
-   purely analytic object -- the SAME Gibbs layer #130 found the moment grid under-resolves at
+   purely analytic object -- the SAME Gibbs layer that under-resolves the moment grid at
    high tau, and (item 3) the term that breaks the sigma=1/sigma=0 FE mirror.
 
 2. catch_K <-> |zeta'(rho)|, the Montgomery a-values (`montgomery_a`, `catch_K(mode=...)`,
-   `catch_K_normalized`). a_1 = rho/(2 pi^2 zeta'(rho)) carries 1/|zeta'(rho)|, and by the #131
+   `catch_K_normalized`). a_1 = rho/(2 pi^2 zeta'(rho)) carries 1/|zeta'(rho)|, and by the
    Hardy-Z reduction |zeta'(rho)| = |Z'(gamma)| EXACTLY. So the height-normalized
    catch_K(mode='abs') = |a_1|/eps is EXACTLY 1/|zeta'(rho)| -- the Montgomery a-value
    reciprocal: which zeros are hardest to resolve is set by |zeta'|, and the small-|zeta'|
    (near-degenerate) zeros are slowest (corr(|zeta'|, relative spacing) ~ 0.74 over the first 80
-   zeros: small |zeta'| <=> closely-spaced pair). The DEFAULT mode='re' (the #124 birth-K) carries
+   zeros: small |zeta'| <=> closely-spaced pair). The DEFAULT mode='re' (the birth-K) carries
    a SECOND fluctuation: |Re a_1| = |rho|/(2 pi^2 |Z'|) |cos pi delta_n|, the Gram factor
    (|cos arg a_1| ~ |cos pi delta_n| to < 0.01 by gamma ~ 60). So 'abs' isolates the Montgomery
    a-values; 're' adds the Gram modulation -- the two pick DIFFERENT hardest zeros (small-|zeta'|
@@ -159,16 +159,16 @@ Three rate-law loose ends (#133)
 
 3. The FE-mirror companions only SHARE HEIGHTS (`fe_mirror`). The sigma=1 eta prefactor
    (1-2^{1-s}=0) and sigma=0 warp companion (2^s-1=0) are exact s<->1-s images as zero SETS
-   (heights +-2 pi k/ln2, the #132 p=2 comb) -- but their migration dynamics are NOT mirrors.
+   (heights +-2 pi k/ln2, the p=2 comb) -- but their migration dynamics are NOT mirrors.
    In a_1 = -Delta_1/target': target' = ln2 zeta(rho) has the same form on both lines (at the
    FE-conjugate arguments 1+it_k vs it_k), but Delta_1 differs in KIND -- eta's is the closed
    additive-comb constant -rho/2 pi^2 (Re == -1/2 pi^2, a rigid line), warp's is the non-closed
    Gibbs constant C_warp(rho) (Re wanders 0.40 -> 1.64). The mirror breaks entirely in Delta_1,
-   for an analytic (boundary-layer = C_warp) not arithmetic reason -- dovetailing #131 (warp
-   Im a_1 has no arithmetic rule) and #132 (mirror-exact spectrum, broken dynamics).
+   for an analytic (boundary-layer = C_warp) not arithmetic reason -- dovetailing the Gram
+   phase (warp Im a_1 has no arithmetic rule) and the two-component spectrum (mirror-exact
+   zero sets, broken dynamics).
 
-Math write-up: ../knowledge/sum-integral/rate-birth-k-law.md (#124, #133).
-Run directly to validate + plot: writes sum_integral/figures/rate_law.png + rate_law_133.png.
+Run directly to validate + plot: writes bridge/figures/rate_law.png + rate_law_loose_ends.png.
 """
 import sys
 from pathlib import Path
@@ -176,16 +176,14 @@ from typing import Dict, Tuple
 
 import mpmath as mp
 
-# repo root + sibling source dirs on sys.path so the bare cross-imports (cont_eta,
-# harmonic_bridge, warp_bridge -- same folder) resolve when run directly (pytest uses
-# the root conftest.py). #107.
-_ROOT = Path(__file__).resolve().parents[1]
-for _d in ("", "maass", "krein", "prime_zero", "legacy", "cone_interface", "sum_integral"):
-    _p = str(_ROOT / _d) if _d else str(_ROOT)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+# This module sits in a flat source dir alongside its bare cross-imports; put that
+# directory on sys.path so a direct ``python rate_law.py`` run resolves them
+# (pytest gets the same path from the root conftest.py).
+_HERE = str(Path(__file__).resolve().parent)
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
 
-import cont_eta as ce         # noqa: E402  (Phase 0: sigma_law, F_asym -- the #117 string)
+import cont_eta as ce         # noqa: E402  (sigma_law, F_asym -- the continuous-eta string)
 import harmonic_bridge as hb  # noqa: E402  (zeta_K/eta_K, migrate -- the comb routes)
 import warp_bridge as wb      # noqa: E402  (warp_K, target_half -- the warp route)
 
@@ -236,7 +234,7 @@ def rate_warp(s, K=40, richardson=False, closed=False, Vmax=30):
       * default: the fast grid warp_K at K=40 (~2-3 digits, enough for the sign and magnitude
         of the displacement coefficient);
       * richardson=True: the slow exact warp_hurwitz at K=80,160 extrapolated (~5 digits);
-      * closed=True: the #133 CLOSED FORM `c_warp_closed` (the Si-Gibbs boundary-layer integral)
+      * closed=True: the CLOSED FORM `c_warp_closed` (the Si-Gibbs boundary-layer integral)
         -- exact, the cleanest. delta1/disp_coeff/catch_K forward this via **kw.
     """
     s = mp.mpc(s)
@@ -251,20 +249,20 @@ def rate_warp(s, K=40, richardson=False, closed=False, Vmax=30):
 
 
 def gibbs_profile(v):
-    """The cell-edge Gibbs relaxation profile  P(v) = (1/pi)(pi/2 - Si(2 pi v))  (#130/#133).
+    """The cell-edge Gibbs relaxation profile  P(v) = (1/pi)(pi/2 - Si(2 pi v)).
 
     The K -> infinity limit of the sawtooth tail r_K in the inner variable v = K u: near a cell
     edge r_K(v/K) -> P(v), a Riemann sum of int_1^inf sin(2 pi v w)/(pi w) dw = (1/pi)(pi/2 -
     Si(2 pi v)). P(0) = 1/2 (the warp argument ramps to 1 at the left edge, 2 at the right),
     P(v) -> 0 in the bulk (~ cos(2 pi v)/(2 pi^2 v)), so the layer is O(1/K) wide. This is the
-    SAME profile #130 found the moment grid mu_j = int psi^j under-resolves at high tau -- the
+    SAME profile the moment grid mu_j = int psi^j under-resolves at high tau -- the
     high-tau resolution difficulty and the warp constant C_warp are two faces of one Gibbs layer.
     """
     return (PI / 2 - mp.si(2 * PI * v)) / PI
 
 
 def c_warp_closed(s, Vmax=30):
-    r"""Closed form for the warp constant  C_warp(s) = lim_K K (warp_K(s,K) - zeta(s,3/2))  (#133).
+    r"""Closed form for the warp constant  C_warp(s) = lim_K K (warp_K(s,K) - zeta(s,3/2)).
 
     warp_K(s,K) = int_0^1 zeta(s, 3/2 - r_K(u)) du with the sawtooth tail r_K(u) =
     sum_{k>K} sin(2 pi k u)/(pi k). The 1/K constant splits into the second-order BULK response
@@ -286,8 +284,8 @@ def c_warp_closed(s, Vmax=30):
     the residual is the Richardson truncation, not this integral).
 
     A prime-FREE, purely analytic (boundary-layer) object -- the term that breaks the
-    sigma=1/sigma=0 FE mirror (`fe_mirror`) and drives the warp's wandering Im a_1 (#131), and
-    the same Gibbs layer #130's moment grid under-resolves at high tau.
+    sigma=1/sigma=0 FE mirror (`fe_mirror`) and drives the warp's wandering Im a_1, and
+    the same Gibbs layer the moment grid under-resolves at high tau.
     """
     s = mp.mpc(s)
     z32 = mp.zeta(s, mp.mpf(3) / 2)
@@ -365,18 +363,18 @@ def approach_side(route, rho, **kw):
 
 
 def vertical_side(route, rho, **kw):
-    """'up' or 'down' -- the VERTICAL (Im s) approach = sign(Im a_1)  (#131).
+    """'up' or 'down' -- the VERTICAL (Im s) approach = sign(Im a_1).
 
     The imaginary part of the same displacement coefficient gives the vertical migration
     Im(s_K - rho) ~ Im(a_1)/K. 'up' (Im a_1 > 0): the zero descends onto its height gamma
     from ABOVE; 'down' (Im a_1 < 0): it climbs from below. This is the vertical analog of
-    approach_side, and the two together make the #124 displacement law a 2-D statement.
+    approach_side, and the two together make the displacement law a 2-D statement.
     """
     return "up" if disp_coeff(route, rho, **kw).imag > 0 else "down"
 
 
 def gram_position(g, n):
-    """Gram-interval position delta_n = theta(gamma)/pi - (n-2) of the n-th zeta zero (#131).
+    """Gram-interval position delta_n = theta(gamma)/pi - (n-2) of the n-th zeta zero.
 
     The Hardy Z-function collapses the comb displacement angle to  arg(a_1) ~ pi*delta_n.
     From a_1 = rho/(2 pi^2 zeta'(rho)) and zeta'(rho) = -i e^{-i theta(gamma)} Z'(gamma)
@@ -386,7 +384,7 @@ def gram_position(g, n):
 
     A Gram-REGULAR zero sits one-per-Gram-interval, delta_n in (0,1): then sin(pi delta_n) > 0
     ALWAYS, so Im a_1 > 0 (vertical pinned UP), while cos(pi delta_n) flips sign at delta_n = 1/2,
-    so Re a_1 ALTERNATES (the #124 'comb approach side alternates', now read off the zero's
+    so Re a_1 ALTERNATES (the 'comb approach side alternates', now read off the zero's
     position within its Gram interval). Im a_1 <= 0 happens EXACTLY when Gram's law fails
     (delta_n leaves (0,1)) -- first at the 127th zero (gamma ~ 282.47, delta ~ 1.006), so the
     comb vertical-up uniformity asserted at low gamma is NOT universal: it IS Gram's law. The
@@ -406,9 +404,9 @@ def overshoots(rho, **kw):
 
 
 def montgomery_a(rho):
-    """|zeta'(rho)| at a zero rho = 1/2 + i gamma -- the Montgomery a-value (#133, item 2).
+    """|zeta'(rho)| at a zero rho = 1/2 + i gamma -- the Montgomery a-value (loose end 2).
 
-    By the #131 Hardy-Z reduction zeta'(rho) = -i e^{-i theta(gamma)} Z'(gamma), so
+    By the Hardy-Z reduction zeta'(rho) = -i e^{-i theta(gamma)} Z'(gamma), so
     |zeta'(rho)| = |Z'(gamma)| EXACTLY: the Montgomery a-values ARE the Hardy-Z slopes at its
     zeros. a_1 = rho/(2 pi^2 zeta'(rho)) carries 1/|zeta'(rho)|, so this single number sets how
     hard the bridge works to resolve gamma (catch_K below). The small-|zeta'| (near-degenerate,
@@ -420,13 +418,13 @@ def montgomery_a(rho):
 def catch_K(route, rho, eps=0.05, mode="re", **kw):
     """Birth-K: smallest K landing the zero within eps of its line, ~ |a_1 component|/eps.
 
-    mode='re' (default, the #124 birth-K): |Re a_1|/eps, the HORIZONTAL catch. It carries TWO
-    fluctuations -- the Montgomery 1/|zeta'(rho)| AND the Gram factor |cos pi delta_n| (#131,
-    |Re a_1| = |rho|/(2 pi^2 |Z'|) |cos pi delta_n|).
+    mode='re' (default, the birth-K): |Re a_1|/eps, the HORIZONTAL catch. It carries TWO
+    fluctuations -- the Montgomery 1/|zeta'(rho)| AND the Gram factor |cos pi delta_n| (the Gram
+    reduction |Re a_1| = |rho|/(2 pi^2 |Z'|) |cos pi delta_n|).
     mode='abs': |a_1|/eps -- carries ONLY 1/|zeta'(rho)| (the Montgomery a-value), so it ranks
     zeros purely by |zeta'| (small-|zeta'| = hardest). The two modes pick DIFFERENT 'hard'
     populations: small-|zeta'| (mode='abs') vs small-|zeta'| AND mid-Gram-interval delta_n ~ 1/2
-    (mode='re'). Both grow on average with height (denser zeros, #117 spacing 2 pi/ln(t/pi)).
+    (mode='re'). Both grow on average with height (denser zeros, spacing 2 pi/ln(t/pi)).
     """
     a1 = disp_coeff(route, rho, **kw)
     mag = abs(a1) if mode == "abs" else abs(a1.real)
@@ -434,7 +432,7 @@ def catch_K(route, rho, eps=0.05, mode="re", **kw):
 
 
 def catch_K_normalized(route, rho, eps=0.05, mode="abs", **kw):
-    """catch_K with the smooth |rho|/(2 pi^2 eps) height-growth divided out (#133, item 2).
+    """catch_K with the smooth |rho|/(2 pi^2 eps) height-growth divided out (loose end 2).
 
     For the comb_zeta family with mode='abs' this is EXACTLY 1/|zeta'(rho)| -- the Montgomery
     a-value reciprocal, the pure zero-to-zero fluctuation with the trivial height growth removed.
@@ -445,25 +443,25 @@ def catch_K_normalized(route, rho, eps=0.05, mode="abs", **kw):
 
 
 # --------------------------------------------------------------------------
-# the sigma=1 / sigma=0 FE-mirror companions: same heights, broken dynamics (#133, item 3)
+# the sigma=1 / sigma=0 FE-mirror companions: same heights, broken dynamics (loose end 3)
 # --------------------------------------------------------------------------
 def fe_mirror(k, **kw):
-    """Compare the FE-mirror prefactor companions at height t_k = 2 pi k/ln2 (#133, item 3).
+    """Compare the FE-mirror prefactor companions at height t_k = 2 pi k/ln2 (loose end 3).
 
     The sigma=1 eta prefactor zero (1 - 2^{1-s} = 0) and the sigma=0 warp companion
     (2^s - 1 = 0) are exact s <-> 1-s images as zero SETS -- 1 - 2^{1-(1-s)} = -(2^s - 1), so
     the two prefactor zero sets coincide under s <-> 1-s, at the IDENTICAL heights +-2 pi k/ln2
-    (the #132 p=2 comb). This returns their migration data to test whether the DYNAMICS mirror too.
+    (the p=2 comb). This returns their migration data to test whether the DYNAMICS mirror too.
 
     They do not. In a_1 = -Delta_1/target':
       * target' = ln2 zeta(rho) has the same functional form on both lines, but at the
         FE-conjugate arguments rho = 1 + i t_k (eta) vs rho = i t_k (warp) -- so it differs only
         by the FE chi-factor, an analytic (arithmetic-free) difference;
-      * Delta_1 differs in KIND: eta migrates by the ADDITIVE comb (#118), Delta_1 = -rho/2 pi^2
-        (Re == -1/2 pi^2, a rigid line); warp migrates by the NONLINEAR warp (#119),
+      * Delta_1 differs in KIND: eta migrates by the ADDITIVE comb, Delta_1 = -rho/2 pi^2
+        (Re == -1/2 pi^2, a rigid line); warp migrates by the NONLINEAR warp,
         Delta_1 = C_warp(rho), the non-closed Gibbs constant whose Re wanders.
     So the mirror is exact in the spectrum and broken in the dynamics, and the break is entirely
-    Delta_1 = C_warp -- an analytic (boundary-layer) not arithmetic reason (cf #131's warp Im a_1
+    Delta_1 = C_warp -- an analytic (boundary-layer) not arithmetic reason (cf the warp's Im a_1
     with no arithmetic rule). Pass closed=True to take the warp Delta_1 from the item-1 closed form.
 
     Returns a dict: k, t, rho_eta, rho_warp, a1_eta, a1_warp, d1_eta, d1_warp, tprime_eta,
@@ -483,15 +481,15 @@ def fe_mirror(k, **kw):
 
 
 # --------------------------------------------------------------------------
-# the #117 sigma_law sub-leading: the residual is F_asym truncation, not the balance
+# the continuous-eta sigma_law sub-leading: the residual is F_asym truncation, not the balance
 # --------------------------------------------------------------------------
 def sigma_law_exact(t):
-    """Re of the #117 zero at height t by solving the F_asym magnitude balance EXACTLY.
+    """Re of the continuous-eta zero at height t by solving the F_asym magnitude balance EXACTLY.
 
     cont_eta.sigma_law uses leading Stirling + |s-1| ~ t; here we solve
        pi^{sigma-1} e^{pi t/2} |Gamma(1-s)| |s-1| / 2 = 1
     with the exact Gamma and |s-1|. It lands within O(1/t^2) of sigma_law -- i.e. the
-    closed form already captures the balance; the residual to the TRUE zeros (#117) is the
+    closed form already captures the balance; the residual to the TRUE zeros is the
     F_asym truncation, not this refinement (see test_sigma_law_residual_is_truncation).
     """
     t = mp.mpf(t)
@@ -525,7 +523,7 @@ def _print_rate_constants():
         ew = float(abs(rate_warp(s, richardson=True)))
         ewb = float(abs(rate_warp_bulk(s)))
         print(f"   warp         {complex(s)!s:>18}    *  full={ew:.6f}   bulk={ewb:.6f}  "
-              f"(boundary layer = {ew - ewb:+.4f}; non-elementary closed form -> c_warp_closed, #133)")
+              f"(boundary layer = {ew - ewb:+.4f}; non-elementary closed form -> c_warp_closed)")
 
 
 def _print_displacement():
@@ -540,7 +538,7 @@ def _print_displacement():
         print(f"   {route:<11}  {complex(rho)!s:>22}   {float(a1.real):+8.4f}   "
               f"{float(a1.imag):+8.4f}   {approach_side(route, rho)}")
     print("   (comb Re a_1 ALTERNATES sign -> some zeros from above, some below;")
-    print("    warp Re a_1 < 0 uniformly -> all from below.  The #119 contrast, sharpened.)")
+    print("    warp Re a_1 < 0 uniformly -> all from below.  The warp/comb contrast, sharpened.)")
 
 
 def _print_overshoot():
@@ -573,7 +571,7 @@ def _print_subleading():
 
 def _print_birth_K():
     print("\n== birth-K law: catch_K(rho, eps=0.05) ~ |Re a_1|/eps grows (on avg) with gamma ==")
-    print("   gamma     comb |Re a_1|   catch_K    #117 density (1/2pi)ln(t/2pi)")
+    print("   gamma     comb |Re a_1|   catch_K    RvM density (1/2pi)ln(t/2pi)")
     for g in _ZGAM:
         rho = mp.mpc(0.5, g)
         a1 = abs(float(disp_coeff("comb_zeta", rho).real))
@@ -582,7 +580,7 @@ def _print_birth_K():
 
 
 def _print_axis_duality():
-    print("\n== axis-duality (#131): comb pins the VERTICAL (Im a_1>0), warp pins the HORIZONTAL (Re a_1<0) ==")
+    print("\n== axis-duality: comb pins the VERTICAL (Im a_1>0), warp pins the HORIZONTAL (Re a_1<0) ==")
     print("   gamma      comb Re a_1  comb Im a_1  |  warp Re a_1  warp Im a_1")
     for g in _ZGAM:
         rho = mp.mpc(0.5, g)
@@ -591,12 +589,12 @@ def _print_axis_duality():
         print(f"   {g:8.4f}   {float(c.real):+8.4f}    {float(c.imag):+8.4f}    |  "
               f"{float(w.real):+8.4f}    {float(w.imag):+8.4f}")
     print("   comb: Re a_1 ALTERNATES (cos pi*delta) / Im a_1 uniformly > 0 (sin pi*delta, = Gram-regular).")
-    print("   warp: Re a_1 uniformly < 0 (#124) / Im a_1 OSCILLATES (inherits the wandering C_warp phase).")
+    print("   warp: Re a_1 uniformly < 0 / Im a_1 OSCILLATES (inherits the wandering C_warp phase).")
     print("   -> each route is uniform on one axis, alternating on the other, and they SWAP axes.")
 
 
 def _print_vertical_universality():
-    print("\n== vertical universality (#131): comb Im a_1>0 IS Gram's law; first flips at n=127/136/196 ==")
+    print("\n== vertical universality: comb Im a_1>0 IS Gram's law; first flips at n=127/136/196 ==")
     print("   n     gamma      delta_n    Im a_1        (-1)^n sin th    Im a_1>0?  Gram-regular?")
     for n in (1, 2, 50, 100, 126, 127, 136, 195, 196):
         g = mp.zetazero(n).imag
@@ -612,7 +610,7 @@ def _print_vertical_universality():
 
 
 def _print_sigma_law():
-    print("\n== #117 sigma_law sub-leading: exact balance == closed form -> residual is truncation ==")
+    print("\n== continuous-eta sigma_law sub-leading: exact balance == closed form -> residual is truncation ==")
     print("   t       sigma_true   sigma_law   sigma_law_exact   res_law    res_exact")
     zeros = ce.find_zeros(60.0)
     for z in zeros[::3]:
@@ -625,7 +623,7 @@ def _print_sigma_law():
 
 
 def _print_cwarp():
-    print("\n== #133 item 1: C_warp closed form -- bulk + Si-Gibbs boundary layer ==")
+    print("\n== loose end 1: C_warp closed form -- bulk + Si-Gibbs boundary layer ==")
     print("   s                   |bulk|     |closed|   |richardson(num)|   |closed-num|")
     for s in [mp.mpc(2, 0), mp.mpc(1.3, 7)]:
         bulk = abs(rate_warp_bulk(s))
@@ -639,7 +637,7 @@ def _print_cwarp():
 
 def _print_montgomery():
     import numpy as np
-    print("\n== #133 item 2: catch_K <-> |zeta'(rho)| (Montgomery a-values) ==")
+    print("\n== loose end 2: catch_K <-> |zeta'(rho)| (Montgomery a-values) ==")
     print("   n   gamma     |zeta'|  1/|zeta'|  catch_abs  catch_re  |cos arg a1|")
     N = 20
     norm, invz = [], []
@@ -658,11 +656,11 @@ def _print_montgomery():
                   f"{cr:6.2f}    {cosg:.4f}")
     c = float(np.corrcoef(norm, invz)[0, 1])
     print(f"   corr(normalized catch_abs, 1/|zeta'|) = {c:.6f}  (== 1: catch_abs IS 1/|zeta'|,")
-    print("    the Montgomery a-value). mode='re' adds the Gram factor |cos pi delta_n| (#131).")
+    print("    the Montgomery a-value). mode='re' adds the Gram factor |cos pi delta_n|.")
 
 
 def _print_fe_mirror():
-    print("\n== #133 item 3: FE-mirror companions -- same heights, broken dynamics ==")
+    print("\n== loose end 3: FE-mirror companions -- same heights, broken dynamics ==")
     print("   k   t_k       eta a1 (sigma=1)      warp a1 (sigma=0)     d1_eta Re  d1_warp=C_warp")
     for k in (1, 2, 3, 4):
         m = fe_mirror(k)
@@ -671,7 +669,7 @@ def _print_fe_mirror():
               f"Re{float(aw.real):+.3f} Im{float(aw.imag):+.3f}  {float(de.real):+.5f}  "
               f"Re{float(dw.real):+.3f} Im{float(dw.imag):+.3f}")
     print(f"   eta d1 Re == -1/2 pi^2 = {-1/(2*float(PI)**2):+.5f} (rigid line); warp d1=C_warp Re wanders.")
-    print("   zero SETS are exact s<->1-s mirrors (#132 p=2 comb); the DYNAMICS are not -- the")
+    print("   zero SETS are exact s<->1-s mirrors (the p=2 comb); the DYNAMICS are not -- the")
     print("   break is entirely Delta_1 = C_warp (analytic boundary layer, not arithmetic).")
 
 
@@ -694,7 +692,7 @@ def _main():
 
     # ================================ figure ================================
     fig, axg = plt.subplots(2, 2, figsize=(14, 9.5))
-    ax = [axg[0, 0], axg[0, 1], axg[1, 0]]      # the three #124 panels keep their indices
+    ax = [axg[0, 0], axg[0, 1], axg[1, 0]]      # the three rate-law panels keep their indices
 
     # panel 0: leading rate -- K|target - object^{(K)}| -> the route constant (flat = O(1/K))
     Ks = [4, 8, 16, 32, 64, 128]
@@ -737,7 +735,7 @@ def _main():
     ax[1].set_title(r"displacement $\to a_1/K$ (slope $=a_1$); sign $=$ approach side")
     ax[1].legend(fontsize=8, loc="upper left")
 
-    # panel 2: birth-K law -- catch_K(comb_zeta) grows with gamma; #117 density overlaid
+    # panel 2: birth-K law -- catch_K(comb_zeta) grows with gamma; RvM density overlaid
     gs = [float(mp.zetazero(n).imag) for n in range(1, 16)]
     cks = [catch_K("comb_zeta", mp.mpc(0.5, g)) for g in gs]
     ax[2].plot(gs, cks, "o", color="C0", label=r"catch-$K=|\mathrm{Re}\,a_1|/\epsilon$")
@@ -753,7 +751,7 @@ def _main():
     ax[2].set_title(r"birth-$K$ grows with height (denser zeros, more harmonics)")
     ax[2].legend(fontsize=8, loc="upper left")
 
-    # panel 3 (#131): vertical migration Im a_1 vs gamma. Comb pinned > 0 (= Gram's law);
+    # panel 3: vertical migration Im a_1 vs gamma. Comb pinned > 0 (= Gram's law);
     # it flips NEGATIVE exactly where Gram's law fails (delta_n leaves (0,1)) -- first the
     # 127th zero. Warp Im a_1 (low gamma) oscillates -- the axis-duality.
     NMAX = 140
@@ -780,7 +778,7 @@ def _main():
     axv.set_title(r"comb $\mathrm{Im}\,a_1>0$ IS Gram's law (flips at $n$=127,136); warp oscillates")
     axv.legend(fontsize=7.5, loc="upper left")
 
-    fig.suptitle(r"Unified $O(1/K)$ rate / birth-$K$ law (#124) + vertical axis-duality (#131): "
+    fig.suptitle(r"Unified $O(1/K)$ rate / birth-$K$ law + vertical axis-duality: "
                  r"$\arg a_1\!\approx\!\pi\delta_n$ -- comb $\mathrm{Im}\,a_1>0$ iff Gram-regular",
                  fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.97))
@@ -790,7 +788,7 @@ def _main():
     fig.savefig(out, dpi=150)
     print(f"\nwrote {out}")
 
-    # ===================== #133 figure (3 panels) =====================
+    # ===================== loose-ends figure (3 panels) =====================
     fig2, bx = plt.subplots(1, 3, figsize=(16, 4.8))
 
     # panel A (item 1): C_warp closed form is the K->inf limit of K(warp_K - zeta(s,3/2));
@@ -838,11 +836,11 @@ def _main():
     bx[2].set_title(r"item 3: same heights, broken dynamics (break $=C_{\rm warp}$)")
     bx[2].legend(fontsize=8, loc="upper left")
 
-    fig2.suptitle(r"Rate-law loose ends (#133): $C_{\rm warp}$ closed form; catch-$K$ vs "
+    fig2.suptitle(r"Rate-law loose ends: $C_{\rm warp}$ closed form; catch-$K$ vs "
                   r"$|\zeta'|$ (Montgomery a-values); FE-mirror companions' broken dynamics",
                   fontsize=12)
     fig2.tight_layout(rect=(0, 0, 1, 0.95))
-    out2 = figdir / "rate_law_133.png"
+    out2 = figdir / "rate_law_loose_ends.png"
     fig2.savefig(out2, dpi=150)
     print(f"wrote {out2}")
 

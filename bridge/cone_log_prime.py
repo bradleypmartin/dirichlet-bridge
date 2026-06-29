@@ -1,5 +1,5 @@
 """Radial log-prime superlattice and the diffraction route to the Riemann zeros
-(issue #80(B); sibling of cone_aperiodic / cone_bloch and the original
+(sibling of cone_aperiodic / cone_bloch and the original
 harmonic-functions-and-zeta arc).
 
 Why the cone: the critical-line eigenfunction of the sign-changing cone is
@@ -10,7 +10,7 @@ a plain cosine in the natural log-coordinate t = log r. So the principled way to
 inject prime structure into the cone is *radially*, with interfaces / scatterers
 placed at the radii r = p (i.e. t = log p) -- a Kronig-Penney "superlattice" in
 log r. The observable that ties this to zeta is not the transfer/band spectrum
-(that is just integrable Bragg physics, issue #80(A)) but the **diffraction /
+(that is just integrable Bragg physics) but the **diffraction /
 Fourier spectrum** of the arrangement, where the Riemann-von Mangoldt *explicit
 formula* plants the connection between primes and zeros.
 
@@ -337,8 +337,8 @@ def _make_figure() -> Path:
     ax.legend(loc="upper right", fontsize=7.8)
 
     fig.suptitle("Radial log-prime superlattice on the sign-changing cone: "
-                 "the diffraction route between primes and the Riemann zeros "
-                 "(issue #80B)", fontsize=12)
+                 "the diffraction route between primes and the Riemann zeros",
+                 fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(out, dpi=150)
     plt.close(fig)

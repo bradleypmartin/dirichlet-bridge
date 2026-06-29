@@ -12,3 +12,15 @@ venv/
 bridge/figures/*.png
 *.txt
 !requirements.txt
+
+# ...but the canonical arc figures ARE committed (embedded in RESULTS.md).
+# Regenerate them with `python repro.py`; only PNG metadata (a timestamp) changes.
+!bridge/figures/cont_eta.png
+!bridge/figures/harmonic_bridge.png
+!bridge/figures/warp_bridge.png
+!bridge/figures/warp_alpha.png
+!bridge/figures/warp_coordinate.png
+!bridge/figures/warp_phase_compare.png
+!bridge/figures/rate_law.png
+!bridge/figures/rate_law_loose_ends.png
+!bridge/figures/eta_two_component.png

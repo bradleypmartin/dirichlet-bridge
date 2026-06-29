@@ -3,7 +3,7 @@
 `load_maass_eigenvalues` reads the LMFDB level-1 PSL_2(Z) dump
 (data/maass_eigenvalues_psl2z.csv). `load_gq_maass_eigenvalues` reads the
 generalized Hecke-triangle-group G_q spectra cached by compute_gq_maass.py
-(data/maass_eigenvalues_g{q}.csv, issue #44) -- a different, lighter schema.
+(data/maass_eigenvalues_g{q}.csv) -- a different, lighter schema.
 
 Both return a list of dict rows with at least a float `tau`, the raw decimal
 string `tau_str`, and an int `symmetry` (0 = even, 1 = odd), so that the
@@ -52,7 +52,7 @@ def load_maass_eigenvalues(path: Path | None = None) -> list[dict]:
 
 def load_gq_maass_eigenvalues(q: int | None = None,
                               path: Path | None = None) -> list[dict]:
-    """Load a cached G_q Maass spectrum (compute_gq_maass.py, issue #44).
+    """Load a cached G_q Maass spectrum (compute_gq_maass.py).
 
     Pass either `q` (resolving data/maass_eigenvalues_g{q}.csv) or an explicit
     `path`. The G_q CSV schema is lighter than the LMFDB one -- columns
