@@ -272,6 +272,8 @@ def _main():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import figstyle
+    figstyle.enlarge()
 
     _print_convergence()
 
@@ -311,7 +313,7 @@ def _main():
         a.set_ylabel(r"$t=\mathrm{Im}\,s$")
         a.set_title(title)
         a.set_xlim(0.2, 2.1)
-        a.legend(fontsize=8, loc="upper right")
+        a.legend(loc="upper right")
 
     s_fzero = ce.sigma_law(25)
     _panel(ax[0], zt, r"$\zeta^{(K)}$: zeros born (K=1) $\to\ \sigma=1/2$",
@@ -324,7 +326,7 @@ def _main():
             (s_fzero, r"continuous-$\eta$ $F$-zeros", "C3", "--")], mark_ground=True)
 
     fig.suptitle(r"Zero-migration map: restoring discreteness one Fourier harmonic "
-                 r"at a time  ($K=0\to\infty$)", fontsize=12)
+                 r"at a time  ($K=0\to\infty$)")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)

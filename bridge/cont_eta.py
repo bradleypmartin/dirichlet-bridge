@@ -155,6 +155,8 @@ def _main():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import figstyle
+    figstyle.enlarge()
 
     print("== F_closed vs F_quad (oscillatory quadrature reference) ==")
     worst = 0.0
@@ -204,7 +206,7 @@ def _main():
     ax[0].axvline(0.5, ls=":", color="C2", lw=1, label=r"critical line $1/2$")
     ax[0].set_xlabel(r"$\sigma=\mathrm{Re}\,s$"); ax[0].set_ylabel(r"$t=\mathrm{Im}\,s$")
     ax[0].set_title("zero string (off the critical line)")
-    ax[0].set_xlim(0.3, 2.3); ax[0].legend(fontsize=8, loc="upper right")
+    ax[0].set_xlim(0.3, 2.3); ax[0].legend(loc="upper right")
 
     gaps = [ts[i] - ts[i - 1] for i in range(1, len(ts))]
     mids = [0.5 * (ts[i] + ts[i - 1]) for i in range(1, len(ts))]
@@ -213,7 +215,7 @@ def _main():
                label=r"$2\pi/\ln(t/\pi)$")
     ax[1].set_xlabel(r"$t$"); ax[1].set_ylabel(r"$\Delta t$")
     ax[1].set_title("spacing law (compresses like $1/\\ln t$)")
-    ax[1].legend(fontsize=9)
+    ax[1].legend()
 
     ax[2].step(ts, range(1, len(ts) + 1), where="post", color="C0",
                label=r"actual $N(t)$")
@@ -221,10 +223,10 @@ def _main():
                label=r"$\frac{t}{2\pi}\ln\frac{t}{\pi e}+\frac{5}{8}$")
     ax[2].set_xlabel(r"$t$"); ax[2].set_ylabel(r"$N(t)$")
     ax[2].set_title("Riemann-von Mangoldt counting law")
-    ax[2].legend(fontsize=9)
+    ax[2].legend()
 
     fig.suptitle(r"Continuous Dirichlet-eta  $F(s)=\int_1^\infty\cos(\pi x)\,"
-                 r"x^{-s}\,dx$", fontsize=12)
+                 r"x^{-s}\,dx$")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)

@@ -44,6 +44,7 @@ if _HERE not in sys.path:
 
 import warp_alpha as wa            # noqa: E402  (the canonical warp_phi_alpha, for the cross-check)
 from warp_coordinate import phi_K  # noqa: E402  (the validated numpy sawtooth partial sum)
+import figstyle                    # noqa: E402  (larger fonts for the embedded figure)
 
 
 def warp_alpha_coord(x, K, alpha):
@@ -100,10 +101,11 @@ def _panel_warp(ax, alpha, k0_label, target_label, cmap):
         ax.axhline(lvl, color="0.85", lw=0.7, zorder=0)
     ax.set_xlim(0, 3); ax.set_ylim(0, 3.2)
     ax.set_xlabel(r"$x$"); ax.set_ylabel(r"$n^*(x)$")
-    ax.legend(fontsize=7.5, loc="upper left")
+    ax.legend(fontsize=11, loc="upper left")
 
 
 def _figure():
+    figstyle.enlarge()
     fig, ax = plt.subplots(1, 3, figsize=(16, 5))
 
     # (a) alpha = 1/2: pristine x -> half-integers -> (2^s-1) zeta
@@ -112,7 +114,7 @@ def _figure():
                 r"$K\to\infty$:  half-integers",
                 plt.cm.viridis)
     ax[0].set_title(r"$\alpha=\frac{1}{2}$ (midpoint): pure $x$ $\to$ half-integers"
-                    "\n" r"target $\zeta(s,\frac{1}{2})=(2^s-1)\zeta(s)$", fontsize=10.5)
+                    "\n" r"target $\zeta(s,\frac{1}{2})=(2^s-1)\zeta(s)$", fontsize=13)
 
     # (b) alpha = 1: x + 1/2 -> counting numbers -> zeta
     _panel_warp(ax[1], 1.0,
@@ -120,7 +122,7 @@ def _figure():
                 r"$K\to\infty$:  counting numbers",
                 plt.cm.copper)
     ax[1].set_title(r"$\alpha=1$ (integer): $x+\frac{1}{2}$ $\to$ counting numbers"
-                    "\n" r"target $\zeta(s,1)=\zeta(s)$", fontsize=10.5)
+                    "\n" r"target $\zeta(s,1)=\zeta(s)$", fontsize=13)
 
     # (c) the displacements: why not both -- the DC (k=0) term
     xs = np.linspace(0.0, 2.0, 5000)
@@ -134,16 +136,15 @@ def _figure():
     ax[2].axhline(0.0, color="C0", lw=0.8, ls=":")
     ax[2].axhline(0.5, color="C1", lw=0.8, ls=":")
     ax[2].annotate(r"the $+\frac{1}{2}$ DC term", xy=(1.5, 0.5), xytext=(1.05, 0.95),
-                   fontsize=8.5, color="C1",
+                   fontsize=11, color="C1",
                    arrowprops=dict(arrowstyle="->", color="C1", lw=0.9))
     ax[2].set_title(r"why not both: integers need a constant $\frac{1}{2}$ (the $k{=}0$ DC term)",
-                    fontsize=10.5)
+                    fontsize=13)
     ax[2].set_xlabel(r"$x$"); ax[2].set_ylabel(r"displacement $\phi_K^{(\alpha)}(x)$")
-    ax[2].legend(fontsize=8, loc="lower left")
+    ax[2].legend(loc="lower left")
 
     fig.suptitle(r"Two clean staircases: pure-$x$ start forces the half-integers "
-                 r"($\alpha=\frac{1}{2}$); the counting numbers ($\alpha=1$) cost a baked-in $\frac{1}{2}$",
-                 fontsize=12.5)
+                 r"($\alpha=\frac{1}{2}$); the counting numbers ($\alpha=1$) cost a baked-in $\frac{1}{2}$")
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)

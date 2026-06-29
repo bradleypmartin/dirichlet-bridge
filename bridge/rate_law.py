@@ -677,6 +677,11 @@ def _main():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import figstyle
+    figstyle.enlarge()
+    # these two figures are dense (2x2 + a 3-up) with long titles, so keep titles and
+    # legends a touch smaller than the global style while still much larger than before.
+    plt.rcParams.update({"axes.titlesize": 13, "legend.fontsize": 11})
 
     _print_rate_constants()
     _print_displacement()
@@ -709,7 +714,7 @@ def _main():
                   label=r"bulk only (misses BL)")
     ax[0].set_xlabel("K"); ax[0].set_ylabel(r"$K\cdot|\mathrm{error}|$ at $s=\frac{1}{2}+14.13i$")
     ax[0].set_title(r"leading rate: $K\cdot$error $\to$ a route constant")
-    ax[0].legend(fontsize=7.5, loc="center right")
+    ax[0].legend(loc="center right")
 
     # panel 1: displacement Re(s_K - rho) vs 1/K -- comb from above (g=14), comb overshoot
     # (g=21, crosses 0), warp from below (g=14). Lines = predicted slope a_1.
@@ -733,7 +738,7 @@ def _main():
     ax[1].axhline(0.0, ls="-", lw=1, color="0.6")
     ax[1].set_xlabel(r"$1/K$"); ax[1].set_ylabel(r"$\mathrm{Re}(s_K-\rho)$")
     ax[1].set_title(r"displacement $\to a_1/K$ (slope $=a_1$); sign $=$ approach side")
-    ax[1].legend(fontsize=8, loc="upper left")
+    ax[1].legend(loc="upper left")
 
     # panel 2: birth-K law -- catch_K(comb_zeta) grows with gamma; RvM density overlaid
     gs = [float(mp.zetazero(n).imag) for n in range(1, 16)]
@@ -749,7 +754,7 @@ def _main():
     ax[2].set_xlabel(r"$\gamma$ (zero height)")
     ax[2].set_ylabel(r"catch-$K$ ($\epsilon=0.05$)")
     ax[2].set_title(r"birth-$K$ grows with height (denser zeros, more harmonics)")
-    ax[2].legend(fontsize=8, loc="upper left")
+    ax[2].legend(loc="upper left")
 
     # panel 3: vertical migration Im a_1 vs gamma. Comb pinned > 0 (= Gram's law);
     # it flips NEGATIVE exactly where Gram's law fails (delta_n leaves (0,1)) -- first the
@@ -772,15 +777,14 @@ def _main():
     axv.axhline(0.0, ls="-", lw=1, color="0.6")
     for n, dx in ((127, (-34, 7)), (136, (6, -14))):
         axv.annotate(f"n={n}", (gv[n - 1], ima[n - 1]), textcoords="offset points",
-                     xytext=dx, fontsize=7.5, color="C3")
+                     xytext=dx, fontsize=11, color="C3")
     axv.set_xlabel(r"$\gamma$ (zero height)")
     axv.set_ylabel(r"$\mathrm{Im}\,a_1$ (vertical migration)")
     axv.set_title(r"comb $\mathrm{Im}\,a_1>0$ IS Gram's law (flips at $n$=127,136); warp oscillates")
-    axv.legend(fontsize=7.5, loc="upper left")
+    axv.legend(loc="upper left")
 
     fig.suptitle(r"Unified $O(1/K)$ rate / birth-$K$ law + vertical axis-duality: "
-                 r"$\arg a_1\!\approx\!\pi\delta_n$ -- comb $\mathrm{Im}\,a_1>0$ iff Gram-regular",
-                 fontsize=12)
+                 r"$\arg a_1\!\approx\!\pi\delta_n$ -- comb $\mathrm{Im}\,a_1>0$ iff Gram-regular")
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)
@@ -803,7 +807,7 @@ def _main():
                   label="bulk only (misses BL)")
     bx[0].set_xlabel("K"); bx[0].set_ylabel(r"$K\cdot|\mathrm{error}|$ at $s=\frac{1}{2}+14.13i$")
     bx[0].set_title(r"item 1: $C_{\rm warp}=$ bulk $+$ Si-Gibbs boundary layer")
-    bx[0].legend(fontsize=8, loc="center right")
+    bx[0].legend(loc="center right")
 
     # panel B (item 2): normalized catch_K vs 1/|zeta'|. mode='abs' lies ON the diagonal
     # (== the Montgomery a-value 1/|zeta'|); mode='re' scatters BELOW (the Gram |cos pi delta|<=1).
@@ -818,7 +822,7 @@ def _main():
     bx[1].set_xlabel(r"$1/|\zeta'(\rho)|$ (Montgomery a-value reciprocal)")
     bx[1].set_ylabel(r"normalized catch-$K$")
     bx[1].set_title(r"item 2: catch-$K$(abs)$=1/|\zeta'|$; (re) adds Gram $|\cos\pi\delta_n|$")
-    bx[1].legend(fontsize=8, loc="upper left")
+    bx[1].legend(loc="upper left")
 
     # panel C (item 3): Re Delta_1 at the FE-mirror companion heights. eta = -1/2 pi^2 (rigid
     # line, the closed comb constant); warp = C_warp (wanders). Same heights, broken dynamics.
@@ -833,12 +837,11 @@ def _main():
                label=r"warp: $\Delta_1=C_{\rm warp}(\rho)$ (wanders)")
     bx[2].set_xlabel(r"$t_k=2\pi k/\ln2$ (shared companion height)")
     bx[2].set_ylabel(r"$\mathrm{Re}\,\Delta_1$")
-    bx[2].set_title(r"item 3: same heights, broken dynamics (break $=C_{\rm warp}$)")
-    bx[2].legend(fontsize=8, loc="upper left")
+    bx[2].set_title(r"item 3: same heights, broken dynamics")
+    bx[2].legend(loc="upper left")
 
     fig2.suptitle(r"Rate-law loose ends: $C_{\rm warp}$ closed form; catch-$K$ vs "
-                  r"$|\zeta'|$ (Montgomery a-values); FE-mirror companions' broken dynamics",
-                  fontsize=12)
+                  r"$|\zeta'|$ (Montgomery a-values); FE-mirror companions' broken dynamics")
     fig2.tight_layout(rect=(0, 0, 1, 0.95))
     out2 = figdir / "rate_law_loose_ends.png"
     fig2.savefig(out2, dpi=150)

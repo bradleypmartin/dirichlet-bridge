@@ -350,6 +350,13 @@ def _main() -> None:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import figstyle
+    figstyle.enlarge()
+    # this is a dense 2x2 with long, multi-clause panel titles and the longest
+    # suptitle of any figure, on the narrowest (14 in) canvas, so keep titles,
+    # suptitle and legends a touch smaller than the global style (still much larger
+    # than before) to avoid overrunning the width.
+    plt.rcParams.update({"axes.titlesize": 12, "figure.titlesize": 14, "legend.fontsize": 11})
 
     gammas = np.asarray(load_riemann_zeros(), dtype=float)
 
@@ -370,8 +377,8 @@ def _main() -> None:
     ax.plot(k, pred, "-o", color="#c2452d", ms=4, label=r"$\log_2(t_c/2\pi)$ (density ratio)")
     ax.set_xlabel("comb gap $k$  (between teeth $2\\pi k/\\ln2$)")
     ax.set_ylabel("zeta zeros in the gap")
-    ax.set_title("(a) LENS 1: packing $=\\log_2(t/2\\pi)$ zeros per tooth", fontsize=10)
-    ax.legend(fontsize=8, loc="upper left")
+    ax.set_title("(a) LENS 1: packing $=\\log_2(t/2\\pi)$ zeros per tooth")
+    ax.legend(loc="upper left")
 
     # panel (b): comb-phase equidistribution (one-point independence) + the p=2 dip
     ax = axg[0, 1]
@@ -386,9 +393,8 @@ def _main() -> None:
             label=fr"$1{{+}}c_1\cos2\pi\phi$, $c_1{{=}}{c1:+.3f}$ (p=2 dip)")
     ax.set_xlabel(r"comb phase $\phi_n=\{\gamma_n\ln2/2\pi\}$  ($\phi=0$ at a tooth)")
     ax.set_ylabel("count")
-    ax.set_title("(b) phase equidistributed but w/ a p=2 dip at $\\phi{=}0$ ($=$ LENS 3)",
-                 fontsize=9.5)
-    ax.legend(fontsize=7.5, loc="lower center")
+    ax.set_title("(b) phase equidistributed but w/ a p=2 dip at $\\phi{=}0$ ($=$ LENS 3)")
+    ax.legend(loc="lower center")
 
     # panel (c): the p=2 resonance -- <cos(gamma omega)> vs omega, prime-power comb
     ax = axg[1, 0]
@@ -401,13 +407,13 @@ def _main() -> None:
         ax.axvline(lg, color=("#c2452d" if is2 else "#2a8a3e"),
                    lw=(1.4 if is2 else 0.8), ls=(":" if not is2 else "--"),
                    alpha=0.85 if is2 else 0.55)
-        ax.text(lg, 0.02, str(n), ha="center", va="bottom", fontsize=7,
+        ax.text(lg, 0.02, str(n), ha="center", va="bottom", fontsize=10,
                 color=("#c2452d" if is2 else "#1d6e30"))
     ax.set_xlim(omegas.min(), omegas.max())
     ax.set_xlabel(r"probe frequency $\omega$ (=$\log n$ at prime powers)")
     ax.set_ylabel(r"$\langle\cos(\gamma_n\,\omega)\rangle$")
     ax.set_title(r"(c) LENS 3: resonance at every $\log p^k$; red = comb's $p{=}2$ "
-                 "($\\log2,\\log4,\\log8$)", fontsize=9.0)
+                 "($\\log2,\\log4,\\log8$)")
 
     # panel (d): the headline -- measured vs predicted p=2 comb-frequency resonance
     ax = axg[1, 1]
@@ -424,13 +430,12 @@ def _main() -> None:
     ax.set_xticks(ms)
     ax.set_xlabel(r"comb harmonic $m$  ($\omega=m\ln2=\log2^m$)")
     ax.set_ylabel(r"resonance $\langle\cos(m\gamma\ln2)\rangle$")
-    ax.set_title(r"(d) headline: comb $\equiv$ $p{=}2$ ghost (teeth at density minima)",
-                 fontsize=9.5)
-    ax.legend(fontsize=8, loc="lower right")
+    ax.set_title(r"(d) headline: comb $\equiv$ $p{=}2$ ghost (teeth at density minima)")
+    ax.legend(loc="lower right")
 
     fig.suptitle(r"The $\eta$ two-component spectrum: rigid $\sigma{=}1$ comb "
                  r"$\times$ GUE $\sigma{=}\frac{1}{2}$ zeros -- additive in bulk, "
-                 r"$p{=}2$-locked at the comb frequency", fontsize=12.5)
+                 r"$p{=}2$-locked at the comb frequency")
     fig.tight_layout(rect=(0, 0, 1, 0.97))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)

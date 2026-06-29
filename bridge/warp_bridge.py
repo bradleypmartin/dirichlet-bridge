@@ -415,6 +415,8 @@ def _main():
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import figstyle
+    figstyle.enlarge()
 
     _print_convergence()
 
@@ -471,7 +473,7 @@ def _main():
     for a in (ax[0], ax[1]):
         a.set_xlabel(r"$\sigma=\mathrm{Re}\,s$")
         a.set_ylabel(r"$t=\mathrm{Im}\,s$")
-        a.legend(fontsize=8, loc="upper right")
+        a.legend(loc="upper right")
 
     # panel 2: convergence O(1/K) -- warp and comb the same rate
     s0 = mp.mpc(0.5, 14.134725)
@@ -484,10 +486,10 @@ def _main():
     ax[2].loglog(Ks, [ew[0] * Ks[0] / K for K in Ks], ":", color="0.5", label=r"$\propto 1/K$")
     ax[2].set_xlabel("K"); ax[2].set_ylabel(r"error at $s=1/2+14.13i$")
     ax[2].set_title(r"convergence: both $O(1/K)$")
-    ax[2].legend(fontsize=8)
+    ax[2].legend()
 
     fig.suptitle(r"$n^*$-warp vs harmonic comb: the half-shifted $\zeta(s,1/2)=(2^s-1)\zeta(s)$ "
-                 r"and its $\sigma=0$ companion", fontsize=12)
+                 r"and its $\sigma=0$ companion")
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)
