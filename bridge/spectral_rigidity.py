@@ -1,33 +1,31 @@
 """Spectral rigidity of the Riemann zeros and the modular-surface Maass
 spectrum: the number variance Sigma^2(L) and the Dyson-Mehta Delta_3(L), the
-position-space two-point lens (issue #90).
+position-space two-point lens.
 
 This is the long-range / rigidity companion to two earlier two-point views:
 
-  * #8  / gue-spacing.md   -- nearest-neighbour SPACINGS (a *short*-range,
-                              one-gap statistic).
-  * #84 / zero-form-factor.md -- the spectral FORM FACTOR K(tau) (the Fourier
-                              two-point statistic).
+  * nearest-neighbour SPACINGS (a *short*-range, one-gap statistic).
+  * the spectral FORM FACTOR K(tau) (the Fourier two-point statistic).
 
 Sigma^2 and Delta_3 are the classic *long-range* rigidity statistics: they
 count fluctuations of the level number over a window of length L levels, and
 they say something the spacings and the small-tau ramp do not -- how stiff the
 spectrum is over many mean spacings.
 
-The number variance is the SAME object as #84's form factor, in conjugate
+The number variance is the SAME object as the form factor, in conjugate
 variables. With the unfolded (unit mean density) spectrum,
 
     Sigma^2(L) = integral_{-inf}^{inf}  K(tau) [sin(pi L tau)/(pi tau)]^2 dtau
                = L  -  integral b(tau) [sin(pi L tau)/(pi tau)]^2 dtau,
 
-where K(tau) is exactly the #84 form factor and b(tau) = 1 - K(tau) is its
+where K(tau) is exactly the form factor and b(tau) = 1 - K(tau) is its
 connected part (Fourier transform of the two-level cluster function Y_2). The
 small-tau RAMP of K (the level repulsion, slope 1 for GUE / 2 for GOE) is what
 makes Sigma^2 grow only logarithmically; the absence of a ramp (Poisson, K = 1)
-gives Sigma^2 = L. So the form-factor ramp of #84 and the log-rigidity here are
+gives Sigma^2 = L. So the form-factor ramp and the log-rigidity here are
 literally the same physics, Fourier-dual. We BUILD the reference curves by
-integrating #84's gue/goe/poisson_form_factor against the Fejer kernel -- a
-direct cross-check between the two issues.
+integrating the gue/goe/poisson_form_factor against the Fejer kernel -- a
+direct cross-check between the two statistics.
 
 Delta_3 follows from Sigma^2 by the Pandey kernel,
 
@@ -44,9 +42,9 @@ Montgomery 1973; Berry 1988; Luo-Sarnak 1994):
     growth holds only out to L set by the shortest periodic orbit (the prime
     log 2 / the height), beyond which the arithmetic (prime) correlations re-enter
     and Sigma^2 flattens (Berry's semiclassical number variance). The primes are
-    the non-universal tail -- the tie-back to #80B/#84.
+    the non-universal tail.
   * PSL_2(Z) Maass spectrum -> the twist the long-range statistic exposes. Its
-    pooled nearest-neighbour SPACINGS are Poisson-leaning (the #8 arithmetic-chaos
+    pooled nearest-neighbour SPACINGS are Poisson-leaning (the arithmetic-chaos
     result), but its NUMBER VARIANCE saturates far below Poisson's L -- it is
     spectrally rigid at long range. The two parities are individually
     intermediate/rigid; pooling Poissonises the short-range spacing (superposition)
@@ -54,7 +52,7 @@ Montgomery 1973; Berry 1988; Luo-Sarnak 1994):
     the number variance give *different* verdicts on the same spectrum -- exactly
     the point of a third, long-range, position-space lens.
 
-Caveat (the repo's recurring trap, #36/#48/#49/#84): rigidity statistics are
+Caveat (the repo's recurring trap): rigidity statistics are
 *more* unfolding-sensitive than spacings, and Delta_3 especially needs L well
 below the sample size. The Maass spectrum is short (~600 LMFDB level-1 forms
 below the parity-completeness cutoff), so the per-parity saturation level is
@@ -64,8 +62,7 @@ all agree), and the estimator is calibrated unbiased on synthetic Poisson / pick
 spectra of the same size. We unfold analytically (reusing gue_spacing), apply a
 single global density rescale, restrict L to a window-rich range, and say so.
 
-Driver main() writes spectral_rigidity.{png,txt}. See
-knowledge/statistics/spectral-rigidity.md.
+Driver main() writes spectral_rigidity.{png,txt}.
 """
 
 from __future__ import annotations
@@ -79,14 +76,14 @@ from typing import Callable, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
-# repo root + sibling source dirs on sys.path so the bare cross-group imports
-# resolve when run directly as a script (pytest gets these from the root
-# conftest.py). See #107.
+# This module sits in a flat source dir alongside its bare cross-imports; put that
+# directory on sys.path so a direct ``python spectral_rigidity.py`` run resolves them
+# (pytest gets the same path from the root conftest.py). ``_ROOT`` (repo root) is
+# also used below for the data/output paths.
 _ROOT = Path(__file__).resolve().parents[1]
-for _d in ("", "maass", "krein", "prime_zero", "legacy", "cone_interface"):
-    _p = str(_ROOT / _d) if _d else str(_ROOT)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+_HERE = str(Path(__file__).resolve().parent)
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
 
 from gue_spacing import (  # noqa: E402
     load_maass_eigenvalues,
@@ -120,7 +117,7 @@ def unfold_to_unit_density(values: np.ndarray) -> np.ndarray:
 
     This is one constant (the whole-staircase analogue of
     gue_spacing.rescale_to_unit_mean), NOT a polynomial fit -- we deliberately
-    avoid the high-order-polynomial unfolding that the #36/#48 lesson warns
+    avoid the high-order-polynomial unfolding that the lesson warns
     silently manufactures the statistics. It removes the leading density
     mismatch of the analytic Weyl/von-Mangoldt counting function; any *local*
     density variation it cannot flatten is the honest finite-N caveat.
@@ -244,7 +241,7 @@ def spectral_rigidity(
 
 
 # ---------------------------------------------------------------------------
-# RMT reference curves -- built from #84's form factor (the cross-check)
+# RMT reference curves -- built from the form factor (the cross-check)
 # ---------------------------------------------------------------------------
 
 
@@ -274,7 +271,7 @@ def number_variance_reference(
     The b-subtraction (rather than integrating K directly) makes the integrand
     decay -- b has compact support for GUE and ~1/tau^2 for GOE -- so a finite
     [0, tau_max] grid suffices. Pass gue_form_factor / goe_form_factor /
-    poisson_form_factor from zero_form_factor (#84). Poisson returns L exactly
+    poisson_form_factor from zero_form_factor. Poisson returns L exactly
     (b == 0)."""
     L_arr = np.atleast_1d(np.asarray(L, dtype=float))
     tau = np.linspace(1.0e-9, tau_max, n_tau)
@@ -392,7 +389,7 @@ def prepare_maass_parity() -> dict[int, np.ndarray]:
 
 
 def maass_spacing_diagnostics() -> dict:
-    """Nearest-neighbour spacing CV and #8-style KS distances (vs Wigner GOE /
+    """Nearest-neighbour spacing CV and KS distances (vs Wigner GOE /
     GUE / Poisson) for the pooled and per-parity Maass spectra -- the SHORT-range
     statistic, reproduced here so the long-range Sigma^2/Delta_3 can be set
     against it. The key dissonance: the pooled spacings are Poisson-leaning while
@@ -445,7 +442,7 @@ def _compute_all() -> dict:
     s2_parity = {p: number_variance(xi, L_maass)[0]
                  for p, xi in maass_parity.items()}
 
-    # reference curves from #84's form factors (the cross-check)
+    # reference curves from the form factors (the cross-check)
     r_gue, s2grid_gue = _sigma2_grid(gue_form_factor, 40.0)
     r_goe, s2grid_goe = _sigma2_grid(goe_form_factor, 40.0)
     ref = {
@@ -494,7 +491,7 @@ def build_summary_text(res: dict) -> str:
     lines: list[str] = []
     lines.append(
         "Spectral rigidity of the Riemann zeros and the PSL_2(Z) Maass spectrum: "
-        "number variance Sigma^2(L) and Dyson-Mehta Delta_3(L) (issue #90)."
+        "number variance Sigma^2(L) and Dyson-Mehta Delta_3(L)."
     )
     lines.append("")
     lines.append(
@@ -502,8 +499,8 @@ def build_summary_text(res: dict) -> str:
         f"{res['n_maass']} PSL_2(Z) Maass forms below the LMFDB "
         "parity-completeness cutoff. Both unfolded to unit mean density "
         "(analytic counting function + one global rescale). Reference Sigma^2 / "
-        "Delta_3 built by integrating #84's form factor against the Fejer / "
-        "Pandey kernels -- the cross-check between the two issues."
+        "Delta_3 built by integrating the form factor against the Fejer / "
+        "Pandey kernels -- the cross-check between the two statistics."
     )
     lines.append("")
     Lz, Lm = res["L_zero"], res["L_maass"]
@@ -538,7 +535,7 @@ def build_summary_text(res: dict) -> str:
     s2m10 = _at(Lm, res["s2_maass"], 10.0)
     lines.append("PSL_2(Z) MAASS -- the third-statistic twist (arithmetic chaos).")
     lines.append(
-        "  SHORT range (nearest-neighbour spacings, the #8 statistic, "
+        "  SHORT range (nearest-neighbour spacings, the spacing statistic, "
         "reproduced): the POOLED spectrum is Poisson-leaning -- "
         f"KS_Poisson {poo['ks_poisson']:.3f} < KS_GOE {poo['ks_goe']:.3f} < "
         f"KS_GUE {poo['ks_gue']:.3f}, CV {poo['cv']:.3f} (Poisson 1.0)."
@@ -559,7 +556,7 @@ def build_summary_text(res: dict) -> str:
         f"(superposition) Poissonises the SPACINGS (CV {ev['cv']:.2f}/{od['cv']:.2f}"
         f" -> {poo['cv']:.2f}) but number variances ADD, so the pooled Sigma^2 "
         "stays rigid. The long-range statistic sees structure the "
-        "nearest-neighbour spacing hides -- exactly why #90 is a third lens."
+        "nearest-neighbour spacing hides -- exactly why this is a third lens."
     )
     lines.append("")
 
@@ -625,23 +622,22 @@ def build_summary_text(res: dict) -> str:
     lines.append(
         "Interpretation. (1) The Riemann zeros are spectrally RIGID: Sigma^2 and "
         "Delta_3 track the GUE curve over the universal range (the curve built "
-        "here by integrating #84's form factor against the Fejer / Pandey "
-        "kernels -- the form-factor ramp of #84 and this log-rigidity are "
+        "here by integrating the form factor against the Fejer / Pandey "
+        "kernels -- the form-factor ramp and this log-rigidity are "
         "Fourier-dual faces of the same level repulsion), then SATURATE below the "
         "GUE log -- Berry's finite-height prime saturation, the arithmetic / "
-        "non-universal tail where the short periodic orbits = the primes re-enter "
-        "(tie-back to #80B/#84). (2) The Maass spectrum is the twist the third "
+        "non-universal tail where the short periodic orbits = the primes re-enter. "
+        "(2) The Maass spectrum is the twist the third "
         "statistic exposes: its pooled nearest-neighbour spacings are "
-        "Poisson-leaning (the #8 arithmetic-chaos result), yet its number "
+        "Poisson-leaning (the arithmetic-chaos result), yet its number "
         "variance saturates far below Poisson's L -- it is spectrally rigid at "
         "long range. The two parities are individually intermediate/rigid; "
         "pooling Poissonises the SHORT-range spacing (superposition) but number "
         "variances ADD, so the LONG-range rigidity survives. The nearest- "
         "neighbour spacing and the number variance give different verdicts on the "
         "same spectrum -- precisely the value of a position-space two-point lens "
-        "beyond #8's spacings and #84's form factor. No new claim about zeta or "
-        "the Maass forms (Dyson-Mehta 1963; Berry 1988; Luo-Sarnak 1994). See "
-        "knowledge/statistics/spectral-rigidity.md."
+        "beyond the spacings and the form factor. No new claim about zeta or "
+        "the Maass forms (Dyson-Mehta 1963; Berry 1988; Luo-Sarnak 1994)."
     )
     return "\n".join(lines) + "\n"
 
@@ -714,7 +710,7 @@ def plot_rigidity(res: dict) -> None:
     ax_d3m.set_ylabel(r"spectral rigidity $\Delta_3(L)$")
 
     fig.suptitle(
-        "Spectral rigidity (#90): Riemann zeros GUE-rigid + Berry-saturate; "
+        "Spectral rigidity: Riemann zeros GUE-rigid + Berry-saturate; "
         r"Maass $\Sigma^2\!\ll\!L$ (rigid) though its spacings look Poisson",
         fontsize=12.5,
     )

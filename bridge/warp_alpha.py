@@ -1,15 +1,15 @@
 r"""General-phase n+alpha warp -> Hurwitz zeta(s, alpha): why only alpha in {0, 1/2, 1}
-is clean -- the Davenport-Heilbronn / Saias-Weingartner dichotomy (issue #122).
+is clean -- the Davenport-Heilbronn / Saias-Weingartner dichotomy.
 
-Phase-2 follow-up of the discrete <-> continuous bridge (epic #116). Phase 2
-(warp_bridge.py, #119) pinned the n*-warp to cell *midpoints* n+1/2 and found the clean
+The general-phase follow-up to the midpoint warp of the discrete <-> continuous bridge. The
+midpoint warp (warp_bridge.py) pinned the n*-warp to cell *midpoints* n+1/2 and found the clean
 half-shifted target zeta(s, 1/2) = (2^s - 1) zeta(s), zeros on sigma = 1/2 UNION sigma = 0.
 But 1/2 was *chosen*. Here we pin to a **general phase** n+alpha, alpha in (0,1), watch
 where the zeros go as a function of alpha, and explain why 1/2 (and 0, 1) are privileged.
 
 The general-phase warp
 ----------------------
-Phase 2's warp x + phi_K(x) collapses each cell [m, m+1] onto its midpoint m + 1/2,
+The midpoint warp x + phi_K(x) collapses each cell [m, m+1] onto its midpoint m + 1/2,
 because phi_K(x) -> 1/2 - {x}. To pin instead to m + alpha we need the warp to send
 x + phi_K^(alpha)(x) -> floor(x) + alpha, i.e. phi_K^(alpha)(x) -> alpha - {x}. Since
 alpha - {x} = (1/2 - {x}) + (alpha - 1/2) and 1/2 - {x} = sum_k sin(2 pi k x)/(pi k),
@@ -18,7 +18,7 @@ alpha - {x} = (1/2 - {x}) + (alpha - 1/2) and 1/2 - {x} = sum_k sin(2 pi k x)/(p
 
 -- the same K-harmonic sawtooth plus the **DC constant alpha - 1/2** (the k=0 Fourier
 coefficient of the shifted sawtooth). So "change the phase" = "add a constant offset";
-phi_K (Phase 2) is the alpha = 1/2 special case (constant 0).
+phi_K (the midpoint warp) is the alpha = 1/2 special case (constant 0).
 
 The honest int_1^inf, collapsed period-by-period to the Hurwitz form (valid all sigma):
 
@@ -43,9 +43,9 @@ honest zeta(s, 1+alpha) = sum_{m>=1}(m+alpha)^{-s} to the full Hurwitz zeta:
     warp_complete_alpha(s, K, alpha) = warp_alpha(s, K, alpha) + alpha^{-s}
                                      -> zeta(s, alpha) = sum_{m>=0}(m + alpha)^{-s}.
 
-This is the general-alpha form of #119's load-bearing +2^s: at alpha = 1/2 the half-cell
-is (1/2)^{-s} = 2^s and zeta(s, 1/2) = (2^s - 1) zeta(s) (so `warp_complete_alpha(.,.,1/2)`
-IS Phase 2's `warp_half_K`); at alpha = 1 it is 1^{-s} = 1 and zeta(s, 1) = zeta(s).
+This is the general-alpha form of the midpoint warp's load-bearing +2^s: at alpha = 1/2 the
+half-cell is (1/2)^{-s} = 2^s and zeta(s, 1/2) = (2^s - 1) zeta(s) (so `warp_complete_alpha(.,.,1/2)`
+IS the midpoint warp's `warp_half_K`); at alpha = 1 it is 1^{-s} = 1 and zeta(s, 1) = zeta(s).
 
 THE PAYOFF -- clean vertical strings only at alpha in {0, 1/2, 1} (Davenport-Heilbronn)
 --------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ Dirichlet L-functions for rational alpha = p/q; it degenerates to a single P*L o
 
   * alpha = 1   -> zeta(s, 1)   = zeta(s)              -> zeros on sigma = 1/2 (plain zeta);
   * alpha = 1/2 -> zeta(s, 1/2) = (2^s - 1) zeta(s)    -> sigma = 1/2 UNION sigma = 0
-                                                          (the 2^s - 1 companion, #119);
+                                                          (the 2^s - 1 companion);
   * alpha = 0   -> the completion alpha^{-s} diverges, but the *honest* warp
                    zeta(s, 1+0) = zeta(s, 1) = zeta(s) is already plain zeta
                    -> sigma = 1/2 (the comb's plain-zeta target). The clean alpha = 0
@@ -80,8 +80,7 @@ What this module provides
     the clean lines; count of sigma > 1 zeros) swept over alpha;
   * reuse of harmonic_bridge.migrate for the warp zero trajectories.
 
-Math write-up: ../knowledge/sum-integral/nstar-warp-half-shift.md (general phase, #122).
-Run directly to validate + plot: writes sum_integral/figures/warp_alpha.png.
+Run directly to validate + plot: writes bridge/figures/warp_alpha.png.
 """
 import sys
 from pathlib import Path
@@ -89,14 +88,12 @@ from typing import List
 
 import mpmath as mp
 
-# repo root + sibling source dirs on sys.path so the bare cross-imports (warp_bridge,
-# harmonic_bridge -- same folder) resolve when run directly (pytest uses the root
-# conftest.py). #107.
-_ROOT = Path(__file__).resolve().parents[1]
-for _d in ("", "maass", "krein", "prime_zero", "legacy", "cone_interface", "sum_integral"):
-    _p = str(_ROOT / _d) if _d else str(_ROOT)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+# This module sits in a flat source dir alongside its bare cross-imports; put that
+# directory on sys.path so a direct ``python warp_alpha.py`` run resolves them
+# (pytest gets the same path from the root conftest.py).
+_HERE = str(Path(__file__).resolve().parent)
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
 
 import warp_bridge as wb       # noqa: E402  (warp_phi, the shared GL grid + moment machinery, alpha=1/2 objects)
 import harmonic_bridge as hb   # noqa: E402  (migrate -- the backward-continuation zero tracker)
@@ -118,7 +115,7 @@ def warp_phi_alpha(u, K, alpha):
     """phi_K^(alpha)(u) = (alpha - 1/2) + phi_K(u): the K-harmonic sawtooth, DC-shifted.
 
     As K -> infinity, -> alpha - {u}, so the warp x + phi_K^(alpha)(x) pins each cell
-    [m, m+1] onto m + alpha. alpha = 1/2 (constant 0) is Phase 2's midpoint warp.
+    [m, m+1] onto m + alpha. alpha = 1/2 (constant 0) is the midpoint warp.
     """
     return (mp.mpf(alpha) - mp.mpf("0.5")) + wb.warp_phi(u, K)
 
@@ -128,13 +125,13 @@ def warp_phi_alpha(u, K, alpha):
 # once, precompute psi = u + (alpha-1/2) + phi_K(u) and per-(K,alpha) logs/moments, then
 # evaluate any s by the binomial-moment expansion of int_1^inf = sum_{m>=1} int_0^1. Reuses
 # warp_bridge's shared helpers (_gl_nodes / _moment_logs_mus / _moment_series) and its |Im s|-
-# scaled working precision / moment-term count / GL degree, so this inherits the #130 high-tau fix.
+# scaled working precision / moment-term count / GL degree, so this inherits the high-tau fix.
 _GRID = {}            # (K, round(alpha,12), degree, prec) -> (logs[m-1][i] = log(m+psi_i), mus[j])
 
 
 def _grid(K, alpha, degree, Jmax=60):
     """Precompute (once per (K, alpha, degree, working precision)) the per-cell logs and moments
-    mu_j up to Jmax (rebuilt with more terms when a higher |Im s| needs a larger Jmax, #130)."""
+    mu_j up to Jmax (rebuilt with more terms when a higher |Im s| needs a larger Jmax)."""
     key = (K, round(float(alpha), 12), degree, mp.mp.prec)
     cached = _GRID.get(key)
     if cached is None or len(cached[1]) < Jmax + 1:
@@ -151,7 +148,7 @@ def warp_alpha(s, K, alpha):
     The fast grid+moment evaluator (warp_bridge.warp_K re-keyed on alpha). K = 0 gives the
     phase-deformed endpoint (alpha + 1/2)^{1-s}/(s-1); valid for all sigma. alpha = 1/2
     reproduces warp_bridge.warp_K (-> zeta(s, 3/2)). Like warp_K it scales its working
-    precision / moment-term count / GL degree with |Im s|, so it stays accurate at high tau (#130).
+    precision / moment-term count / GL degree with |Im s|, so it stays accurate at high tau.
     """
     s = mp.mpc(s)
     base_dps = mp.mp.dps
@@ -177,7 +174,7 @@ def warp_complete_alpha(s, K, alpha):
     """Endpoint-completed warp: warp_alpha + alpha^{-s} -> zeta(s, alpha).
 
     alpha^{-s} = (m=0 cell at alpha) is the load-bearing half-cell, the general-alpha form
-    of #119's +2^s (= (1/2)^{-s}). The migration object: its limit zeta(s, alpha) is clean
+    of the midpoint warp's +2^s (= (1/2)^{-s}). The migration object: its limit zeta(s, alpha) is clean
     only at the Saias-Weingartner P*L phases alpha in {1/2, 1}.
     """
     s = mp.mpc(s)
@@ -277,7 +274,7 @@ def _print_identities():
         eh = float(abs(warp_alpha(s, 45, a) - mp.zeta(s, 1 + mp.mpf(a))))
         ec = float(abs(warp_complete_alpha(s, 45, a) - mp.zeta(s, mp.mpf(a))))
         print(f"   alpha={a:>4}:  |warp-z(s,1+a)|={eh:.2e}   |warp+a^-s - z(s,a)|={ec:.2e}")
-    # the alpha=1/2 warp IS Phase 2's warp_half_K; the endpoint is phase-deformed
+    # the alpha=1/2 warp IS the midpoint warp's warp_half_K; the endpoint is phase-deformed
     s2 = mp.mpc(1.3, 7)
     print(f"   alpha=1/2 completion == warp_bridge.warp_half_K? "
           f"{float(abs(warp_complete_alpha(s2, 7, 0.5) - wb.warp_half_K(s2, 7))):.1e}")
@@ -372,7 +369,7 @@ def _main():
     ax[2].legend(fontsize=8)
 
     fig.suptitle(r"General-phase $n+\alpha$ warp $\to\ \zeta(s,\alpha)$: clean strings only at "
-                 r"$\alpha\in\{0,\frac{1}{2},1\}$ (Davenport-Heilbronn / Saias-Weingartner)  (#122)",
+                 r"$\alpha\in\{0,\frac{1}{2},1\}$ (Davenport-Heilbronn / Saias-Weingartner)",
                  fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     figdir = Path(__file__).resolve().parent / "figures"

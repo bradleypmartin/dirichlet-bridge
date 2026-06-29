@@ -1,13 +1,12 @@
-"""Unit tests for the harmonic interpolation zeta^{(K)} / eta^{(K)} (issue #118,
-knowledge/sum-integral/discrete-continuous-bridge.md sec 2-3).
+"""Unit tests for the harmonic interpolation zeta^{(K)} / eta^{(K)}.
 
-Phase 1 of epic #116: restore discreteness one Fourier harmonic at a time and watch
+The additive-comb stage of the bridge: restore discreteness one Fourier harmonic at a time and watch
 the zeros migrate. The interpolants run from a bland/ground endpoint (K=0) to the
 genuine Dirichlet object (K -> infinity). The checks:
 
 * the incomplete-gamma moments C/S match oscillatory quadrature;
 * both endpoints are exact -- zeta_K(.,0) = 1/(s-1)+1/2, eta_K(.,0) = -F(s)+1/2
-  (the #117 object + the load-bearing n=1 half-weight);
+  (the continuous-eta object + the load-bearing n=1 half-weight);
 * zeta_K / eta_K (and the Bose twins) converge to zeta / eta as K grows;
 * the two zeta routes (Euler-Maclaurin sawtooth, Abel-Plana Bose) are identical
   *term by term* -- one comb in two integral guises;
@@ -33,7 +32,7 @@ def test_moments_match_quadosc():
         sq = mp.quadosc(lambda x: mp.sin(w * x) * x ** (-a), [1, mp.inf], period=per)
         assert abs(hb.Cmom(w, a) - cq) < mp.mpf("1e-20")
         assert abs(hb.Smom(w, a) - sq) < mp.mpf("1e-20")
-    # the #117 identity Cmom(pi, s) == F_closed(s)
+    # the continuous-eta identity Cmom(pi, s) == F_closed(s)
     s = mp.mpc(1.8, 25)
     assert abs(hb.Cmom(mp.pi, s) - ce.F_closed(s)) < mp.mpf("1e-25")
 
@@ -45,17 +44,17 @@ def test_zeta_endpoint():
 
 
 def test_eta_endpoint_is_minus_F_plus_half():
-    """eta_K(., 0) is exactly -F(s) + 1/2 (the #117 object + n=1 half-weight)."""
+    """eta_K(., 0) is exactly -F(s) + 1/2 (the continuous-eta object + n=1 half-weight)."""
     for s in [mp.mpc(0.5, 14), mp.mpc(1.8, 12), mp.mpc(1.3, 7)]:
         assert abs(hb.eta_K(s, 0) - (-ce.F_closed(s) + mp.mpf("0.5"))) < mp.mpf("1e-25")
 
 
 def test_half_weight_relocates_the_ground_zeros():
-    """At a #117 F-zero (F=0) the eta ground state equals +1/2, not 0 -- so the
-    ground string is NOT the #117 string; the half-weight has moved it."""
-    z117 = ce.find_zeros(20.0)[0]            # first F-zero, t ~ 10.67, Re ~ 2.08
-    assert abs(ce.F_closed(z117)) < 1e-18    # it is a zero of F
-    assert abs(hb.eta_K(z117, 0) - mp.mpf("0.5")) < 1e-15   # ... but eta_K(.,0) = 1/2 there
+    """At a continuous-eta F-zero (F=0) the eta ground state equals +1/2, not 0 -- so the
+    ground string is NOT the continuous-eta string; the half-weight has moved it."""
+    z_fzero = ce.find_zeros(20.0)[0]            # first F-zero, t ~ 10.67, Re ~ 2.08
+    assert abs(ce.F_closed(z_fzero)) < 1e-18    # it is a zero of F
+    assert abs(hb.eta_K(z_fzero, 0) - mp.mpf("0.5")) < 1e-15   # ... but eta_K(.,0) = 1/2 there
 
 
 def test_zeta_converges_to_zeta():
@@ -118,11 +117,11 @@ def test_eta_zeros_split_to_two_lines():
     assert float(p[32].real) > 0.8                   # distinct destinations
 
 
-def test_eta_ground_string_below_117():
-    """Continued to K=0 the eta zeros sit near Re~0.7 -- far below the #117 Re~1.8
+def test_eta_ground_string_below_fzeros():
+    """Continued to K=0 the eta zeros sit near Re~0.7 -- far below the continuous-eta Re~1.8
     string -- confirming the half-weight pulled the ground state toward criticality."""
     traj = hb.migrate(hb.eta_K, mp.mpc(0.5, 14.134725), schedule=[0] + SHORT)
     g = dict(traj).get(0)
     assert g is not None
-    assert float(g.real) < 1.0               # ground zero well below #117's ~1.8
+    assert float(g.real) < 1.0               # ground zero well below the continuous-eta ~1.8
     assert abs(hb.eta_K(g, 0)) < 1e-12       # it really is a ground-state zero

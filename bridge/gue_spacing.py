@@ -1,5 +1,5 @@
 """Nearest-neighbour spacing comparison for the modular-surface Maass
-spectrum vs Riemann zeros. Issue #8.
+spectrum vs Riemann zeros.
 
 Operates directly on two ordinate lists -- no Selberg zeta evaluation
 needed -- and KS-tests the *unfolded* nearest-neighbour spacings
@@ -11,7 +11,7 @@ against two reference distributions:
 
 The GOE surmise is the orthogonal-class reference (a real / time-
 reversal-invariant chaotic Laplacian); it is the correct positive
-control for a non-arithmetic G_q Maass spectrum (issue #45). GUE is
+control for a non-arithmetic G_q Maass spectrum. GUE is
 the unitary class of the Riemann zeros.
 
 Riemann zeros are the textbook Montgomery-Odlyzko / Bohigas-Giannoni-
@@ -61,8 +61,6 @@ Driver `main()` emits:
 * `gue_spacing.txt` - summary table with sample sizes, unfolded mean /
   std, and KS distances vs the GUE surmise (and Maass-vs-Riemann via
   ks_2samp).
-
-See knowledge/statistics/gue-spacing.md for the math and the sample-size caveat.
 """
 
 from __future__ import annotations
@@ -166,8 +164,8 @@ def unfold_modular_surface_taus(taus: Iterable[float]) -> np.ndarray:
         N(T) ~ T^2 / 12  -  (T / pi) log T  +  O(T).
 
     The O(T) residual is responsible for a sizeable absolute gap between
-    N(tau_100) and the true count 100 at the LMFDB cutoff tau ~ 46
-    (see knowledge/statistics/gue-spacing.md), but is locally affine so it has
+    N(tau_100) and the true count 100 at the LMFDB cutoff tau ~ 46,
+    but is locally affine so it has
     negligible effect on the *spacing shape* we are testing.
     """
     arr = np.asarray(list(taus), dtype=float)
@@ -230,8 +228,7 @@ def wigner_goe_pdf(s: np.ndarray | float) -> np.ndarray | float:
         p_GOE(s) = (pi / 2) s exp(-pi s^2 / 4).
 
     Contrast GUE (~ s^2 at small s, the unitary class of the Riemann
-    zeros): GOE repels only linearly (~ s). See
-    knowledge/maass/hecke-triangle-groups.md sec 6."""
+    zeros): GOE repels only linearly (~ s)."""
     s = np.asarray(s, dtype=float)
     return 0.5 * math.pi * s * np.exp(-0.25 * math.pi * s * s)
 
@@ -333,7 +330,7 @@ def build_summary_text(
     lines: list[str] = []
     lines.append(
         "Nearest-neighbour spacing comparison: modular Maass spectrum "
-        "vs Riemann zeros vs Wigner GUE surmise (issue #8)."
+        "vs Riemann zeros vs Wigner GUE surmise."
     )
     lines.append("")
     lines.append("Inputs:")
@@ -447,7 +444,7 @@ def build_summary_text(
         "good quantum numbers wash out level repulsion. "
         "Bogomolny-Georgeot-Giannoni-Schmit (1992) and Sarnak (1995) "
         "predicted exactly this: arithmetic surfaces violate the BGS "
-        "GUE expectation. See knowledge/statistics/gue-spacing.md."
+        "GUE expectation."
     )
     return "\n".join(lines) + "\n"
 

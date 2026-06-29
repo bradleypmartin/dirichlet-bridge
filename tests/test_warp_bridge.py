@@ -1,22 +1,21 @@
-"""Unit tests for the nonlinear n*-warp bridge (issue #119,
-knowledge/sum-integral/discrete-continuous-bridge.md sec 2c, 3, 4).
+"""Unit tests for the nonlinear n*-warp bridge.
 
-Phase 2 of epic #116: warp the integration variable (n* = x + phi_K(x)) instead of
+The midpoint-warp stage of the bridge: warp the integration variable (n* = x + phi_K(x)) instead of
 adding harmonics to the integrand, and watch where the zeros go. The checks:
 
 * the warp endpoint is bland -- warp_K(., 0) = 1/(s-1);
 * the honest int_1^inf warp limits to the *ugly* half-integer-midpoint zeta(s, 3/2);
 * the load-bearing +2^s completes it to the *clean* half-shifted zeta(s, 1/2) =
-  (2^s - 1) zeta(s) -- the eta factor #116 set aside, re-derived as the lower-endpoint
+  (2^s - 1) zeta(s) -- the eta factor the bridge set aside, re-derived as the lower-endpoint
   half-cell;
 * the Hurwitz form matches the genuine oscillatory integral (sigma > 1);
 * migration: zeta zeros climb onto Re = 1/2 (from below), and the prefactor companions
   (2^s - 1 = 0, at t = 2 pi k/ln2) climb onto Re = 0 -- the mirror, across 1/2, of
-  #118's eta companion on Re = 1; without the +2^s that companion does not exist.
-* density bijection (#123): the warp target zeta(s,1/2)=(2^s-1)zeta(s) carries N_1/2(T)
-  zeta zeros on sigma=1/2 and N_0(T) companions on sigma=0; N_1/2 + N_0 reproduces #117's
-  Riemann-von Mangoldt N(T) to leading order, and N_0 = floor(T ln2/2pi) on the nose --
-  the warp mirror (measured, not asserted-by-symmetry) of #118's eta count.
+  the additive comb's eta companion on Re = 1; without the +2^s that companion does not exist.
+* density bijection: the warp target zeta(s,1/2)=(2^s-1)zeta(s) carries N_1/2(T)
+  zeta zeros on sigma=1/2 and N_0(T) companions on sigma=0; N_1/2 + N_0 reproduces the
+  continuous-eta's Riemann-von Mangoldt N(T) to leading order, and N_0 = floor(T ln2/2pi) on the nose --
+  the warp mirror (measured, not asserted-by-symmetry) of the additive comb's eta count.
 
 The full-K limits, the quadrature cross-check, the (continuation-heavy) migration, and the
 box-finder *measured* counts are marked `slow` (deselected by default, like the cone/krein
@@ -69,7 +68,7 @@ def test_pref_heights():
 
 
 # --------------------------------------------------------------------------
-# fast: the density-bijection counting identity (#123), root-finder-free
+# fast: the density-bijection counting identity, root-finder-free
 # --------------------------------------------------------------------------
 def test_target_half_is_half_shift():
     """target_half(s) == (2^s - 1) zeta(s) == zeta(s, 1/2) (the K -> infinity migration object)."""
@@ -85,10 +84,10 @@ def test_companion_count_is_on_the_nose():
 
 
 def test_density_bijection_sum_matches_rvm():
-    """N_1/2(T) + N_0(T) reproduces #117's Riemann-von Mangoldt N(T) to leading order.
+    """N_1/2(T) + N_0(T) reproduces the continuous-eta's Riemann-von Mangoldt N(T) to leading order.
 
     N_1/2 = #zeta-zeros below T, N_0 = #companions below T; their densities
-    (1/2pi)ln(t/2pi) + (ln2/2pi) = (1/2pi)ln(t/pi) sum to #117's ground density exactly, so
+    (1/2pi)ln(t/2pi) + (ln2/2pi) = (1/2pi)ln(t/pi) sum to the continuous-eta's ground density exactly, so
     the integer total tracks counting_law(T) within an O(1) slack (the 7/8-vs-5/8 constant
     offset shared with the eta side, plus rounding)."""
     import cont_eta as ce
@@ -165,9 +164,9 @@ def test_prefactor_companion_migrates_to_zero():
 
 @pytest.mark.slow
 def test_measured_bijection_on_target():
-    """MEASURED bijection (#123): find every zero of the warp target zeta(s,1/2) below T=40 and
+    """MEASURED bijection: find every zero of the warp target zeta(s,1/2) below T=40 and
     bin it -- 6 land on sigma=1/2 (the zeta zeros), 4 on sigma=0 (the 2^s-1 companions), none
-    off-line, and the total matches #117's RvM N(40)~10.46 (so N_1/2+N_0 reproduces the ground
+    off-line, and the total matches the continuous-eta's RvM N(40)~10.46 (so N_1/2+N_0 reproduces the ground
     count). Closes the 'mirror of eta, same heights' claim as a count, not a symmetry argument."""
     import cont_eta as ce
     counts, off, zeros = wb.count_on_lines(wb.target_half, 40.0)
@@ -196,7 +195,7 @@ def test_measured_bijection_finite_K():
 
 @pytest.mark.slow
 def test_warp_K_stable_at_high_tau():
-    """#130 regression: the grid+moment warp_K used to diverge catastrophically above
+    """Regression: the grid+moment warp_K used to diverge catastrophically above
     |Im s| ~ 110 -- e.g. warp_K(1/2 + 160i, 40) blew up to ~2e8 (vs the true O(1)) because the
     binomial factor binom(-s,j) ~ 10^{0.4|s|} amplified the m>M tail (zeta(s+j)-H_M) once it
     decayed past mpmath's absolute error floor. With the |Im s|-scaled working precision /

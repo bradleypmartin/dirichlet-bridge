@@ -1,15 +1,15 @@
-r"""The eta zero set as a two-component (crystal x GUE) spectrum (issue #132).
+r"""The eta zero set as a two-component (crystal x GUE) spectrum.
 
-Follow-up from #118 (the eta migration) / #124 (the rate law) / #131 (the Gram phase).
-The eta interpolant's ground string splits onto TWO lines (harmonic-comb-migration.md):
+Follow-up to the eta migration (harmonic_bridge.py), the rate law (rate_law.py), and the
+Gram-phase duality. The eta interpolant's ground string splits onto TWO lines:
 
   * sigma = 1  -- the prefactor (1 - 2^{1-s}) zeros: a PERFECT ARITHMETIC COMB,
                   teeth at  t = 2 pi k / ln2,  period 2 pi/ln2 ~ 9.0647, perfectly rigid;
   * sigma = 1/2 -- the genuine zeta zeros: a GUE-random sequence, packing  log2(t/2pi)
-                  per comb tooth (the ratio of the two #118/#123 counting densities).
+                  per comb tooth (the ratio of the two counting densities).
 
 So the eta zero set, projected onto the t-axis, is a RIGID CRYSTALLINE COMB superposed
-with a GUE sequence -- a genuine two-component spectrum. #132 asks the fine-structure
+with a GUE sequence -- a genuine two-component spectrum. This module asks the fine-structure
 question the density bijection (which only fixes the COUNTS) cannot: are the two
 components INDEPENDENT ("GUE + a deterministic backbone"), or do the zeta zeros "see" the
 comb? Three lenses, the third decisive:
@@ -46,28 +46,26 @@ LENS 3 -- the p=2 resonance (the headline; the components are NOT independent). 
   measured <cos(m gamma ln2)> matches the p=2^m coefficient to ~4 digits (-0.098 at
   m=1), and the sign is NEGATIVE -- the comb teeth (cos = +1) sit at the zeta-zero density
   MINIMA. So the sigma=1 comb is not an independent backbone: it is the p=2 sub-comb of
-  the zeta zeros' OWN prime structure (the first Bragg peak of the #80B/#84 structure
+  the zeta zeros' OWN prime structure (the first Bragg peak of the structure
   factor is at log2). The two components share the prime-2 lattice -- the comb is the
   "p=2 ghost".
 
 The synthesis: the eta two-component spectrum is a rigid crystal superposed with the GUE
 zeta zeros, additive (independent) in the smooth bulk -- BUT phase-locked at the comb
-frequency through the prime 2. That resonance is the same object as the explicit formula
-(#87), the structure factor / form factor (#84, #80B), and the prime peaks the repo has
-been tracking all along; #132 is where the discrete<->continuous bridge's eta side meets
-the prime<->zero arc.
+frequency through the prime 2. That resonance is the same object as the explicit formula,
+the structure factor / form factor, and the prime peaks the repo has been tracking all
+along; it is where the discrete<->continuous bridge's eta side meets the prime<->zero arc.
 
-Forward-only / honesty (the #132 prep-note discipline). The sigma=1/2 family IS zeta's
+Forward-only / honesty. The sigma=1/2 family IS zeta's
 zeros (the eta/warp targets factor through zeta) and the sigma=1 comb is the closed-form
 lattice 2 pi k/ln2; both are REFERENCE sequences here, not outputs of any zero-finding.
-The two families were established blind in #118/#123 (warp_bridge.count_on_lines, the
-local-minimum-seeded finder -- no zero locations injected). #132 takes those families and
+The two families were established blind (warp_bridge.count_on_lines, the
+local-minimum-seeded finder -- no zero locations injected). This module takes those families and
 measures their JOINT statistics: the genuinely forward content is the two-component law
 and the p=2 lock, NOT a rediscovery of the zeros. No hb.migrate (homotopy seeded from a
 known zero) is used.
 
-Math write-up: ../knowledge/sum-integral/eta-two-component-spectrum.md (#132).
-Run directly to validate + plot: writes sum_integral/figures/eta_two_component.png.
+Run directly to validate + plot: writes bridge/figures/eta_two_component.png.
 """
 import math
 import sys
@@ -76,14 +74,12 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 
-# repo root + sibling source dirs on sys.path so the bare cross-imports resolve when run
-# directly (pytest uses the root conftest.py). Reuses gue_spacing/spectral_rigidity
-# (prime_zero), zero_form_factor (prime_zero), cone_log_prime (cone_interface). #107.
-_ROOT = Path(__file__).resolve().parents[1]
-for _d in ("", "maass", "krein", "prime_zero", "legacy", "cone_interface", "sum_integral"):
-    _p = str(_ROOT / _d) if _d else str(_ROOT)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+# This module sits in a flat source dir alongside its bare cross-imports; put that
+# directory on sys.path so a direct ``python eta_two_component.py`` run resolves them
+# (pytest gets the same path from the root conftest.py).
+_HERE = str(Path(__file__).resolve().parent)
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
 
 from gue_spacing import load_riemann_zeros, unfold_riemann_zeros  # noqa: E402
 import spectral_rigidity as sr  # noqa: E402  (number_variance + GUE reference)
@@ -132,7 +128,7 @@ def zeros_per_tooth(
 
     Returns (k, counts, predicted) with k = 1..n_gaps, counts[i] = #{gamma in the gap
     between teeth k and k+1, i.e. (2 pi k/ln2, 2 pi(k+1)/ln2]}, predicted[i] =
-    log2(t_center/2pi) the inter-tooth density ratio (the #118 zeta-zero density
+    log2(t_center/2pi) the inter-tooth density ratio (the zeta-zero density
     (1/2pi)ln(t/2pi) over the comb density ln2/2pi). Reproduces the measured 1,2,2,3,3,3,4,3.
     """
     g = np.sort(np.asarray(gammas, dtype=float))
@@ -176,7 +172,7 @@ def prime_resonance(gammas: np.ndarray, freq: float) -> float:
     By the explicit formula this is ~0 unless freq = log(p^k) (a prime power), where it
     resonates with the p^k Bragg term. The comb frequencies are freq = m ln2 = log(2^m),
     so the comb probes exactly the p=2 family. (Conjugate sin part is ~0 by the cosine
-    symmetry of the zero set -- this is the real, even structure factor of #84/#80B.)
+    symmetry of the zero set -- this is the real, even structure factor.)
     """
     g = np.asarray(gammas, dtype=float)
     return float(np.cos(g * freq).mean())
@@ -255,7 +251,7 @@ def union_number_variance(
 ) -> Dict[str, np.ndarray]:
     """Sigma^2(L) of the unfolded union vs the references (LENS 2).
 
-    Returns measured union Sigma^2, the GUE reference (number_variance_reference, the #84
+    Returns measured union Sigma^2, the GUE reference (number_variance_reference, the
     form factor against the Fejer kernel -- the zeta part alone), the independent-
     superposition prediction  Sigma^2_GUE(f_zeta L) + picket(f_comb, L), and Poisson = L.
     The measured curve tracking GUE-log + a bounded picket ripple is the "GUE + rigid
@@ -432,7 +428,7 @@ def _main() -> None:
                  fontsize=9.5)
     ax.legend(fontsize=8, loc="lower right")
 
-    fig.suptitle(r"The $\eta$ two-component spectrum (#132): rigid $\sigma{=}1$ comb "
+    fig.suptitle(r"The $\eta$ two-component spectrum: rigid $\sigma{=}1$ comb "
                  r"$\times$ GUE $\sigma{=}\frac{1}{2}$ zeros -- additive in bulk, "
                  r"$p{=}2$-locked at the comb frequency", fontsize=12.5)
     fig.tight_layout(rect=(0, 0, 1, 0.97))

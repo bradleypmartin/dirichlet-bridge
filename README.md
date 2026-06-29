@@ -35,21 +35,33 @@ cached Riemann zeros in `data/riemann_zeros.csv` and reuses a few spectral-stati
 helpers (`gue_spacing`, `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`)
 that are vendored into `bridge/` alongside it.
 
+Two small companion drivers illustrate the warp itself (see [`RESULTS.md`](RESULTS.md)):
+`warp_coordinate.py` draws the coordinate `n* = x + φ_K(x)` bending from a straight line
+into the midpoint staircase as `K` grows (Gibbs wobble and all), and
+`warp_phase_compare.py` contrasts the midpoint staircase (`α = ½`, half-integers) with the
+integer one (`α = 1`, counting numbers) — and why a pure-`x` start forces the former.
+
 ## Quickstart
 
 ```bash
 python -m venv .venv && . .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt                  # numpy, scipy, mpmath, matplotlib, pytest (pinned)
+# (or, with uv:  uv venv --python 3.9 .venv  &&  uv pip install -r requirements.txt)
 
 pytest                       # fast suite (slow high-precision checks deselected by default)
 pytest -m slow               # the expensive end-to-end regressions
 
-python bridge/cont_eta.py    # any driver self-validates and writes bridge/figures/<name>.png
+python repro.py              # regenerate ALL figures from scratch (a few minutes)
+python bridge/cont_eta.py    # or run one driver: it self-validates and writes bridge/figures/<name>.png
 ```
 
 Targets **Python 3.9** (kept 3.9-compatible: `typing.Union`, not PEP-604 `X | Y`
 runtime unions). Every driver anchors its data reads and figure writes to the
 repo root, so it runs the same regardless of the working directory.
+
+**Read next:** [`RESULTS.md`](RESULTS.md) walks through every figure ("what it
+shows / why it matters"); [`CONTRIBUTING.md`](CONTRIBUTING.md) covers setup and the
+layout conventions.
 
 ## Layout
 
@@ -85,6 +97,12 @@ than claiming them:
 
 A full annotated bibliography (`references.bib`) and a figure-by-figure walkthrough
 accompany the preprint.
+
+## Provenance
+
+This repository is the self-contained **bridge arc**, extracted from the author's
+larger research project; it carries the six arc drivers plus the vendored
+spectral-statistics helpers they depend on, and nothing else.
 
 ## License
 

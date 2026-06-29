@@ -1,7 +1,6 @@
-"""Unit tests for the unified O(1/K) rate / birth-K law (issue #124,
-knowledge/sum-integral/discrete-continuous-bridge.md sec 1, 3, 6).
+"""Unit tests for the unified O(1/K) rate / birth-K law.
 
-A follow-up across epic #116: one leading-rate constant and one zero-displacement
+A follow-up across the bridge: one leading-rate constant and one zero-displacement
 coefficient per bridge route, plus the sub-leading correction behind the
 comb-overshoot / warp-no-overshoot asymmetry. The checks:
 
@@ -13,7 +12,7 @@ comb-overshoot / warp-no-overshoot asymmetry. The checks:
 * approach side = sign(Re a_1): comb alternates (some above, some below), warp uniformly
   below; overshoot <=> Re a_1 < 0 for the comb (born above), never for the warp;
 * birth-K catch_K = |Re a_1|/eps grows (on average) with the zero height;
-* the #117 sigma_law residual is F_asym truncation -- solving the balance exactly doesn't
+* the continuous-eta sigma_law residual is F_asym truncation -- solving the balance exactly doesn't
   shrink it.
 
 The continuation-heavy migrate checks and the slow exact-Richardson warp constant are
@@ -156,11 +155,11 @@ def test_catch_K_grows_with_height():
 
 
 # --------------------------------------------------------------------------
-# fast: vertical migration & the Gram phase  arg(a_1) ~ pi delta_n  (#131)
+# fast: vertical migration & the Gram phase  arg(a_1) ~ pi delta_n
 # --------------------------------------------------------------------------
 def test_vertical_side_up_for_low_zeros():
     """Comb Im a_1 > 0 for the first zeros: the bridge zero descends onto gamma from above
-    (vertical_side 'up'). This is the low-gamma uniformity that #131 shows is NOT universal."""
+    (vertical_side 'up'). This is the low-gamma uniformity that the Gram-phase finding shows is NOT universal."""
     for g in ZGAM:
         rho = mp.mpc(0.5, g)
         assert rl.disp_coeff("comb_zeta", rho).imag > 0
@@ -180,7 +179,7 @@ def test_gram_phase_governs_both_axes():
 
 
 def test_axis_duality_warp_im_oscillates():
-    """The axis swap: warp Re a_1 < 0 uniformly (#124, horizontal pinned) but warp Im a_1
+    """The axis swap: warp Re a_1 < 0 uniformly (horizontal pinned) but warp Im a_1
     takes BOTH signs over the first zeros (vertical oscillates) -- comb is the mirror."""
     warp_im_signs = {rl.disp_coeff("warp_zeta", mp.mpc(0.5, g)).imag > 0 for g in ZGAM}
     assert warp_im_signs == {True, False}                  # genuinely oscillates
@@ -189,7 +188,7 @@ def test_axis_duality_warp_im_oscillates():
 
 
 # --------------------------------------------------------------------------
-# fast: the #117 sigma_law sub-leading -- exact balance ~ closed form
+# fast: the continuous-eta sigma_law sub-leading -- exact balance ~ closed form
 # --------------------------------------------------------------------------
 def test_sigma_law_exact_matches_closed():
     """Solving the F_asym magnitude balance exactly lands within O(1/t^2) of the closed sigma_law."""
@@ -199,7 +198,7 @@ def test_sigma_law_exact_matches_closed():
 
 
 # --------------------------------------------------------------------------
-# fast: #133 item 1 -- the C_warp closed form (Si-Gibbs boundary layer)
+# fast: loose end 1 -- the C_warp closed form (Si-Gibbs boundary layer)
 # --------------------------------------------------------------------------
 def test_gibbs_profile_endpoints():
     """P(v) = (1/pi)(pi/2 - Si(2 pi v)): P(0) = 1/2 (edge argument 1), P -> 0 in the bulk."""
@@ -220,10 +219,10 @@ def test_c_warp_closed_beats_bulk():
 
 
 # --------------------------------------------------------------------------
-# fast: #133 item 2 -- catch_K <-> |zeta'(rho)| (Montgomery a-values)
+# fast: loose end 2 -- catch_K <-> |zeta'(rho)| (Montgomery a-values)
 # --------------------------------------------------------------------------
 def test_montgomery_a_is_zeta_prime_abs():
-    """montgomery_a(rho) = |zeta'(rho)| (the Montgomery a-value, = |Z'(gamma)| by #131)."""
+    """montgomery_a(rho) = |zeta'(rho)| (the Montgomery a-value, = |Z'(gamma)| by the Gram-phase finding)."""
     rho = mp.mpc(0.5, 14.134725142)
     assert abs(rl.montgomery_a(rho) - abs(mp.zeta(rho, derivative=1))) < mp.mpf("1e-25")
 
@@ -274,11 +273,11 @@ def test_catch_K_modes_pick_different_hard_zeros():
 
 
 # --------------------------------------------------------------------------
-# fast: #133 item 3 -- FE-mirror companions (same heights, broken dynamics)
+# fast: loose end 3 -- FE-mirror companions (same heights, broken dynamics)
 # --------------------------------------------------------------------------
 def test_fe_mirror_shares_heights():
     """The sigma=1 eta prefactor and sigma=0 warp companion sit at the SAME height t_k = 2 pi k/ln2
-    (exact s<->1-s images as zero sets -- the #132 p=2 comb)."""
+    (exact s<->1-s images as zero sets -- the p=2 comb)."""
     for k in (1, 2, 3):
         m = rl.fe_mirror(k)
         assert abs(m["t"] - 2 * PI * k / LN2) < 1e-9
@@ -380,7 +379,7 @@ def test_rate_warp_richardson_matches_grid_sign():
 
 @pytest.mark.slow
 def test_im_a1_flips_at_gram_failures():
-    """#131 headline: comb Im a_1 > 0 is NOT universal -- it IS Gram's law. It flips negative
+    """The Gram-phase headline: comb Im a_1 > 0 is NOT universal -- it IS Gram's law. It flips negative
     exactly at the first Gram-law failures (n=127,136,196; gamma ~ 282,296,391), where the
     Gram-interval position delta_n leaves (0,1); it stays > 0 for every regular zero below.
 
@@ -412,7 +411,7 @@ def test_vertical_migration_matches_im_a1():
 
 @pytest.mark.slow
 def test_sigma_law_residual_is_truncation():
-    """The residual to the TRUE #117 zeros is the F_asym truncation: solving the balance exactly
+    """The residual to the TRUE continuous-eta zeros is the F_asym truncation: solving the balance exactly
     (sigma_law_exact) leaves essentially the same residual as the closed sigma_law."""
     import cont_eta as ce
     zeros = ce.find_zeros(60.0)
@@ -426,11 +425,11 @@ def test_sigma_law_residual_is_truncation():
 
 
 # --------------------------------------------------------------------------
-# slow: #133 -- the C_warp closed form vs the exact numerical truth; the pair-correlation tie
+# slow: loose ends -- the C_warp closed form vs the exact numerical truth; the pair-correlation tie
 # --------------------------------------------------------------------------
 @pytest.mark.slow
 def test_c_warp_closed_matches_richardson():
-    """#133 item 1: the Si-Gibbs closed form C_warp = rate_warp_bulk + boundary integral matches
+    """loose end 1: the Si-Gibbs closed form C_warp = rate_warp_bulk + boundary integral matches
     the exact numerical rate_warp(richardson=True) to that truth's own ~5-digit accuracy (the
     closed form is exact; the residual is the Richardson 1/K^2 truncation, larger at high t)."""
     for s in [mp.mpc(2, 0), mp.mpc(1.3, 7), mp.mpc(0.5, 14.134725142)]:
@@ -462,7 +461,7 @@ def test_c_warp_closed_quadratic_subtraction_is_required():
 
 @pytest.mark.slow
 def test_warp_disp_coeff_closed_matches_grid():
-    """disp_coeff with the #133 closed-form Delta_1 (closed=True) reproduces the grid-based
+    """disp_coeff with the closed-form Delta_1 (closed=True) reproduces the grid-based
     warp displacement coefficient -- the closed C_warp drives the same migration (~2-3 digit grid)."""
     rho = mp.mpc(0.5, 14.134725142)
     a_grid = rl.disp_coeff("warp_zeta", rho)
@@ -472,7 +471,7 @@ def test_warp_disp_coeff_closed_matches_grid():
 
 @pytest.mark.slow
 def test_small_zeta_prime_zeros_are_near_degenerate():
-    """#133 item 2 tie: the hardest-to-catch (small |zeta'|) zeros ARE the near-degenerate
+    """loose end 2 tie: the hardest-to-catch (small |zeta'|) zeros ARE the near-degenerate
     (closely-spaced) ones -- |zeta'| correlates with the relative neighbour spacing (~0.74 over
     the first 80 zeros), so small |zeta'| <=> a closely-spaced pair (the pair-correlation link)."""
     import numpy as np

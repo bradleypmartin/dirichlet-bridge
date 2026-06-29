@@ -1,7 +1,7 @@
 r"""
-Continuous Dirichlet-eta integral  F(s) = int_1^inf cos(pi x) x^{-s} dx  (issue #117).
+Continuous Dirichlet-eta integral  F(s) = int_1^inf cos(pi x) x^{-s} dx.
 
-Phase 0 of the discrete <-> continuous bridge (epic #116). Treat the eta *series*
+The continuous-eta endpoint of the discrete <-> continuous bridge. Treat the eta *series*
 eta(s) = sum (-1)^{n-1} n^{-s} as a Riemann sum (sign (-1)^n = cos(pi n) at the
 integers) and ask for the underlying *integral*. Unlike the bland zeta-side
 endpoint  int_1^inf x^{-s} dx = 1/(s-1)  (no zeros at all), this continuous eta is
@@ -41,13 +41,12 @@ laws, all confirmed numerically to 3-5 digits over 8 < t < 160:
   * counting law  (`counting_law`):  N(t) = (t/2pi) ln( t / (pi e) ) + 5/8 + o(1).
     This is a Riemann-von Mangoldt law: the SAME zero-density structure as the
     genuine zeta/eta zeros (pi where zeta has 2pi, constant 5/8 where zeta has
-    7/8) -- but realized off the critical line. That is the point of Phase 0: the
-    continuous eta already has "non-trivial" zeros with the right density; what it
-    lacks (and what restoring discreteness, Phase 1 / issue #118, must supply) is
-    pinning them to Re s = 1/2.
+    7/8) -- but realized off the critical line. That is the point of this continuous
+    endpoint: the continuous eta already has "non-trivial" zeros with the right
+    density; what it lacks (and what restoring discreteness must supply) is pinning
+    them to Re s = 1/2.
 
-Math write-up: ../knowledge/sum-integral/continuous-eta-integral.md (Phase 0, #117).
-Run directly to validate + plot: writes sum_integral/figures/cont_eta.png.
+Run directly to validate + plot: writes bridge/figures/cont_eta.png.
 """
 import math
 from pathlib import Path
@@ -225,7 +224,7 @@ def _main():
     ax[2].legend(fontsize=9)
 
     fig.suptitle(r"Continuous Dirichlet-eta  $F(s)=\int_1^\infty\cos(\pi x)\,"
-                 r"x^{-s}\,dx$  (issue #117)", fontsize=12)
+                 r"x^{-s}\,dx$", fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     figdir = Path(__file__).resolve().parent / "figures"
     figdir.mkdir(exist_ok=True)
