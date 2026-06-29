@@ -89,6 +89,48 @@ companion line that the additive comb lacks. Two superficially different
 constructions (add harmonics vs. warp the variable) reach the critical line by
 **opposite approaches** — a contrast the rate law (§5) then explains quantitatively.
 
+### Why the half-integers reproduce ζ's zeros
+
+A fair worry: the *literal* Dirichlet series is summed over the **counting numbers**
+`1, 2, 3, …` (that is the `α = 1` warp in §4), so why should the **half-integer** object
+reproduce ζ's zeros and their migration at all? Because the half-integer object is not a
+different beast that merely mimics ζ — it **contains ζ as a factor**, by an exact identity.
+The half-integers are the odd integers rescaled by ½:
+
+```
+ζ(s, ½) = Σ_{n≥0} (n + ½)^{−s} = 2^s · Σ_{n≥0} (2n+1)^{−s} = 2^s · Σ_{odd m} m^{−s},
+```
+
+and "sum over the odds" is "all integers minus the evens":
+
+```
+Σ_{odd} m^{−s} = ζ(s) − 2^{−s} ζ(s) = (1 − 2^{−s}) ζ(s),
+```
+
+so
+
+```
+ζ(s, ½) = 2^s (1 − 2^{−s}) ζ(s) = (2^s − 1) ζ(s).
+```
+
+This is **algebra, not a limit**: summing over the half-integers equals summing over the
+counting numbers times the explicit factor `2^s − 1`. The zeros therefore simply **split**,
+
+```
+zeros of (2^s − 1)·ζ(s)  =  { ζ's zeros on σ = ½ }  ∪  { zeros of 2^s − 1 on σ = 0 },
+```
+
+so the `σ = ½` family the warp migrates onto **is ζ's genuine non-trivial zero set,
+identically** — not a look-alike. The half-integer lattice carries the same prime content as
+ζ for every odd prime and isolates only `p = 2` (the pulled-out Euler factor `1 − 2^{−s}`),
+which reappears as the `2^s − 1` companion on `σ = 0` at `t = 2πk/ln2` — the
+functional-equation mirror of η's `σ = 1` comb (§6) at the same heights. Using the counting
+numbers directly (`α = 1`, §4) would give plain `ζ(s)` and *only* the `σ = ½` family; the
+half-shift gives the **same** critical zeros plus that explicit, fully-understood `σ = 0`
+bonus — and does so from the pristine zeroless `1/(s−1)` endpoint. (This is why neither the
+half-integer staircase below nor the `α` choice is a sleight of hand: the critical zeros are
+ζ's own, present exactly, in every clean phase.)
+
 ### Companion — the warp coordinate, visualized (`warp_coordinate.py`)
 
 ![The warp coordinate: linear x bending into the midpoint staircase](bridge/figures/warp_coordinate.png)
@@ -134,8 +176,9 @@ reachable from a pure-`x` start by pure trigonometric corrections.
 
 **Why it matters / implications.** This is exactly why the bridge's headline is `α = ½`:
 it is the one phase that keeps the pristine zeroless endpoint `1/(s−1)` *and* lands on a clean
-line — and the clean line it lands on is the **richer** half-shifted `(2^s − 1)ζ(s)`, which
-carries the `σ = 0` companion (the functional-equation mirror of η's `σ = 1` comb). Choosing
+line — and the clean line it lands on is the **richer** half-shifted `(2^s − 1)ζ(s)`, whose
+`σ = ½` zeros are ζ's own (see *Why the half-integers reproduce ζ's zeros* in §3) and which
+also carries the `σ = 0` companion (the functional-equation mirror of η's `σ = 1` comb). Choosing
 `α = 1` instead would recover **plain `ζ(s)`** and the literal counting numbers, but at the
 cost of the pristine endpoint *and* the `σ = 0` companion (no `2^s − 1` prefactor, so no
 companion line). The `O(1/K)` rate law (§5) holds for both; only the displacement constants
