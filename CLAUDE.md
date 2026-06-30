@@ -40,7 +40,7 @@ Targets **Python 3.9** — keep code 3.9-compatible (`typing.Union`, *not* PEP 6
 
 - Setup: `python -m venv .venv` then `pip install -r requirements.txt`
   (numpy, scipy, mpmath, matplotlib, pytest — pinned).
-- Fast suite: `pytest` (82 tests, ~110 s; the slow high-precision checks are
+- Fast suite: `pytest` (93 tests, ~110 s; the slow high-precision checks are
   deselected by default via `addopts = -m "not slow"` in `pytest.ini`).
 - Slow suite: `pytest -m slow`.
 - Each driver self-validates and writes a figure, e.g.
@@ -53,6 +53,12 @@ for pytest.
 
 - `cont_eta.py` — the continuous-η endpoint `F(s)=∫₁^∞ cos(πx)x^{-s}dx`; the
   off-critical Riemann–von Mangoldt zero string.
+- `comb_vs_warp.py` — the two restoration routes drawn **side by side at the level
+  of the integrand** (issue #11): the additive comb `x^{-s}+s·φ_K(x)·x^{-s-1}`
+  (kernel added, `x` linear) vs. the warp `(x+φ_K(x))^{-s}` (kernel composed into the
+  argument, `x` warped), both from the same `φ_K`. Validates that each integrand's
+  area is `harmonic_bridge.zeta_K` / `warp_bridge.warp_K` (depends on both). A preview
+  figure for §sec:comb/§sec:warp; the *coordinate* view is `warp_coordinate.py`.
 - `harmonic_bridge.py` — additive comb (EM sawtooth ≡ Abel–Plana, term-by-term);
   the zero-migration map (ζ born onto σ=½; η ground string splits σ=½ ∪ σ=1).
 - `warp_bridge.py` — the nonlinear midpoint-warp → `ζ(s,½)=(2^s−1)ζ`; the σ=0
@@ -83,7 +89,7 @@ for pytest.
 - `figstyle.py` — shared Matplotlib font bump (`figstyle.enlarge()`); each driver
   calls it before plotting so the embedded figures stay legible when scaled down in
   the preprint. The dense/long-title figures (`rate_law`, `eta_two_component`,
-  `warp_coordinate`, `warp_eta`) override `axes.titlesize`/`figure.titlesize`
+  `warp_coordinate`, `warp_eta`, `comb_vs_warp`) override `axes.titlesize`/`figure.titlesize`
   locally so titles don't overrun. Changing sizes here means re-running
   `python repro.py`.
 
@@ -113,11 +119,13 @@ referenced from `bridge/figures/` via `\graphicspath` (not copied).
 - **#4 — Presentation & reproducibility** (open): `RESULTS.md` walkthrough,
   one-command figure regen, and the self-bootstrap-header cleanup above.
 - **#5 — arXiv preprint** (open): **draft complete in `paper/`** — `main.tex`
-  (14-page methods/experimental-math write-up), a verified `references.bib` (30
-  entries), `make_arxiv.py` packager, and a built `main.pdf`. Build with
-  `tectonic main.tex` from `paper/` (Tectonic + Poppler live in `~/.local/bin` /
-  installed via winget). Framing/citations come from #2; the 9 figures are pulled
-  straight from `bridge/figures/` via `\graphicspath`, so no figure is duplicated.
+  (~19-page methods/experimental-math write-up; includes the §"Two routes, side by
+  side" integrand comparison from #11 and the §"The trivial zeros" section from #10),
+  a verified `references.bib` (30 entries), `make_arxiv.py` packager, and a built
+  `main.pdf`. Build with `tectonic main.tex` from `paper/` (Tectonic + Poppler live in
+  `~/.local/bin` / installed via winget). Framing/citations come from #2; the 13
+  figures are pulled straight from `bridge/figures/` via `\graphicspath`, so no figure
+  is duplicated.
 - **#6 — Senior-collaborator outreach** (open): one-pager + draft email; depends
   on #2/#4/#5.
 

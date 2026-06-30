@@ -43,6 +43,31 @@ counting law" is a property of the continuum; "those zeros sit on Re s = ½" is
 exactly what *restoring discreteness* has to supply. That gap is the whole point
 of the bridge.
 
+### Preview — the two routes side by side (`comb_vs_warp.py`)
+
+![Comb vs warp: the same kernel added to the integrand vs composed into the variable](bridge/figures/comb_vs_warp.png)
+
+**What it shows.** The next two sections restore discreteness by two different
+routes, so before either is developed this preview draws the distinction at the
+level of the integrand. Both inject the **same** `K`-harmonic kernel
+`φ_K(x) = Σ_{k=1}^K sin(2πkx)/(πk)` (the partial sum of the sawtooth `½ − {x}`);
+they differ only in *where* it enters. The **additive comb** (§2) leaves `x` alone
+and adds the kernel to the integrand, `x^{−s} + s·φ_K(x)·x^{−s−1}` — the smooth
+`x^{−s}` carrying an added ripple (linear in `φ_K`). The **variable warp** (§3)
+composes the kernel into the argument, `(x + φ_K(x))^{−s}` — pulling the measure
+onto the cell midpoints `m + ½` so the integrand collapses toward a midpoint
+staircase (nonlinear in `φ_K`). Both start at the same bland `x^{−s}` at `K = 0`.
+The driver validates that each integrand's area is the real bridge object: the
+additive one integrates (plus the `½` Euler–Maclaurin endpoint term) to
+`harmonic_bridge.zeta_K`, and the warp one to `warp_bridge.warp_K`, both by an
+independent quadrature.
+
+**Why it matters.** "Add the kernel" vs "warp the variable" is the single most
+useful thing to see clearly up front, and it is also why the two routes share the
+same `O(1/K)` rate (§5): the same truncated kernel drives both. (The *coordinate*
+view `n* = x + φ_K` itself — the straight line bending into the staircase — is
+drawn separately by `warp_coordinate.py`, §3.)
+
 ---
 
 ## 2. The additive comb — `harmonic_bridge.py`

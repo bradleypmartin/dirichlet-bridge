@@ -39,6 +39,7 @@
 \renewcommand{\Im}{\operatorname{Im}}
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\eu}{\mathrm{e}}
+\newcommand{\iu}{\mathrm{i}}
 \newcommand{\half}{\tfrac12}
 
 \title{\bfseries A discrete\,$\leftrightarrow$\,continuous bridge for the
@@ -72,7 +73,11 @@ dichotomy (clean vertical zero strings only at $\alpha\in\{0,\tfrac12,1\}$). The
 unifying result is a single \emph{$O(1/K)$ rate / birth-$K$ law}: every route
 truncates the same sawtooth, so every route converges at the same algebraic rate,
 with a route-dependent displacement constant whose real part fixes the approach
-side and whose imaginary part is numerically tied to Gram's law. Finally we read
+side and whose imaginary part is numerically tied to Gram's law. The same law,
+followed onto the negative real axis, also accounts for the \emph{trivial} zeros:
+they surface as a receding $O(1/K)$ tide uncovers $-2,-4,-6,\dots$, the first
+inherited from the endpoint and the rest born as conjugate pairs that pinch onto
+the axis. Finally we read
 the Dirichlet-$\eta$ zeros as a two-component ``crystal $\times$ GUE'' spectrum
 and isolate the single prime $p=2$. This is a \emph{computational /
 experimental-mathematics} synthesis: every individual endpoint is classical and
@@ -151,8 +156,10 @@ and revisited in \cref{sec:prior}:
 \paragraph{Roadmap.}
 \Cref{sec:endpoints} sets up the two endpoints: the bland $1/(s-1)$ and the
 structured continuous-$\eta$ integral, whose off-critical zero string already
-obeys the Riemann--von Mangoldt counting law. \Cref{sec:comb} restores
-discreteness \emph{additively} and exhibits the zero-migration map.
+obeys the Riemann--von Mangoldt counting law. \Cref{sec:sidebyside} then places
+the two restoration routes side by side at the level of the integrand---an added
+kernel versus a warped variable---before either is developed. \Cref{sec:comb}
+restores discreteness \emph{additively} and exhibits the zero-migration map.
 \Cref{sec:warp} restores it by a nonlinear \emph{warp} of the integration
 variable, deliberately targeting $\zeta(s,\tfrac12)$, and leads with the algebra
 that makes the half-integer object \emph{contain} $\zeta$; a short supplement
@@ -161,7 +168,9 @@ phase annihilated by its $\cos$ sign-carrier. \Cref{sec:alpha}
 generalizes the warp to arbitrary phase and recovers the $P\cdot L$ dichotomy.
 \Cref{sec:rate} is the unifying $O(1/K)$ rate law, with a stability corollary
 (\cref{sec:stability}): every finite-$K$ interpolant is meromorphic on all of
-$\mathbb{C}$, with no abscissa of convergence. \Cref{sec:two} reads the
+$\mathbb{C}$, with no abscissa of convergence. A short section
+(\cref{sec:trivial}) then follows the negative real axis and watches the
+\emph{trivial} zeros be born there. \Cref{sec:two} reads the
 $\eta$ zeros as a two-component spectrum. \Cref{sec:prior} foregrounds the
 prior-art deflators and gives the de Bruijn--Newman contrast, and
 \cref{sec:repro} points to the reproducible code.
@@ -217,6 +226,80 @@ $\sigma=\tfrac32$. ``Zeros with the right counting law'' is therefore a property
 of the continuum; ``those zeros on $\Re s = \tfrac12$'' is what restoring
 discreteness must supply. Closing that gap is the whole point of the bridge.
 \end{observation}
+
+% =====================================================================
+\section{Two routes, side by side: an added kernel vs.\ a warped variable}
+\label{sec:sidebyside}
+% =====================================================================
+
+The next two sections restore discreteness by two different routes, and the
+distinction between them is the single most useful thing to see clearly before
+either is developed, so we draw it first. Both routes inject the \emph{same}
+$K$-harmonic discreteness kernel,
+\begin{equation}\label{eq:phiK}
+  \phi_K(x) \;=\; \sum_{k=1}^{K}\frac{\sin(2\pi k x)}{\pi k},
+\end{equation}
+the Fourier partial sum of the sawtooth $\tfrac12-\{x\}$ (so $\phi_K\to\tfrac12-\{x\}$
+as $K\to\infty$, and $\phi_0\equiv0$). What differs is only \emph{where} $\phi_K$
+enters the integrand of the $\zeta$-side object.
+
+The \textbf{additive comb} (\cref{sec:comb}) leaves the integration variable alone
+and adds the kernel to the integrand. Euler--Maclaurin on $\zeta$ with $g(x)=x^{-s}$
+gives, term by term,
+\begin{equation}\label{eq:combintegrand}
+  \zeta^{(K)}(s)
+  \;=\;
+  \int_1^\infty\!\Bigl[\,x^{-s} + s\,\phi_K(x)\,x^{-s-1}\,\Bigr]\dd x \;+\; \tfrac12,
+\end{equation}
+since $\sum_{k\le K}\tfrac{s}{\pi k}\int_1^\infty\!\sin(2\pi k x)\,x^{-s-1}\dd x
+= \int_1^\infty\! s\,\phi_K(x)\,x^{-s-1}\dd x$ (the $+\tfrac12$ is the constant
+Euler--Maclaurin endpoint term, a boundary contribution, not part of the
+integrand). The integrand $x^{-s}+s\,\phi_K(x)\,x^{-s-1}=x^{-s}\bigl(1+s\,\phi_K(x)/x\bigr)$
+is the smooth $x^{-s}$ carrying an \emph{added} $K$-harmonic ripple; it is
+\emph{linear} in $\phi_K$, and the variable $x$ is untouched.
+
+The \textbf{variable warp} (\cref{sec:warp}) instead leaves the integrand's shape
+alone and composes the kernel into the argument, $x\mapsto x+\phi_K(x)$:
+\begin{equation}\label{eq:warpintegrand}
+  W_K(s) \;=\; \int_1^\infty\!\bigl(x+\phi_K(x)\bigr)^{-s}\dd x .
+\end{equation}
+This is \emph{nonlinear} in $\phi_K$. As $K\to\infty$, $x+\phi_K(x)\to\lfloor
+x\rfloor+\tfrac12$, so each unit cell collapses onto its midpoint and the integrand
+becomes the midpoint staircase $(\lfloor x\rfloor+\tfrac12)^{-s}$, which is why the
+warp lands on the half-shifted Hurwitz zeta $\zeta(s,\tfrac12)$ (\cref{sec:warp}).
+
+The contrast is then a one-line picture (\cref{fig:sidebyside}):
+\begin{equation}\label{eq:contrast}
+  \begin{array}{c@{\qquad}|@{\qquad}c}
+  \textbf{additive comb} & \textbf{variable warp}\\[2pt]
+  x^{-s} + s\,\phi_K(x)\,x^{-s-1} & \bigl(x+\phi_K(x)\bigr)^{-s}\\[2pt]
+  \text{kernel \emph{added}; $x$ linear} & \text{kernel \emph{composed in}; $x$ warped}
+  \end{array}
+\end{equation}
+Both reduce to the same bland endpoint at $K=0$ (then $\phi_0\equiv0$, both
+integrands are $x^{-s}$, and both objects are $1/(s-1)$, the comb's with its
+$+\tfrac12$), and both restore full discreteness as $K\to\infty$, but by
+\emph{addition} versus \emph{composition}. That shared truncated kernel
+\eqref{eq:phiK} is also why the two routes converge at the \emph{same} $O(1/K)$
+rate (\cref{sec:rate}), differing only in the displacement constant. A companion
+view of the warp \emph{coordinate} $x+\phi_K(x)$ itself, bending from the straight
+line into the midpoint staircase, appears in \cref{sec:warp} (\cref{fig:warpcoord}).
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{comb_vs_warp.png}
+  \caption{The two restoration routes drawn at the level of the integrand, at a
+  real $s=2$ and harmonic counts $K=2,4,8,16$. \emph{Left:} the additive comb
+  $x^{-s}+s\,\phi_K(x)\,x^{-s-1}$ \eqref{eq:combintegrand} -- the same kernel
+  $\phi_K$ is \emph{added} on top of the smooth $x^{-s}$ (grey, $K=0$), an
+  oscillation that converges to the full sawtooth ripple (dashed). \emph{Right:}
+  the variable warp $(x+\phi_K(x))^{-s}$ \eqref{eq:warpintegrand} -- the same
+  kernel is \emph{composed into the argument}, pulling the measure onto the cell
+  midpoints $m+\tfrac12$ (dots) so the integrand collapses toward the midpoint
+  staircase (dashed). Same kernel, same $K$, same $K=0$ start; addition on the
+  left, composition on the right.}
+  \label{fig:sidebyside}
+\end{figure}
 
 % =====================================================================
 \section{Phase 1: the additive comb}\label{sec:comb}
@@ -645,6 +728,95 @@ there is no divergence at any $K$, and more harmonics always help.
   height $t$, tracking the analytic rate constant $|s|/(2\pi^2K)$: the cost is
   height, not $\Re s$.}
   \label{fig:stability}
+\end{figure}
+
+% =====================================================================
+\section{The trivial zeros: a rising tide on the negative axis}\label{sec:trivial}
+% =====================================================================
+
+Everything so far has tracked the \emph{non-trivial} zeros. But $\zeta$ also carries
+the \emph{trivial} zeros at $s=-2,-4,-6,\dots$, and the bland endpoint
+$1/(s-1)+\tfrac12$ has none of them (its only real zero is at $s=-1$). They must
+therefore be born somewhere along the interpolation as well, and the stability
+result of \cref{sec:stability} says exactly where we are allowed to look: because
+$\zeta^{(K)}\to\zeta$ with no abscissa, converging at $\sigma=-2$ as readily as at
+$\sigma=+2$, the negative real axis is fair game. Following it gives a clean account
+of the trivial string. On that axis every harmonic in \eqref{eq:phiK} is real, so
+$\zeta^{(K)}$ is a real function whose trivial zeros are honest sign changes, and the
+leading $O(1/K)$ tail \eqref{eq:tail} acts as a \emph{rising tide}: a positive,
+uniform lift
+\begin{equation}\label{eq:tide}
+  \zeta^{(K)}(s)\;\approx\;\zeta(s)+\frac{|s|}{2\pi^2K},
+  \qquad s\ \text{real},\ s<0,
+\end{equation}
+governed by the \emph{same} comb rate constant $|s|/(2\pi^2K)$ that set the height
+cost in \cref{sec:stability}. The genuine $\zeta$ oscillates about zero on the
+negative axis, with the trivial zeros as its crossings; the tide fills in the shallow
+dips where $\zeta<0$ and erases the crossing pairs that bound them, and as $K$ grows
+the tide recedes and uncovers the zeros (\cref{fig:trivial}a). Three things follow.
+
+\paragraph{The first trivial zero $-2$ is inherited, not born.}
+The dip on $(-2,0)$ is bounded on the right by the pole side, not by a zero, so the
+endpoint's lone real zero (the $s=-1$ of $1/(s-1)+\tfrac12$) is never destroyed: it
+simply slides leftward and limits onto $-2$, as $-2+a_1/K$ with
+$a_1=-\,(-2)/\bigl(2\pi^2\zeta'(-2)\bigr)\approx3.327$. The bland integral's single
+zero is the seed of the entire trivial string.
+
+\paragraph{The rest are born as conjugate pairs that pinch onto the axis.}
+Below its birth-$K$ a pair is not absent from the plane: it is a complex-conjugate
+pair sitting \emph{off} the real axis, near an odd-integer midpoint $-(4j+1)$. As $K$
+grows the pair descends, \emph{pinches} onto $\Im s=0$, and splits, one zero sliding
+right toward $-4j$ and one left toward $-(4j+2)$ (\cref{fig:trivial}b). For example
+the $\{-4,-6\}$ pair runs $-4.75+0.88\iu$ at $K=30$, pinches near $-4.78$ at
+$K\approx62$, then splits to $-4$ and $-6$.
+
+\begin{observation}[The trivial zeros mirror the non-trivial story]\label{obs:mirror}
+This is the non-trivial picture rotated onto the real axis and run in pairs. The
+non-trivial zeros are \emph{born off their locus and migrate onto it}; so are these,
+except the locus is the negative real axis and the approach is a conjugate pair
+pinching onto it from above and below. The one feature with no non-trivial analogue
+is the \emph{birth event} itself: the non-trivial families are present already at
+$K=1$ and only migrate thereafter, whereas a trivial pair must first pinch onto the
+axis before it exists as two real zeros.
+\end{observation}
+
+\paragraph{Deep valleys are born first.}
+A pair clears the tide once $|s_{\mathrm{mid}}|/(2\pi^2K)$ drops below the valley
+depth $|\zeta(s_{\mathrm{mid}})|$, i.e.\ at
+\begin{equation}\label{eq:pinchK}
+  K_{\mathrm{pinch}}\;\approx\;\frac{|s_{\mathrm{mid}}|}{2\pi^2\,|\zeta(s_{\mathrm{mid}})|},
+  \qquad s_{\mathrm{mid}}=-(4j+1).
+\end{equation}
+Since $|\zeta(-(2m+1))|=|B_{2m+2}|/(2m+2)$ grows \emph{factorially}, the deep valleys
+are bottomless and their pairs are present already at $K\sim1$, while the
+\emph{shallowest} valley is the first one (depth $|\zeta(-5)|\approx0.004$), so the
+$\{-4,-6\}$ pair is the \emph{last} to clear: not born until $K\approx62$ (measured),
+against $K\approx64$ from \eqref{eq:pinchK}, whereas the deeper $\{-12,-14\}$ pair is
+already born by $K\approx8$ (\cref{fig:trivial}c). The negative axis thus fills in
+from both ends, and the hardest trivial zeros to resolve are $-4$ and $-6$.
+
+This account needs no new machinery. The displacement law \eqref{eq:disp} applies
+verbatim with target $\zeta$ and $\rho=-2n$: the trivial displacement coefficient is
+identically the comb's $a_1(-2n)$ to full precision. What is genuinely new on this
+axis is only the birth event of \cref{obs:mirror}---the conjugate-pair pinch and its
+valley-depth birth-$K$ law \eqref{eq:pinchK}---which the non-trivial families never
+undergo. With it the bridge accounts for \emph{all} of $\zeta$'s zeros: the
+condensation of the non-trivial ones onto their critical lines, and the birth of the
+trivial ones out of a zeroless endpoint.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{trivial_zeros.png}
+  \caption{Where the trivial zeros come from. \emph{(a)} On the negative real axis
+  the $O(1/K)$ tail is a rising tide $+|s|/(2\pi^2K)$ \eqref{eq:tide} that lifts
+  $\zeta^{(K)}$ above zero and recedes as $K$ grows, uncovering the trivial zeros at
+  $-2,-4,-6,\dots$; the inherited endpoint zero ($K=0$) is marked. \emph{(b)} Each
+  born pair starts as a complex-conjugate pair off the axis, descends as $K$ grows,
+  pinches onto $\Im s=0$, and splits toward adjacent even integers. \emph{(c)} The
+  birth-$K$ law \eqref{eq:pinchK}: valley depth grows factorially, so deep pairs are
+  born first and the shallow $\{-4,-6\}$ pair is born last (measured points against
+  the law).}
+  \label{fig:trivial}
 \end{figure}
 
 % =====================================================================
