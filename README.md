@@ -36,11 +36,15 @@ cached Riemann zeros in `data/riemann_zeros.csv` and reuses a few spectral-stati
 helpers (`gue_spacing`, `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`)
 that are vendored into `bridge/` alongside it.
 
-Two small companion drivers illustrate the warp itself (see [`RESULTS.md`](RESULTS.md)):
+Four small companion drivers extend the arc (see [`RESULTS.md`](RESULTS.md)):
 `warp_coordinate.py` draws the coordinate `n* = x + φ_K(x)` bending from a straight line
-into the midpoint staircase as `K` grows (Gibbs wobble and all), and
-`warp_phase_compare.py` contrasts the midpoint staircase (`α = ½`, half-integers) with the
-integer one (`α = 1`, counting numbers) — and why a pure-`x` start forces the former.
+into the midpoint staircase as `K` grows (Gibbs wobble and all); `warp_phase_compare.py`
+contrasts the midpoint staircase (`α = ½`, half-integers) with the integer one (`α = 1`,
+counting numbers) — and why a pure-`x` start forces the former; `warp_eta.py` warps the **η**
+integrand `cos(πx)x^{-s}` and finds the midpoint `α = ½` *annihilated* (`cos(π(m+½)) = 0`), so
+only `α = 1` survives — reproducing the σ=½ ∪ σ=1 split by a second route; and `stability.py`
+shows each `K`-truncated interpolant is meromorphic on **all of ℂ** (no abscissa — it converges
+at σ<0 too), the cost being *height* `t`, not `Re s`.
 
 ## Quickstart
 
@@ -67,7 +71,7 @@ layout conventions.
 ## Layout
 
 ```
-bridge/        the six drivers + the vendored spectral-statistics helpers (flat; bare cross-imports)
+bridge/        the six core drivers + four companions + vendored spectral-statistics helpers (flat; bare cross-imports)
   figures/     generated PNGs (gitignored)
 data/          riemann_zeros.csv (cached non-trivial zeros)
 tests/         one test module per driver
@@ -106,8 +110,9 @@ arXiv upload.
 ## Provenance
 
 This repository is the self-contained **bridge arc**, extracted from the author's
-larger research project; it carries the six arc drivers plus the vendored
-spectral-statistics helpers they depend on, and nothing else.
+larger research project; it carries the six core arc drivers (with four small
+companions) plus the vendored spectral-statistics helpers they depend on, and
+nothing else.
 
 ## License
 

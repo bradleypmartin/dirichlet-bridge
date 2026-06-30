@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """One-command reproduction of every figure in the discrete <-> continuous bridge.
 
-Runs each of the six arc drivers in `bridge/` as a fresh subprocess. Each driver
+Runs each of the arc drivers in `bridge/` as a fresh subprocess. Each driver
 self-validates (asserts its identities to full precision) and writes its figure(s)
 to `bridge/figures/`, so a green run of this script reproduces the whole arc from
 scratch and confirms the numerics on the way.
@@ -13,8 +13,8 @@ Usage
     python repro.py cont_eta rate_law   # run only the named driver(s)
 
 Exit code is non-zero if any driver errors or fails to (re)write its figure(s).
-Total runtime is roughly 12-13 minutes (see the per-driver estimates below); the
-two migration drivers `harmonic_bridge` and `warp_bridge` dominate (~4-5 min each).
+Total runtime is roughly 18-20 minutes (see the per-driver estimates below); the
+migration drivers `harmonic_bridge`, `warp_bridge` and `warp_eta` dominate.
 """
 import argparse
 import os
@@ -37,7 +37,9 @@ DRIVERS: List[Tuple[str, List[str], str]] = [
     ("warp_coordinate",   ["warp_coordinate.png"],                       "~5 s"),
     ("warp_phase_compare", ["warp_phase_compare.png"],                   "~5 s"),
     ("warp_alpha",        ["warp_alpha.png"],                            "~20 s"),
+    ("warp_eta",          ["warp_eta.png"],                              "~3 min"),
     ("rate_law",          ["rate_law.png", "rate_law_loose_ends.png"],   "~3 min"),
+    ("stability",         ["stability.png"],                             "~2 min"),
     ("eta_two_component", ["eta_two_component.png"],                     "~2 s"),
 ]
 
