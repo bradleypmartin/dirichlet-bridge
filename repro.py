@@ -32,6 +32,7 @@ FIGURES_DIR = BRIDGE_DIR / "figures"
 # Runtimes are wall-clock on a laptop; the two migration drivers dominate (~10 min total).
 DRIVERS: List[Tuple[str, List[str], str]] = [
     ("cont_eta",          ["cont_eta.png"],                              "~10 s"),
+    ("comb_vs_warp",      ["comb_vs_warp.png"],                          "~1 min"),
     ("harmonic_bridge",   ["harmonic_bridge.png"],                       "~4 min"),
     ("warp_bridge",       ["warp_bridge.png"],                           "~5 min"),
     ("warp_coordinate",   ["warp_coordinate.png"],                       "~5 s"),

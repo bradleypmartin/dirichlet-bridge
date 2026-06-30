@@ -36,7 +36,11 @@ cached Riemann zeros in `data/riemann_zeros.csv` and reuses a few spectral-stati
 helpers (`gue_spacing`, `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`)
 that are vendored into `bridge/` alongside it.
 
-Five small companion drivers extend the arc (see [`RESULTS.md`](RESULTS.md)):
+Six small companion drivers extend the arc (see [`RESULTS.md`](RESULTS.md)):
+`comb_vs_warp.py` draws the two restoration routes side by side at the level of the
+integrand — the additive comb `x^{-s} + s·φ_K(x)·x^{-s-1}` (kernel *added*; `x` linear)
+vs the warp `(x + φ_K(x))^{-s}` (kernel *composed into the argument*; `x` warped) — the
+single clearest picture of how the two methods differ, both built from the same `φ_K`;
 `warp_coordinate.py` draws the coordinate `n* = x + φ_K(x)` bending from a straight line
 into the midpoint staircase as `K` grows (Gibbs wobble and all); `warp_phase_compare.py`
 contrasts the midpoint staircase (`α = ½`, half-integers) with the integer one (`α = 1`,
@@ -74,7 +78,7 @@ layout conventions.
 ## Layout
 
 ```
-bridge/        the six core drivers + four companions + vendored spectral-statistics helpers (flat; bare cross-imports)
+bridge/        the six core drivers + six companions + vendored spectral-statistics helpers (flat; bare cross-imports)
   figures/     generated PNGs (gitignored)
 data/          riemann_zeros.csv (cached non-trivial zeros)
 tests/         one test module per driver
