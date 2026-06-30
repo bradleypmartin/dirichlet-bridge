@@ -278,6 +278,42 @@ finite precision, itself height-set (the `e^{πt/2}` cancellations the warp eval
 tames near `t ≈ 110`); the `O(1/K)` descent is otherwise clean, and in exact
 arithmetic more harmonics always help.
 
+### Companion — where the trivial zeros come from (`trivial_zeros.py`)
+
+![Trivial zeros born on the negative real axis: a rising tide carves -2, -4, -6, ...](bridge/figures/trivial_zeros.png)
+
+**What it shows.** The migration story so far is about *non-trivial* zeros. But ζ also
+has the **trivial** zeros at `s = −2, −4, −6, …`, and the bland endpoint `1/(s−1)+½`
+has none of them (it has a single real zero, at `s = −1`). Because `ζ^{(K)}` converges
+with no abscissa (the stability result above), we can follow the negative real axis and
+watch them appear. On that axis the `O(1/K)` tail acts as a **rising tide**,
+`ζ^{(K)}(s) ≈ ζ(s) + |s|/(2π²K)`, lifting ζ uniformly upward; the lift recedes as `K`
+grows and uncovers the trivial zeros. Three findings, all self-validated:
+
+- **The first trivial zero `−2` is *inherited*, not born.** The bland endpoint's lone
+  zero (`−1`) just slides leftward and limits onto `−2` as `−2 + 3.327/K` (panel a). The
+  bland integral's single zero is the seed of the whole trivial string.
+- **The rest are *born* as conjugate pairs that pinch onto the axis.** Below its birth-`K`
+  a pair sits **off** the real axis (a complex-conjugate pair near an odd-integer
+  midpoint); as `K` grows it descends, **pinches** onto `Im s = 0`, and splits — one zero
+  to `−2(2j)`, one to `−2(2j+1)` (panel b). It is the trivial-zero mirror of the
+  non-trivial story: *born off the locus, migrate onto it*, rotated ninety degrees (onto
+  the real axis) and in pairs.
+- **Depth beats shallowness — deep pairs are born first.** A pair clears the tide at
+  `K_pinch ≈ |s_mid|/(2π²|ζ(s_mid)|)`, and `|ζ(−(2m+1))|` grows *factorially*, so the deep
+  dips are bottomless and their pairs are present already at `K ~ 1`, while the shallowest
+  dip — the first one — is the last to clear: the `{−4,−6}` pair is not born until
+  `K ≈ 62` (panel c). The negative axis fills in from both ends; the hardest trivial zeros
+  to resolve are `−4` and `−6`.
+
+**Why it matters.** It closes the bridge's account of the zeros: not just the
+condensation of the non-trivial zeros onto their lines, but the **birth of the trivial
+zeros** out of a zeroless endpoint. And it needs no new constants — the unified
+displacement law of §5 applies *verbatim* with target `ζ` and `ρ = −2n`
+(`disp_coeff_trivial(n) == rate_law.disp_coeff("comb_zeta", −2n)`); what is genuinely new
+on this axis is the **birth event** itself, the conjugate-pair pinch and its valley-depth
+birth-`K` law, which the non-trivial families (born immediately at `K = 1`) never undergo.
+
 ---
 
 ## 6. The two-component η spectrum — `eta_two_component.py`
@@ -311,7 +347,7 @@ tie-in** — not the `log 2` frequency itself. (See issue #2 for the full
 ## Reproducing everything
 
 ```bash
-python repro.py        # regenerates all eleven figures above (~18 min; harmonic/warp/eta dominate)
+python repro.py        # regenerates all twelve figures above (~20 min; harmonic/warp/eta dominate)
 pytest                 # fast self-checks (the slow high-precision suite: pytest -m slow)
 ```
 

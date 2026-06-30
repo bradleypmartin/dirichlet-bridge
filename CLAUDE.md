@@ -68,6 +68,14 @@ for pytest.
 - `stability.py` — the stability corollary of the rate law: each finite-`K`
   interpolant is meromorphic on all of ℂ (no abscissa; converges at σ<0), and the
   cost is **height** `t`, not `Re s` (error ∼ `|s|/(2π²K)`).
+- `trivial_zeros.py` — where the **trivial** zeros come from (issue #10): on the
+  negative real axis the same `O(1/K)` tail acts as a rising tide `+|s|/(2π²K)` that
+  lifts ζ and carves zeros onto `−2n`. The first zero `−2` is *inherited* (the bland
+  endpoint's lone zero at `−1` slides onto it); the rest are *born* as conjugate
+  pairs that pinch onto the axis near the odd-integer midpoints and split. Deep dips
+  are factorially deep → born first; the shallow `{−4,−6}` pair is born last
+  (`K≈62`). Reuses `rate_law.disp_coeff` verbatim at `ρ=−2n` (depends on
+  `harmonic_bridge`, `rate_law`).
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→
