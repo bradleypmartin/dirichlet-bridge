@@ -24,3 +24,5 @@ bridge/figures/*.png
 !bridge/figures/rate_law.png
 !bridge/figures/rate_law_loose_ends.png
 !bridge/figures/eta_two_component.png
+!bridge/figures/warp_eta.png
+!bridge/figures/stability.png

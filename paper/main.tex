@@ -155,9 +155,13 @@ obeys the Riemann--von Mangoldt counting law. \Cref{sec:comb} restores
 discreteness \emph{additively} and exhibits the zero-migration map.
 \Cref{sec:warp} restores it by a nonlinear \emph{warp} of the integration
 variable, deliberately targeting $\zeta(s,\tfrac12)$, and leads with the algebra
-that makes the half-integer object \emph{contain} $\zeta$. \Cref{sec:alpha}
+that makes the half-integer object \emph{contain} $\zeta$; a short supplement
+(\cref{sec:etawarp}) warps the $\eta$ integrand itself and finds the midpoint
+phase annihilated by its $\cos$ sign-carrier. \Cref{sec:alpha}
 generalizes the warp to arbitrary phase and recovers the $P\cdot L$ dichotomy.
-\Cref{sec:rate} is the unifying $O(1/K)$ rate law. \Cref{sec:two} reads the
+\Cref{sec:rate} is the unifying $O(1/K)$ rate law, with a stability corollary
+(\cref{sec:stability}): every finite-$K$ interpolant is meromorphic on all of
+$\mathbb{C}$, with no abscissa of convergence. \Cref{sec:two} reads the
 $\eta$ zeros as a two-component spectrum. \Cref{sec:prior} foregrounds the
 prior-art deflators and gives the de Bruijn--Newman contrast, and
 \cref{sec:repro} points to the reproducible code.
@@ -448,6 +452,58 @@ carries the $\sigma=0$ companion. Choosing $\alpha=1$ recovers plain $\zeta(s)$
 and the literal counting numbers, but at the cost of the pristine endpoint
 \emph{and} the companion line.
 
+\subsection{Warping the $\eta$ integral: why $\alpha=\tfrac12$ is a $\zeta$-only
+luxury}\label{sec:etawarp}
+
+The warp has so far acted only on the \emph{bland} integrand $x^{-s}$. It is
+natural to ask what it does to the bridge's \emph{structured} endpoint, the
+continuous-$\eta$ integral \eqref{eq:conteta}: warp the whole integrand,
+sign-carrier and all,
+\begin{equation}\label{eq:etawarp}
+  \int_1^\infty \cos(\pi n^\ast)\,(n^\ast)^{-s}\,\dd x,
+  \qquad n^\ast = x + (\alpha-\tfrac12) + \varphi_K(x).
+\end{equation}
+The period-by-period collapse is $\sum_{m\ge1}(-1)^m\int_0^1\cos(\pi
+g)(m+g)^{-s}\,\dd u$ with $g(u)=u+(\alpha-\tfrac12)+\varphi_K(u)$, and as
+$K\to\infty$ each cell lands on $\cos(\pi(m+\alpha))\,(m+\alpha)^{-s}$. The phase
+now matters in a way it did not for $\zeta$:
+\begin{itemize}[leftmargin=1.4em]
+\item \textbf{The midpoint phase $\alpha=\tfrac12$ is annihilated.}
+  $\cos(\pi(m+\tfrac12))=0$ identically: the midpoint lattice $\{m+\tfrac12\}$
+  \emph{is the zero set of the $\eta$ sign-carrier} $\cos(\pi x)$, so
+  \eqref{eq:etawarp} collapses to $0$ (numerically as $O(1/K)$, the finite-$K$
+  residual being the Gibbs smoothing of those zeros). The elegant half-shift of
+  \cref{sec:warp} has \emph{nothing to land on}.
+\item \textbf{Only the integer phase $\alpha=1$ survives.} There
+  $\cos(\pi(m+1))=(-1)^{m+1}$, so \eqref{eq:etawarp} $\to-\eta(s)+1$; restoring the
+  omitted $n=1$ cell $\cos\pi\cdot1^{-s}=-1$ (the load-bearing lower-endpoint term,
+  the $\eta$-form of the warp's $+2^{s}$) completes it to
+  $\eta(s)=(1-2^{1-s})\zeta(s)$. Its zeros are the genuine $\zeta$ zeros on
+  $\sigma=\tfrac12$ together with the $1-2^{1-s}$ comb on $\sigma=1$: the
+  \emph{same} split the additive comb produced in \cref{sec:comb}, now reached by
+  the independent warp mechanism (\cref{fig:etawarp}), at the same $O(1/K)$ rate.
+\end{itemize}
+This sharpens \cref{sec:phasecompare}: $\zeta$ could afford $\alpha=\tfrac12$
+(keeping the pristine zeroless endpoint \emph{and} a clean line) because its
+integrand $x^{-s}$ has no zeros on the half-integer lattice. The $\eta$
+integrand does, so $\eta$ is forced onto $\alpha=1$ and pays the DC-offset endpoint
+that $\zeta$ avoided. The half-shift is special for $\zeta$ because the discreteness
+it samples carries no alternating sign.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\textwidth]{warp_eta.png}
+  \caption{Warping the $\eta$ integral \eqref{eq:etawarp}. \emph{Left:} the
+  obstruction. The midpoints $m+\tfrac12$ that the $\alpha=\tfrac12$ warp samples
+  are the zeros of the $\eta$ sign-carrier $\cos(\pi x)$, while the integers
+  $m$ that $\alpha=1$ samples sit on its extrema $\pm1$. \emph{Middle:} consequently
+  $\alpha=1$ rebuilds $\eta$ at $O(1/K)$ while the $\alpha=\tfrac12$ warp vanishes.
+  \emph{Right:} the $\alpha=1$ $\eta$-warp's zeros migrate onto $\sigma=\tfrac12$
+  (genuine $\zeta$ zeros) and $\sigma=1$ (the prefactor comb): the same split as
+  the additive comb (\cref{fig:comb}), by a second, independent route.}
+  \label{fig:etawarp}
+\end{figure}
+
 % =====================================================================
 \section{The general phase and the $P\cdot L$ dichotomy}\label{sec:alpha}
 % =====================================================================
@@ -544,6 +600,52 @@ This is where the package stops being several separate demonstrations and become
 one law: a single rate constant and displacement coefficient, route by route,
 plus a Gram's-law coupling on the vertical axis. It is the synthesis around which
 the whole study is organized.
+
+\subsection{Stability of the interpolants: no abscissa, height is the cost}
+\label{sec:stability}
+
+The rate law also settles a question the Dirichlet series provokes: how far into
+the plane do the truncated objects remain valid? The series $\sum n^{-s}$ converges
+only for $\Re s>1$ and its alternating cousin only for $\Re s>0$, so one might
+expect $\zeta^{(K)}$ to inherit a barrier. It does not. Each $\zeta^{(K)}$ is
+\emph{not} a partial sum of a Dirichlet series but $1/(s-1)+\tfrac12$ plus finitely
+many harmonics, every one of which is an incomplete-gamma closed form, entire in
+$s$ for its fixed nonzero argument. So every finite-$K$ interpolant is meromorphic
+on all of $\mathbb{C}$, with the single pole at $s=1$ and \emph{no abscissa of
+convergence at all}: the zeroless endpoint $1/(s-1)$ already shows this, and each
+harmonic preserves it. The interpolant is its own analytic continuation, strictly
+better behaved than either series.
+
+The cost of reaching deep into the plane is therefore not a half-plane boundary but
+\emph{height}, and two facts make this precise (\cref{fig:stability}). First,
+$\Re s$ is essentially free: $\zeta^{(K)}\to\zeta$ at the \emph{same} $O(1/K)$ rate
+at $\sigma=-2$ as at $\sigma=2$, the convergence curves for
+$\sigma\in\{-2,-\tfrac12,\tfrac12,2\}$ lying on top of one another. Second, the cost
+is set by $t=\Im s$ through the comb rate constant $\Delta_1=s/(2\pi^2)$ of
+\cref{sec:rate} (the sawtooth tail \eqref{eq:tail}): the fixed-$K$ error tracks
+$|s|/(2\pi^2K)$, growing linearly with height. This is the convergence-side face of
+the birth-$K$ law (higher, denser zeros need proportionally more harmonics), and it
+depends on $t$, not on any vertical line in $\sigma$.
+
+The only genuine limit is finite precision, and it too is governed by height: at
+large $t$ the moment evaluators carry $\eu^{\pi t/2}$-scale cancellations, so a
+fixed working precision eventually floors (we observe this near $|\Im s|\approx110$
+and remove it by scaling precision, term count and quadrature degree with $|\Im s|$).
+But the $O(1/K)$ convergence is slow enough that at moderate height this floor sits
+far below the achievable error and the descent stays clean; in exact arithmetic
+there is no divergence at any $K$, and more harmonics always help.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.92\textwidth]{stability.png}
+  \caption{Where the $K$-truncated interpolants are stable. \emph{Left:} the
+  convergence error $|\zeta^{(K)}-\zeta|$ vs.\ $K$ collapses onto one $O(1/K)$ line
+  for every $\sigma$, including $\sigma<0$ where both Dirichlet series diverge, so
+  there is no abscissa. \emph{Right:} at fixed $K$ the error grows linearly with
+  height $t$, tracking the analytic rate constant $|s|/(2\pi^2K)$: the cost is
+  height, not $\Re s$.}
+  \label{fig:stability}
+\end{figure}
 
 % =====================================================================
 \section{The two-component $\eta$ spectrum}\label{sec:two}
@@ -645,22 +747,48 @@ structure factor \citep{MadisonMadisonKozyrev2023,Shaughnessy2024}) supply the
 measures (a value-distribution statement, not a zero-statistics one).
 
 \subsection{Contrast with the de Bruijn--Newman heat flow}
-Our deformation should not be confused with the de Bruijn--Newman heat flow. In
-that picture the family $H_t = \eu^{t\Delta}H_0$ is, for \emph{every} value of the
-flow parameter $t$, an entire function of order one carrying the full infinite
-complement of $\xi$-type zeros at Weyl density; the backward heat flow merely
-transports these already-existing zeros (by a Calogero--Moser-type ODE)
+Our deformation should not be confused with the de Bruijn--Newman heat flow,
+though the two sides of the bridge stand in different relations to it. In the
+heat-flow picture the family $H_t = \eu^{t\Delta}H_0$ is, for \emph{every} value
+of the flow parameter $t$, an entire function of order one carrying the full
+infinite complement of $\xi$-type zeros at Weyl density; the backward heat flow
+merely transports these already-existing zeros (by a Calogero--Moser-type ODE)
 onto or off the real axis, and the de Bruijn--Newman constant $\Lambda$ (now known
 to satisfy $0\le\Lambda\le 0.22$, with RH $\Longleftrightarrow\Lambda=0$ after
 \citealp{RodgersTao2020,Polymath2019DBN}) marks the threshold at which an existing
 configuration has become entirely real. No zeros are created or destroyed; the
 question is purely \emph{when} a fixed-cardinality configuration becomes all-real.
-By contrast, our harmonic-count knob $K$ interpolates from a genuinely zeroless
-endpoint (the bare continuous integral \eqref{eq:bland}, which has no
-non-trivial zeros at all) to the full Dirichlet series, and the non-trivial
-zeros are \emph{born} as $K$ increases and then migrate to the critical line.
-Ours is a creation-and-migration mechanism from a zeroless endpoint, not a
-real-ification of a pre-existing infinite zero set.
+
+\paragraph{The $\zeta$ side: creation, not real-ification.}
+On the $\zeta$ side the contrast is sharp. The harmonic-count knob $K$ interpolates
+from a genuinely \emph{zeroless} endpoint (the bare continuous integral
+\eqref{eq:bland}, equivalently the $K=0$ warp object, which has no non-trivial
+zeros at all) to the full Dirichlet series, and the non-trivial zeros are
+\emph{born} as $K$ leaves $0$ and only then migrate to the critical line
+(\cref{obs:born}). There is no fixed pre-existing configuration being rearranged,
+and no $\Lambda$-type threshold: this is creation-and-migration from a zeroless
+endpoint, not the real-ification of a pre-existing infinite zero set.
+
+\paragraph{The $\eta$ side: the nearer cousin, but still distinct.}
+On the $\eta$ side the analogy is closer, and we flag it rather than paper over it.
+The $K=0$ ground string there is \emph{not} zeroless: it is $-F(s)+\tfrac12$, which
+already carries an infinite zero string at the full Riemann--von Mangoldt density
+(\cref{obs:density}); as $K\to\infty$ those zeros are \emph{transported}, not
+created, in the same fixed-cardinality, density-preserving motion of a pre-existing
+infinite zero set that the heat-flow picture has. Three features nonetheless keep
+it distinct. First, the destination is a pair of \emph{vertical} critical lines
+($\sigma=\tfrac12$ and $\sigma=1$), not the real axis of a symmetrised $\xi$.
+Second, the motion is a density-conserving \emph{split}: the single ground string
+is \emph{sorted} onto two lines with the density bookkeeping of
+\eqref{eq:etadensity}, a bifurcation driven by the arithmetic $1-2^{1-s}$ comb for
+which the heat flow (which keeps one configuration on one axis) has no
+analogue. Third, the deformation parameter is a harmonic count, the dynamics are
+not a Calogero--Moser gradient flow, and there is no value of $K$ at which an
+all-line configuration is first achieved: the lines are reached only in the
+limit. So the bridge separates a genuine ``born from nothing'' mechanism ($\zeta$)
+from a ``transported and sorted'' one ($\eta$); only the latter resembles the heat
+flow, and even then only in the weak sense that a pre-existing infinite zero set is
+moved by a parameter.
 
 \subsection{Contrast with Taylor-section and resummation routes}
 Our rate is algebraic, $O(1/K)$ \eqref{eq:tail}. This distinguishes the
@@ -678,7 +806,7 @@ family uniformly $O(1/K)$ across all routes.
 Every figure in this paper is produced by a driver of the same name in the
 accompanying repository, and every driver self-validates its identities to full
 precision before it plots, so each figure doubles as a numerical certificate. The
-nine figures are regenerated together by a single command:
+eleven figures are regenerated together by a single command:
 \begin{quote}
 \texttt{python repro.py}\quad(regenerates all figures);\qquad
 \texttt{pytest}\quad(fast self-checks; \texttt{pytest -m slow} for the

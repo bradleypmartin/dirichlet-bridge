@@ -40,7 +40,7 @@ Targets **Python 3.9** — keep code 3.9-compatible (`typing.Union`, *not* PEP 6
 
 - Setup: `python -m venv .venv` then `pip install -r requirements.txt`
   (numpy, scipy, mpmath, matplotlib, pytest — pinned).
-- Fast suite: `pytest` (66 tests, ~60 s; the slow high-precision checks are
+- Fast suite: `pytest` (82 tests, ~110 s; the slow high-precision checks are
   deselected by default via `addopts = -m "not slow"` in `pytest.ini`).
 - Slow suite: `pytest -m slow`.
 - Each driver self-validates and writes a figure, e.g.
@@ -59,8 +59,15 @@ for pytest.
   companion; the measured σ=½ + σ=0 bijection.
 - `warp_alpha.py` — the general-phase `n+α` warp → `ζ(s,α)`; the
   Saias–Weingartner `P·L` dichotomy.
+- `warp_eta.py` — warps the **η** integrand `cos(πx)x^{-s}` (supplement to the
+  warp): the midpoint `α=½` is annihilated (`cos(π(m+½))=0`), only `α=1` survives →
+  `η=(1−2^{1-s})ζ`, reproducing the σ=½ ∪ σ=1 split by a second route. Reuses the
+  `warp_bridge` moment machinery (cos-weighted moments + alternating `−η` tail).
 - `rate_law.py` — the unified `O(1/K)` rate / birth-`K` law; the Gram's-law
   vertical-axis duality.
+- `stability.py` — the stability corollary of the rate law: each finite-`K`
+  interpolant is meromorphic on all of ℂ (no abscissa; converges at σ<0), and the
+  cost is **height** `t`, not `Re s` (error ∼ `|s|/(2π²K)`).
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→
@@ -68,8 +75,9 @@ for pytest.
 - `figstyle.py` — shared Matplotlib font bump (`figstyle.enlarge()`); each driver
   calls it before plotting so the embedded figures stay legible when scaled down in
   the preprint. The dense/long-title figures (`rate_law`, `eta_two_component`,
-  `warp_coordinate`) override `axes.titlesize`/`figure.titlesize` locally so titles
-  don't overrun. Changing sizes here means re-running `python repro.py`.
+  `warp_coordinate`, `warp_eta`) override `axes.titlesize`/`figure.titlesize`
+  locally so titles don't overrun. Changing sizes here means re-running
+  `python repro.py`.
 
 `data/riemann_zeros.csv` — cached non-trivial zeros (the **only** runtime data
 dependency). `tests/` — one test module per driver. `paper/` — the arXiv preprint

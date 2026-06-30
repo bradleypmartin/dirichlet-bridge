@@ -205,6 +205,31 @@ three privileged phases, framed by the right classical results (Saias–Weingart
 "clean lines only at `{0, ½, 1}`" picture is the load-bearing control that keeps
 the half-shift route honest.
 
+### Companion — warping the η integral (`warp_eta.py`)
+
+![Warping the eta integral: alpha=1/2 annihilated, alpha=1 reproduces the split](bridge/figures/warp_eta.png)
+
+**What it shows.** The warp so far acted only on the *bland* integrand `x^{−s}`. What
+happens if we warp the bridge's *structured* endpoint — the continuous-η integrand
+`cos(πx) x^{−s}` (§1) — whole, both terms? As `K → ∞` each cell lands on
+`cos(π(m+α))·(m+α)^{−s}`, and the phase suddenly matters:
+
+- **`α = ½` (midpoints) is annihilated.** `cos(π(m+½)) = 0` identically — the
+  half-integer lattice the midpoint warp samples is *exactly the zero set of the η
+  sign-carrier* `cos(πx)` — so the warp collapses to **0** (numerically `O(1/K) → 0`).
+  The elegant half-shift has nothing to land on.
+- **`α = 1` (counting numbers) survives** and rebuilds `η(s) = (1 − 2^{1−s})ζ(s)`,
+  whose zeros are the genuine ζ zeros on `σ = ½` **and** the `1 − 2^{1−s}` comb on
+  `σ = 1` — the *same* split the additive comb produced (§2), now reached by the
+  independent warp route. The omitted `n = 1` cell (`cos π · 1 = −1`) is the
+  load-bearing endpoint term, the η-form of the warp's `+2^s`.
+
+**Why it matters.** It sharpens *why* `α = ½` is the headline (§3): ζ can afford the
+midpoint phase — pristine endpoint *and* a clean line — precisely because `x^{−s}`
+has no zeros on the half-integer lattice. The η integrand does, so η is forced onto
+`α = 1` and pays the DC-offset endpoint ζ avoided. The half-shift is a ζ-only luxury
+because the discreteness it samples carries no alternating sign.
+
 ---
 
 ## 5. The unified rate law — `rate_law.py`
@@ -230,6 +255,28 @@ for the warp constant `C_warp` (a Gibbs boundary-layer integral), the tie of
 demonstrations and becomes one law: a single rate constant and displacement
 coefficient, route by route, plus a Gram's-law coupling on the vertical axis. It is
 the synthesis the whole repo is organized around.
+
+### Companion — stability: no abscissa, height is the cost (`stability.py`)
+
+![Stability: meromorphic everywhere; the cost is height, not Re(s)](bridge/figures/stability.png)
+
+**What it shows.** A question the Dirichlet series provokes: how far into the plane
+do the `K`-truncated objects stay valid? The series `Σ n^{−s}` converges only for
+`Re s > 1`, the alternating η-series only for `Re s > 0` — but `ζ^{(K)}` inherits
+**no such barrier**. Each `ζ^{(K)}` is `1/(s−1) + ½` plus finitely many harmonics,
+every one an incomplete-gamma *closed form* (entire in `s`), so it is **meromorphic
+on all of ℂ** — one pole at `s = 1`, **no abscissa of convergence**. The figure
+shows the two consequences: (left) the convergence error collapses onto one `O(1/K)`
+line for every `σ`, including `σ = −2` where both series diverge; (right) at fixed
+`K` the error grows linearly with **height** `t`, tracking the analytic rate
+constant `|s|/(2π²K)`.
+
+**Why it matters.** It inverts the Dirichlet intuition: `Re s` is essentially free,
+and the only cost is *height* — higher, denser zeros need proportionally more
+harmonics (the convergence-side face of the birth-`K` law). The one genuine limit is
+finite precision, itself height-set (the `e^{πt/2}` cancellations the warp evaluator
+tames near `t ≈ 110`); the `O(1/K)` descent is otherwise clean, and in exact
+arithmetic more harmonics always help.
 
 ---
 
@@ -264,7 +311,7 @@ tie-in** — not the `log 2` frequency itself. (See issue #2 for the full
 ## Reproducing everything
 
 ```bash
-python repro.py        # regenerates all nine figures above (~12 min; harmonic/warp dominate)
+python repro.py        # regenerates all eleven figures above (~18 min; harmonic/warp/eta dominate)
 pytest                 # fast self-checks (the slow high-precision suite: pytest -m slow)
 ```
 
