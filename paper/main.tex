@@ -469,8 +469,8 @@ $K\to\infty$ each cell lands on $\cos(\pi(m+\alpha))\,(m+\alpha)^{-s}$. The phas
 now matters in a way it did not for $\zeta$:
 \begin{itemize}[leftmargin=1.4em]
 \item \textbf{The midpoint phase $\alpha=\tfrac12$ is annihilated.}
-  $\cos(\pi(m+\tfrac12))=0$ identically --- the midpoint lattice $\{m+\tfrac12\}$
-  is \emph{exactly the zero set of the $\eta$ sign-carrier} $\cos(\pi x)$ --- so
+  $\cos(\pi(m+\tfrac12))=0$ identically: the midpoint lattice $\{m+\tfrac12\}$
+  \emph{is the zero set of the $\eta$ sign-carrier} $\cos(\pi x)$, so
   \eqref{eq:etawarp} collapses to $0$ (numerically as $O(1/K)$, the finite-$K$
   residual being the Gibbs smoothing of those zeros). The elegant half-shift of
   \cref{sec:warp} has \emph{nothing to land on}.
@@ -479,13 +479,13 @@ now matters in a way it did not for $\zeta$:
   omitted $n=1$ cell $\cos\pi\cdot1^{-s}=-1$ (the load-bearing lower-endpoint term,
   the $\eta$-form of the warp's $+2^{s}$) completes it to
   $\eta(s)=(1-2^{1-s})\zeta(s)$. Its zeros are the genuine $\zeta$ zeros on
-  $\sigma=\tfrac12$ together with the $1-2^{1-s}$ comb on $\sigma=1$ --- the
+  $\sigma=\tfrac12$ together with the $1-2^{1-s}$ comb on $\sigma=1$: the
   \emph{same} split the additive comb produced in \cref{sec:comb}, now reached by
   the independent warp mechanism (\cref{fig:etawarp}), at the same $O(1/K)$ rate.
 \end{itemize}
-This sharpens \cref{sec:phasecompare}: $\zeta$ could afford $\alpha=\tfrac12$ ---
-keeping the pristine zeroless endpoint \emph{and} a clean line --- precisely
-because its integrand $x^{-s}$ has no zeros on the half-integer lattice. The $\eta$
+This sharpens \cref{sec:phasecompare}: $\zeta$ could afford $\alpha=\tfrac12$
+(keeping the pristine zeroless endpoint \emph{and} a clean line) because its
+integrand $x^{-s}$ has no zeros on the half-integer lattice. The $\eta$
 integrand does, so $\eta$ is forced onto $\alpha=1$ and pays the DC-offset endpoint
 that $\zeta$ avoided. The half-shift is special for $\zeta$ because the discreteness
 it samples carries no alternating sign.
@@ -494,12 +494,12 @@ it samples carries no alternating sign.
   \centering
   \includegraphics[width=0.92\textwidth]{warp_eta.png}
   \caption{Warping the $\eta$ integral \eqref{eq:etawarp}. \emph{Left:} the
-  obstruction --- the midpoints $m+\tfrac12$ that the $\alpha=\tfrac12$ warp samples
-  are exactly the zeros of the $\eta$ sign-carrier $\cos(\pi x)$, while the integers
+  obstruction. The midpoints $m+\tfrac12$ that the $\alpha=\tfrac12$ warp samples
+  are the zeros of the $\eta$ sign-carrier $\cos(\pi x)$, while the integers
   $m$ that $\alpha=1$ samples sit on its extrema $\pm1$. \emph{Middle:} consequently
   $\alpha=1$ rebuilds $\eta$ at $O(1/K)$ while the $\alpha=\tfrac12$ warp vanishes.
   \emph{Right:} the $\alpha=1$ $\eta$-warp's zeros migrate onto $\sigma=\tfrac12$
-  (genuine $\zeta$ zeros) and $\sigma=1$ (the prefactor comb) --- the same split as
+  (genuine $\zeta$ zeros) and $\sigma=1$ (the prefactor comb): the same split as
   the additive comb (\cref{fig:comb}), by a second, independent route.}
   \label{fig:etawarp}
 \end{figure}
@@ -609,7 +609,7 @@ the plane do the truncated objects remain valid? The series $\sum n^{-s}$ conver
 only for $\Re s>1$ and its alternating cousin only for $\Re s>0$, so one might
 expect $\zeta^{(K)}$ to inherit a barrier. It does not. Each $\zeta^{(K)}$ is
 \emph{not} a partial sum of a Dirichlet series but $1/(s-1)+\tfrac12$ plus finitely
-many harmonics, every one of which is an incomplete-gamma closed form --- entire in
+many harmonics, every one of which is an incomplete-gamma closed form, entire in
 $s$ for its fixed nonzero argument. So every finite-$K$ interpolant is meromorphic
 on all of $\mathbb{C}$, with the single pole at $s=1$ and \emph{no abscissa of
 convergence at all}: the zeroless endpoint $1/(s-1)$ already shows this, and each
@@ -624,8 +624,8 @@ $\sigma\in\{-2,-\tfrac12,\tfrac12,2\}$ lying on top of one another. Second, the 
 is set by $t=\Im s$ through the comb rate constant $\Delta_1=s/(2\pi^2)$ of
 \cref{sec:rate} (the sawtooth tail \eqref{eq:tail}): the fixed-$K$ error tracks
 $|s|/(2\pi^2K)$, growing linearly with height. This is the convergence-side face of
-the birth-$K$ law --- higher, denser zeros need proportionally more harmonics ---
-and it depends on $t$, not on any vertical line in $\sigma$.
+the birth-$K$ law (higher, denser zeros need proportionally more harmonics), and it
+depends on $t$, not on any vertical line in $\sigma$.
 
 The only genuine limit is finite precision, and it too is governed by height: at
 large $t$ the moment evaluators carry $\eu^{\pi t/2}$-scale cancellations, so a
@@ -633,14 +633,14 @@ fixed working precision eventually floors (we observe this near $|\Im s|\approx1
 and remove it by scaling precision, term count and quadrature degree with $|\Im s|$).
 But the $O(1/K)$ convergence is slow enough that at moderate height this floor sits
 far below the achievable error and the descent stays clean; in exact arithmetic
-there is no divergence at any $K$ --- more harmonics always help.
+there is no divergence at any $K$, and more harmonics always help.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.92\textwidth]{stability.png}
   \caption{Where the $K$-truncated interpolants are stable. \emph{Left:} the
   convergence error $|\zeta^{(K)}-\zeta|$ vs.\ $K$ collapses onto one $O(1/K)$ line
-  for every $\sigma$, including $\sigma<0$ where both Dirichlet series diverge ---
+  for every $\sigma$, including $\sigma<0$ where both Dirichlet series diverge, so
   there is no abscissa. \emph{Right:} at fixed $K$ the error grows linearly with
   height $t$, tracking the analytic rate constant $|s|/(2\pi^2K)$: the cost is
   height, not $\Re s$.}
@@ -761,9 +761,9 @@ question is purely \emph{when} a fixed-cardinality configuration becomes all-rea
 
 \paragraph{The $\zeta$ side: creation, not real-ification.}
 On the $\zeta$ side the contrast is sharp. The harmonic-count knob $K$ interpolates
-from a genuinely \emph{zeroless} endpoint --- the bare continuous integral
+from a genuinely \emph{zeroless} endpoint (the bare continuous integral
 \eqref{eq:bland}, equivalently the $K=0$ warp object, which has no non-trivial
-zeros at all --- to the full Dirichlet series, and the non-trivial zeros are
+zeros at all) to the full Dirichlet series, and the non-trivial zeros are
 \emph{born} as $K$ leaves $0$ and only then migrate to the critical line
 (\cref{obs:born}). There is no fixed pre-existing configuration being rearranged,
 and no $\Lambda$-type threshold: this is creation-and-migration from a zeroless
@@ -774,17 +774,17 @@ On the $\eta$ side the analogy is closer, and we flag it rather than paper over 
 The $K=0$ ground string there is \emph{not} zeroless: it is $-F(s)+\tfrac12$, which
 already carries an infinite zero string at the full Riemann--von Mangoldt density
 (\cref{obs:density}); as $K\to\infty$ those zeros are \emph{transported}, not
-created --- the same fixed-cardinality, density-preserving motion of a pre-existing
+created, in the same fixed-cardinality, density-preserving motion of a pre-existing
 infinite zero set that the heat-flow picture has. Three features nonetheless keep
 it distinct. First, the destination is a pair of \emph{vertical} critical lines
 ($\sigma=\tfrac12$ and $\sigma=1$), not the real axis of a symmetrised $\xi$.
 Second, the motion is a density-conserving \emph{split}: the single ground string
-is \emph{sorted} onto two lines with the exact bookkeeping of
+is \emph{sorted} onto two lines with the density bookkeeping of
 \eqref{eq:etadensity}, a bifurcation driven by the arithmetic $1-2^{1-s}$ comb for
-which the heat flow --- which keeps one configuration on one axis --- has no
+which the heat flow (which keeps one configuration on one axis) has no
 analogue. Third, the deformation parameter is a harmonic count, the dynamics are
 not a Calogero--Moser gradient flow, and there is no value of $K$ at which an
-all-line configuration is first achieved --- the lines are reached only in the
+all-line configuration is first achieved: the lines are reached only in the
 limit. So the bridge separates a genuine ``born from nothing'' mechanism ($\zeta$)
 from a ``transported and sorted'' one ($\eta$); only the latter resembles the heat
 flow, and even then only in the weak sense that a pre-existing infinite zero set is
