@@ -13,7 +13,7 @@ Usage
     python repro.py cont_eta rate_law   # run only the named driver(s)
 
 Exit code is non-zero if any driver errors or fails to (re)write its figure(s).
-Total runtime is roughly 18-20 minutes (see the per-driver estimates below); the
+Total runtime is roughly 20-22 minutes (see the per-driver estimates below); the
 migration drivers `harmonic_bridge`, `warp_bridge` and `warp_eta` dominate.
 """
 import argparse
@@ -40,6 +40,7 @@ DRIVERS: List[Tuple[str, List[str], str]] = [
     ("warp_eta",          ["warp_eta.png"],                              "~3 min"),
     ("rate_law",          ["rate_law.png", "rate_law_loose_ends.png"],   "~3 min"),
     ("stability",         ["stability.png"],                             "~2 min"),
+    ("trivial_zeros",     ["trivial_zeros.png"],                         "~2 min"),
     ("eta_two_component", ["eta_two_component.png"],                     "~2 s"),
 ]
 

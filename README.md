@@ -36,15 +36,18 @@ cached Riemann zeros in `data/riemann_zeros.csv` and reuses a few spectral-stati
 helpers (`gue_spacing`, `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`)
 that are vendored into `bridge/` alongside it.
 
-Four small companion drivers extend the arc (see [`RESULTS.md`](RESULTS.md)):
+Five small companion drivers extend the arc (see [`RESULTS.md`](RESULTS.md)):
 `warp_coordinate.py` draws the coordinate `n* = x + φ_K(x)` bending from a straight line
 into the midpoint staircase as `K` grows (Gibbs wobble and all); `warp_phase_compare.py`
 contrasts the midpoint staircase (`α = ½`, half-integers) with the integer one (`α = 1`,
 counting numbers) — and why a pure-`x` start forces the former; `warp_eta.py` warps the **η**
 integrand `cos(πx)x^{-s}` and finds the midpoint `α = ½` *annihilated* (`cos(π(m+½)) = 0`), so
-only `α = 1` survives — reproducing the σ=½ ∪ σ=1 split by a second route; and `stability.py`
+only `α = 1` survives — reproducing the σ=½ ∪ σ=1 split by a second route; `stability.py`
 shows each `K`-truncated interpolant is meromorphic on **all of ℂ** (no abscissa — it converges
-at σ<0 too), the cost being *height* `t`, not `Re s`.
+at σ<0 too), the cost being *height* `t`, not `Re s`; and `trivial_zeros.py` follows that
+stability out to σ<0 to show where the **trivial** zeros come from — a rising tide `+|s|/2π²K`
+that carves `−2, −4, −6, …` onto the negative real axis, the first *inherited* from the bland
+endpoint's lone zero and the rest *born* as conjugate pairs that pinch onto the axis.
 
 ## Quickstart
 
