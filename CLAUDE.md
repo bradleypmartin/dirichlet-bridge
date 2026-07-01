@@ -82,6 +82,18 @@ for pytest.
   are factorially deep → born first; the shallow `{−4,−6}` pair is born last
   (`K≈62`). Reuses `rate_law.disp_coeff` verbatim at `ρ=−2n` (depends on
   `harmonic_bridge`, `rate_law`).
+- `jonquiere_zeros.py` — reproduces **Fornberg–Kölbig 1975** (the direct ancestor,
+  issue #15): the polylogarithm deformation `F(x,s)=Σ x^k k^{-s}` (`=mpmath.polylog`,
+  endpoints `F(1)=ζ`, `F(−1)=−η`) and its complex-zero trajectories as `x` sweeps
+  `(−1,1)`. Reproduces FK's two classes (P=0 → the pole `s=1`; the rest → ζ zeros, e.g.
+  `s0+(x,1,1)→s₁`, `(2,1)→s₂`, `(1,2)→s₃`), the **transient σ=½ brush + spiral about
+  `s₁`** (Figs. 6–7 — the foil: FK *approach but never land*, vs our `O(1/K)`), the
+  σ=1 log-2 comb `1+2πim/log2` (Eq. 23, an earlier deform-and-track appearance than
+  Sondow 2003), the trivial-zero real-axis trajectories → `−2N` (§6, cousin of
+  `trivial_zeros.py`), the argument-principle counts `Z(0.1)=27`,`Z(−0.1)=26` (Eq. 25),
+  and the `α±` counting constants (Eqs. 39–40). Self-contained (no bridge cross-imports).
+  Tracks zeros with a cancellation-free x→−1 series + a two-phase `|x|` schedule; near
+  `x=±1` it swaps `polylog` for the Eq. 26 expansion (speed). Feeds preprint work in #18.
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→
@@ -89,9 +101,9 @@ for pytest.
 - `figstyle.py` — shared Matplotlib font bump (`figstyle.enlarge()`); each driver
   calls it before plotting so the embedded figures stay legible when scaled down in
   the preprint. The dense/long-title figures (`rate_law`, `eta_two_component`,
-  `warp_coordinate`, `warp_eta`, `comb_vs_warp`) override `axes.titlesize`/`figure.titlesize`
-  locally so titles don't overrun. Changing sizes here means re-running
-  `python repro.py`.
+  `warp_coordinate`, `warp_eta`, `comb_vs_warp`, `jonquiere_zeros`) override
+  `axes.titlesize`/`figure.titlesize` locally so titles don't overrun. Changing sizes
+  here means re-running `python repro.py`.
 
 `data/riemann_zeros.csv` — cached non-trivial zeros (the **only** runtime data
 dependency). `tests/` — one test module per driver. `paper/` — the arXiv preprint
@@ -108,6 +120,9 @@ referenced from `bridge/figures/` via `\graphicspath` (not copied).
   adds sibling dir names that don't exist here (`maass/`, `prime_zero/`, …) —
   harmless; cleanup is tracked in **#4**.
 - Only `riemann_zeros.csv` is needed at runtime; the Maass eigenvalue CSV is not.
+- `_private/` is a gitignored local stash for full-text papers (`_private/papers/`)
+  and scratch material we keep organized but never commit (copyright + bulk).
+  Reproductions cite the paper; they don't ship it. The FK1975 PDF lives there.
 
 ## Status & open work (issues in this repo)
 - **#1 — Epic** (the hub; full scope + dependency graph).
