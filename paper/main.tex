@@ -224,8 +224,9 @@ by the corresponding integral gives
 \begin{equation}\label{eq:conteta}
   F(s) \;=\; \int_1^\infty \cos(\pi x)\, x^{-s}\,\dd x,
 \end{equation}
-which, unlike \eqref{eq:bland}, is genuinely structured: it has a closed form in
-incomplete gamma functions and a non-trivial zero string. Numerically (see
+which, unlike \eqref{eq:bland}, is genuinely structured: its analytic
+continuation has a closed form in incomplete gamma functions and a non-trivial
+zero string. Numerically (see
 \cref{fig:conteta}) the zeros of \eqref{eq:conteta} obey three laws, confirmed to
 $3$--$5$ digits over $8<t<160$:
 \begin{align}
@@ -256,6 +257,23 @@ $\sigma=\tfrac32$. ``Zeros with the right counting law'' is therefore a property
 of the continuum; ``those zeros on $\Re s = \tfrac12$'' is what restoring
 discreteness must supply. Closing that gap is the whole point of the bridge.
 \end{observation}
+
+\paragraph{Where these objects live.}
+Both endpoints---and every interpolant between them---are meant in the sense of
+analytic continuation. The bland integral \eqref{eq:bland} converges only for
+$\Re s>1$, and the Dirichlet series for $\zeta$ likewise; yet $1/(s-1)$,
+$\zeta(s)$, and every finite-$K$ object $\zeta^{(K)}$ are meromorphic on all of
+$\mathbb{C}$. The knob therefore interpolates between two \emph{analytic
+continuations}, never between two divergent expressions---and, tellingly, the
+entire zero-birth-and-migration story unfolds in the critical strip
+$0<\sigma<1$ (and, for the trivial zeros of \cref{sec:trivial}, at $\sigma<0$),
+where neither series converges. The Euler--Maclaurin mechanism behind this is
+classical; what we use it for is to keep the whole construction on the continued
+side, so that ``a zero is born at $\sigma=\tfrac12$'' is a statement about
+meromorphic functions rather than about summing a series that does not converge
+there. We make it precise as a no-abscissa stability result in
+\cref{sec:stability}, and give the fully elementary version---divergent series
+summed in closed form to their analytic values---in \cref{app:geometric}.
 
 % =====================================================================
 \section{Two routes, side by side: an added kernel vs.\ a warped variable}
