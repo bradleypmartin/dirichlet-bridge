@@ -262,10 +262,13 @@ foreground are `FornbergKolbig1975` (argument knob, §2) and `GarunkstisSteuding
 
 Our motion is the only one whose arrow points **onto** the line from **nothing**.
 
-> **Update — fork-2 executed (issue #20).** The K-knob + warp have now been run on a genuine
+> **Update — fork-2 executed (issues #20, #21).** The K-knob + warp have now been run on a genuine
 > primitive **Dirichlet L-function**, `L(s,χ₄)` (`bridge/lfunction_bridge.py`), and the
-> `born-and-migrate-onto-½` behaviour **survives** — and is *cleaner* there than for ζ/η. Full
-> write-up in **§4.10**; the ledger row (§5) is updated accordingly.
+> `born-and-migrate-onto-½` behaviour **survives** — and is *cleaner* there than for ζ/η (**§4.10**).
+> Separately, the closest *published* analogues — the **Hurwitz/Lerch α-sweep** of Garunkštis–Steuding
+> (2007) and Garunkštis–Tamošiūnas (2017) — are now **reproduced** (`bridge/hurwitz_lerch_zeros.py`,
+> **§4.11**), foregrounding the closest sibling and drawing the on/off-½ vs onto-½ contrast explicitly.
+> The ledger rows (§5) are updated accordingly.
 
 ### 4.1 Polylogarithm / Jonquière (argument knob) — the ancestor + a documented negative
 - **`FornbergKolbig1975`** — the ancestor; full treatment in §2.
@@ -292,7 +295,8 @@ Our motion is the only one whose arrow points **onto** the line from **nothing**
   half-shift target) — **re-frame it as the closest deform-and-track analogue**, not
   only the half-shift source. Caveat: both endpoints already carry infinitely many zeros
   (no birth), and the `α=½` endpoint is itself flagged as established ζ/η prior art.
-  **CLOSEST COUSIN (after FK).**
+  **CLOSEST COUSIN (after FK).** *Reproduced* in `bridge/hurwitz_lerch_zeros.py` (§4.11, #21):
+  the stable/unstable split and the `σ=0` companion-comb landings.
 
 ### 4.3 Lerch `L(λ,α,s)` — the deformation family that literally contains the bridge's objects
 - The two-parameter Lerch family `L(λ,α,s)=Σ_{m≥0} e^{2πiλm}(m+α)^{−s}` **contains our
@@ -306,6 +310,8 @@ Our motion is the only one whose arrow points **onto** the line from **nothing**
   symmetric about* `σ=½`; gives **parametric trajectory sweeps `½≤λ≤1`** with the `(1,1)`
   endpoint = ζ. **COUSIN** — a static structural-symmetry special point, largely
   numerical ("almost restored," not a proven RH analogue), not a birth-from-zeroless.
+  *Reproduced* as the `λ=α` diagonal in `bridge/hurwitz_lerch_zeros.py` (§4.11, #21): ζ's zeros
+  ride down onto `2^s L(s,χ₄)`'s, staying on `σ=½` (primitive L → no companion).
 - **`GarunkstisPanavas2022`** — *The zeros of the Lerch zeta-function are uniformly
   distributed modulo one*, Ukr. Math. J. 73 (9), doi `10.1007/s11253-022-01999-2` — a
   zero-*distribution* result, not deform-and-track. Earlier: Garunkštis–Steuding, *On
@@ -427,6 +433,53 @@ uses the **bridge's** discreteness knob, so it does *not* answer §4.8's open ga
 FK-style *argument-knob* study for L-functions). Kept public/exploratory; folds into the main draft
 (#5) only if a result warrants it (that draft stays ζ/η-only for now).
 
+### 4.11 Reproducing the published α-sweep analogues — Hurwitz + Lerch (issue #21, executed)
+
+`bridge/hurwitz_lerch_zeros.py` reproduces the **two closest *published* deform-and-track studies**
+(§4.2 `GarunkstisSteuding2007`, §4.3 `GarunkstisTamosiunas2017`) and foregrounds them as the
+paper's related-work needs. This is **reproduction + expository synthesis, not a novelty claim** —
+the honest counterweight to §4.10: the α-sweep is the *closest published sibling* of our K-knob, so
+we run it ourselves, distinguish it, and let the contrast carry the framing. Verified findings:
+
+- **The Garunkštis–Steuding Hurwitz α-trajectories, reproduced.** Track the zeros of `ζ(s,α)` as
+  the shift `α:1→½` (Newton-continued in `α`, seeded by the Riemann zeros at `α=1`). G–S call a zero
+  **"stable" iff its trajectory starts *and* ends on `Re s=½`.** Reproduced for the first 8: **5 are
+  stable** (they bulge off `½` — one wanders to `Re≈0.9`, another to `Re<0` — then return to a
+  Riemann zero at `α=½`) and **3 are unstable**, landing exactly on the **`σ=0` companion comb**
+  `s = 2πim/log 2 = 9.0647·m·i` (the `(2^s−1)` zeros of the half-shift — the *same* comb
+  `warp_bridge.py`'s target carries). Extending below `α=½` exhibits the Davenport–Heilbronn
+  off-line wandering (`|Re−½|` up to ~0.6), the continuous-trajectory view of `warp_alpha.py`'s
+  box-finder scatter.
+- **The Lerch family square — three published ancestors, one picture (the synthesis).** The
+  two-parameter family `L(λ,α,s)=Σ_{m≥0}e^{2πiλm}(m+α)^{−s}` holds the bridge's four objects at the
+  corners of the `(λ,α)` unit square (§4.3), and its **three deformation paths are exactly the three
+  published deform-and-track programs**, each landing on a *different* companion line:
+  - **`λ=1` edge** (`α:1→½`) = **Garunkštis–Steuding** Hurwitz shift → `(2^s−1)ζ`; companion on **`σ=0`**.
+  - **`α=1` edge** (`λ:1→½`) = **Fornberg–Kölbig** polylog argument knob (`jonquiere_zeros.py`) in
+    disguise — `z=e^{2πiλ}` sweeps the unit circle `1→−1`, `F(−1,s)=−η` — → η; companion on **`σ=1`**.
+  - **`λ=α` diagonal** (`1→½`) = **Garunkštis–Tamošiūnas** equal-parameter sweep → `2^s L(s,χ₄)`
+    (issue #20); **no companion** — `L(s,χ₄)` is primitive, so the zeros stay glued to `σ=½` the
+    whole way (verified: the first three Riemann zeros ride down onto the first three `L(s,χ₄)`
+    zeros `6.02, 10.24, 12.99` without ever leaving the line). One family knits FK, G–S, G–T, and
+    the bridge's ζ / half-shift / η / χ₄ objects together, with the companion line (`σ=0` / `σ=1` /
+    none) reading off which edge you took.
+- **An evaluator gotcha, logged.** `mpmath.lerchphi(z,s,α)` **blows up as `z→1`** (integer `λ`) for
+  `σ≤1` — the emerging pole — but `lerchphi(1,s,α)=ζ(s,α)` exactly, so we splice in the Hurwitz zeta
+  there (the Lerch analog of `lfunction_bridge`'s removable `L(1,χ₄)=π/4`; §4.10). The `ζ(s,α)` and
+  `L(λ,α,s)` evaluators are validated against direct sums (σ>1), and the four corner identities to ~1e-31.
+- **The distinction from the K-knob, drawn explicitly (checklist item 4).** The α-sweep deforms
+  between two configurations that **both already carry infinitely many zeros** — no zero is *born*; a
+  "stable" zero merely leaves `½` and returns, its arrow pointing **on and off** the line. Our K-knob
+  starts from a **zeroless / structured endpoint**, the zeros are **born**, and they climb **onto** `½`
+  and stay (`O(1/K)`). The driver's last panel overlays a stable α-trajectory (both ends on `½`,
+  wandering between) against a genuine `harmonic_bridge.zeta_K` trajectory (off-line `K=1` ground →
+  onto `½`) to make the taxonomy (§4.0) visible in one axis.
+
+**Honest framing.** Nothing here is claimed as new mathematics: G–S (2007) and G–T (2017) are
+reproduced, and the family-square + K-knob contrast are **expository synthesis** (a computational
+re-presentation of known objects). Its role is exactly the ticket's: validate our α-trajectory
+machinery and **foreground the closest published analogue** so the preprint distinguishes it cleanly.
+
 ---
 
 ## 5. Consolidated novelty ledger
@@ -441,6 +494,7 @@ FK-style *argument-knob* study for L-functions). Kept public/exploratory; folds 
 | Deform-ζ-and-track-zeros (overall) | **ancestor exists** | **`FornbergKolbig1975`** | clean `O(1/K)` *convergence* (vs FK's transient brush) |
 | Generalise beyond ζ/η | **survives** (§4) | `GarunkstisSteuding2007` (Hurwitz α-track); `TravenecSamaj2022` (Epstein, reverse) | zeroless→born→**onto** ½ unmatched for any family ≠ ζ/η |
 | **Executed: `L(s,χ₄)`** (§4.10, #20) | **demonstrated** | (fills §4.8 gap 1, via the bridge's knob not FK's) | born→onto-½ survives for a primitive Dirichlet L; *cleaner* than η (single line, no companion); Lerch tie-in + a mod-8 warp surprise |
+| **Reproduced: Hurwitz/Lerch α-sweep** (§4.11, #21) | **reproduction + synthesis** (not a claim) | `GarunkstisSteuding2007`, `GarunkstisTamosiunas2017` (both *reproduced*) | the closest published analogue is foregrounded + distinguished (on/off-½ vs onto-½); the Lerch-square unification of FK/G–S/G–T as three edges is the only expository new bit |
 
 ---
 

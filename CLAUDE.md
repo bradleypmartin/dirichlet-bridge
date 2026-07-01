@@ -108,6 +108,18 @@ for pytest.
   the *genuine* χ₄ carrier `sin(πx/2)` at midpoints lands on a **mod-8** character
   `2^s(√2/2)L(s,χ₋₈)` (a period-q carrier's half-integer samples reveal period-2q). Reuses
   `harmonic_bridge` (Smom/Cmom, migrate) + `warp_bridge` (grid+moment machinery; sin-weighted).
+- `hurwitz_lerch_zeros.py` — reproduces the closest **published** deform-and-track analogues
+  (issue #21): **Garunkštis–Steuding 2007** (track `ζ(s,α)` zeros as the shift `α:1→½`; the
+  "stable zero" = trajectory starts+ends on `σ=½`, vs the "unstable" ones landing on the `σ=0`
+  companion comb `2πim/log2`) and **Garunkštis–Tamošiūnas 2017** (the Lerch `λ=α` diagonal
+  `ζ→2^s L(s,χ₄)`, stays on `σ=½`). The organizing picture is the **Lerch family square**
+  `L(λ,α,s)=lerchphi(e^{2πiλ},s,α)`: the four bridge objects (`ζ`, half-shift, `η`, `2^s L(χ₄)`)
+  at the corners, and its three edges = the three published ancestors — the `λ=1` edge is G–S
+  (`σ=0` companion), the `α=1` edge is Fornberg–Kölbig's polylog knob (`jonquiere_zeros.py`;
+  `σ=1` companion), the diagonal is G–T (no companion). Contrasts the *parameter*-sweep (wanders
+  on/off ½ between two zero-rich ends) with our K-knob (born onto ½ from a zeroless endpoint,
+  reusing `harmonic_bridge.zeta_K`). Evaluator gotcha: `lerchphi` diverges at `z→1`, spliced with
+  the Hurwitz zeta. Self-contained (only `harmonic_bridge` for the K-knob contrast panel).
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→
