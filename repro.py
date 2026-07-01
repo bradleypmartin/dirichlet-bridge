@@ -45,6 +45,7 @@ DRIVERS: List[Tuple[str, List[str], str]] = [
     ("eta_two_component", ["eta_two_component.png"],                     "~2 s"),
     ("jonquiere_zeros",   ["jonquiere_zeros.png"],                       "~1 min"),
     ("lfunction_bridge",  ["lfunction_bridge.png"],                      "~3 min"),
+    ("hurwitz_lerch_zeros", ["hurwitz_lerch_zeros.png"],                 "~5 min"),
 ]
 
 
