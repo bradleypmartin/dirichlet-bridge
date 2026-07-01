@@ -31,3 +31,4 @@ bridge/figures/*.png
 !bridge/figures/warp_eta.png
 !bridge/figures/stability.png
 !bridge/figures/jonquiere_zeros.png
+!bridge/figures/lfunction_bridge.png
