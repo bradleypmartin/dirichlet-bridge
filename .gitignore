@@ -30,6 +30,8 @@ bridge/figures/*.png
 !bridge/figures/eta_two_component.png
 !bridge/figures/warp_eta.png
 !bridge/figures/stability.png
+!bridge/figures/comb_vs_warp.png
+!bridge/figures/trivial_zeros.png
 !bridge/figures/jonquiere_zeros.png
 !bridge/figures/lfunction_bridge.png
 !bridge/figures/hurwitz_lerch_zeros.png
