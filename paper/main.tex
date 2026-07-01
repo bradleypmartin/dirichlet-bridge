@@ -201,7 +201,9 @@ prior-art deflators and gives the de Bruijn--Newman contrast, and
 \cref{sec:repro} points to the reproducible code. \Cref{app:beyond}, a
 self-contained appendix, carries the picture to four families beyond $\zeta$ and
 $\eta$: reproducing the published deform-and-track ancestors and a reverse-direction
-foil, and running the bridge's own knob on a primitive Dirichlet $L$-function.
+foil, and running the bridge's own knob on a primitive Dirichlet $L$-function. A short
+closing appendix (\cref{app:geometric}) runs the construction on the geometric series,
+where it reduces entirely to elementary closed form---a consistency check, not a result.
 
 % =====================================================================
 \section{The two endpoints}\label{sec:endpoints}
@@ -1415,6 +1417,114 @@ lattice-zeta analogue (\cref{app:epstein}) drives its zeros the opposite way. Th
 same arrow \emph{does} survive for a genuine primitive Dirichlet $L$-function
 (\cref{app:chi4}) is the appendix's one forward step beyond reproduction---and even
 there the claim is a computational demonstration, not a theorem.
+
+% =====================================================================
+\section{The geometric series: the bridge in miniature}\label{app:geometric}
+% =====================================================================
+
+The four cases above are \emph{lateral} moves---other Dirichlet-type objects with
+their own zeros. This last appendix is a \emph{vertical} one: the same construction
+run on the simplest possible summand, the geometric series, where every step collapses
+to an \emph{elementary closed form} and there are \textbf{no special functions and no
+zeros} anywhere. Nothing here is new mathematics---the one identity that does the work
+is the classical $\coth$ partial fraction, and the summation of divergent series to
+their analytic values is textbook Abel/Euler summability \citep[cf.][]{Hardy1949}. Its
+purpose is a fully transparent \emph{consistency check} of the apparatus, and it renders
+the arc's subtlest point---convergence \emph{beyond} the classical domain
+(\cref{sec:stability})---completely elementary.
+
+\paragraph{The two endpoints.}
+Take the ratio $s$ as the variable and $f(x)=s^{x}=e^{x\ln s}$. The discrete object and
+its continuous shadow are both elementary,
+\begin{equation}\label{eq:geom-endpoints}
+  g(s)=\sum_{n\ge0}s^{n}=\frac{1}{1-s},
+  \qquad
+  C(s)=\int_0^{\infty}s^{x}\,dx=-\frac{1}{\ln s}
+  \qquad(|s|<1,\ \text{else by continuation}),
+\end{equation}
+and both keep the pole at $s=1$ with residue $-1$: near $s=1$,
+$-1/\ln s=-1/(s-1)-\tfrac12+O(s-1)$, the bland pole of \cref{sec:endpoints} in a new
+guise.
+
+\paragraph{The comb telescopes.}
+Euler--Maclaurin with the periodic-Bernoulli sawtooth
+$\{x\}-\tfrac12=-\sum_{k\ge1}\sin(2\pi kx)/(\pi k)$ and
+$\int_0^{\infty}\sin(2\pi kx)\,e^{x\ln s}\,dx=2\pi k/((\ln s)^2+4\pi^2k^2)$ gives, term
+by term, the interpolant
+\begin{equation}\label{eq:geom-comb}
+  g_K(s)=-\frac{1}{\ln s}+\frac12
+          -\sum_{k=1}^{K}\frac{2\ln s}{(\ln s)^2+4\pi^2k^2},
+\end{equation}
+whose $K=0$ anchor is the shadow plus the load-bearing half-weight $\tfrac12$---the
+same term that cancels the shadow's $-\tfrac12$ at the pole, so \emph{every} $g_K$
+inherits the residue $-1$. The full comb \textbf{telescopes exactly}, by the $\coth$
+partial-fraction expansion
+$\sum_{k\ge1}2L/(L^{2}+4\pi^2k^2)=\tfrac12\coth\tfrac L2-\tfrac1L$ (equivalently the
+generating function of the Bernoulli numbers; \citealp{DLMF}), giving
+\begin{equation}\label{eq:geom-telescope}
+  g_\infty(s)=\tfrac12-\tfrac12\coth\!\tfrac{\ln s}{2}=\frac{1}{1-s},
+\end{equation}
+the discrete sum, on the nose.
+
+\paragraph{The rate law, with $s\mapsto\ln s$; and no abscissa.}
+The $k$-th harmonic is $2\ln s/((\ln s)^2+4\pi^2k^2)\sim(\ln s)/(2\pi^2k^2)$: the same
+$1/k^{2}$ sawtooth tail as the $\zeta$-comb term $\sim s/(2\pi^2k^2)$ of
+\cref{sec:rate}, with the per-mode constant $s$ replaced by $\ln s$. Hence the identical
+$O(1/K)$ error law,
+\begin{equation}\label{eq:geom-rate}
+  \Bigl|g_K(s)-\tfrac{1}{1-s}\Bigr|
+   =\frac{|\ln s|}{2\pi^2}\Bigl(\frac1K-\frac{1}{2K^2}+\cdots\Bigr),
+\end{equation}
+with the ``height/cost'' coordinate now $|\ln s|$---the log-distance of $s$ from the
+pole---in place of $|s|\sim t$. And, exactly as in \cref{sec:stability}, each $g_K$ is
+meromorphic on all of $\mathbb{C}$ with a single pole at $s=1$: there is \emph{no
+abscissa of convergence}. So \eqref{eq:geom-comb} converges for $|s|>1$ as well,
+summing the \emph{divergent} series to its analytic value---$1+2+4+\dots=-1$, Grandi's
+$1-1+1-\dots=\tfrac12$ (\cref{fig:geometric}, right)---the elementary face of the
+``$\zeta^{(K)}$ converges left of every abscissa'' phenomenon.
+
+\paragraph{The warp factorizes; and runs both ways.}
+The nonlinear route of \cref{sec:warp} also collapses. Warping $x\mapsto x+\phi_K(x)$
+with $\phi_K(x)=\sum_{k=1}^{K}\sin(2\pi kx)/(\pi k)$ and the integer-phase offset
+$-\tfrac12$ pins each cell onto its integer; because $s^{\,m+r}=s^{m}\,s^{r}$, the cell
+index \emph{factors out} of the sum,
+\begin{equation}\label{eq:geom-warp}
+  \int_0^{\infty}s^{\,x-\frac12+\phi_K(x)}\,dx
+   =\frac{1}{1-s}\,J_K(s),
+  \qquad
+  J_K(s)=\int_0^{1}s^{\,u-\frac12+\phi_K(u)}\,du\ \longrightarrow\ 1,
+\end{equation}
+so the entire warp convergence is the single scalar $J_K\to1$---no Hurwitz zeta, no
+moment machinery (contrast \cref{sec:warp}). The midpoint-phase warp lands instead on
+$s^{1/2}/(1-s)=\sum_{m\ge0}s^{m+1/2}$, the elementary echo of the half-shift
+$\zeta(s,\tfrac12)$. Finally, the same harmonic family runs \emph{backwards}: added
+rather than subtracted, it carries the discrete sum back to the shadow
+($\tfrac{1}{1-s}-\tfrac12+\sum_{k\le K}h_k\to-1/\ln s$), so continuous
+$\leftrightarrow$ discrete is one comb read in either direction.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{geometric_bridge.png}
+  \caption{The geometric series in miniature (\texttt{geometric\_bridge.py}).
+  \emph{Left:} with no zeros to move, the \emph{value} $g_K(s)$ migrates from the
+  continuous shadow ($K=0$, squares) onto the discrete sum $1/(1-s)$ (stars); at
+  $s=-1$ it slides down $\Re=\tfrac12$ from $\iu/\pi$ to Grandi's $\tfrac12$.
+  \emph{Centre:} the comb error is $O(1/K)$ for every $s$, tracking
+  $|\ln s|/(2\pi^2K)$ \eqref{eq:geom-rate}---the arc's rate law with $s\mapsto\ln s$.
+  \emph{Right:} no abscissa---the error is smooth \emph{through} the classical boundary
+  $|s|=1$, dipping to $0$ at the pole (shadow $=$ sum) and growing like $|\ln s|$; for
+  $|s|>1$ the interpolant sums the divergent series to $1/(1-s)$.}
+  \label{fig:geometric}
+\end{figure}
+
+\paragraph{What the miniature establishes.}
+Precisely because it has \emph{no} zeros, functional equation, or arithmetic, it
+isolates what the comb and warp actually are: a reshaping of the
+discrete\,$\leftrightarrow$\,continuous \emph{measure}, independent of any zero story.
+Pole preservation, the $O(1/K)$ rate, the no-abscissa stability, and the comb/warp
+duality all survive the strip-down to elementary functions; the zeros of the main arc
+are what this scaffold \emph{carries}, not what it \emph{is}. It is a consistency check
+and an expository on-ramp, not a result.
 
 % =====================================================================
 \bibliographystyle{plainnat}
