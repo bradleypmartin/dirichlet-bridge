@@ -94,6 +94,20 @@ for pytest.
   and the `α±` counting constants (Eqs. 39–40). Self-contained (no bridge cross-imports).
   Tracks zeros with a cancellation-free x→−1 series + a two-phase `|x|` schedule; near
   `x=±1` it swaps `polylog` for the Eq. 26 expansion (speed). Feeds preprint work in #18.
+- `lfunction_bridge.py` — the **fork-2 headline** (issue #20): the `K`-knob + warp on a
+  genuine primitive **Dirichlet L-function** `L(s,χ₄)=Σχ₄(n)n^{-s}`. Key identity
+  `χ₄(n)=sin(πn/2)`, so χ₄ is mean-zero periodic like η: the bland endpoint is *not* zeroless
+  but the **structured** `G(s)=∫₁^∞ sin(πx/2)x^{-s}dx=Smom(π/2,s)` (an off-critical RvM string,
+  σ→3/2 — cont_eta with π→π/2). So χ₄ is **η-type** — zeros migrate from the `G+½` ground
+  string — but `L(s,χ₄)` is *primitive* (no prefactor·ζ), so there is **no companion**: the
+  whole ground string maps 1:1 onto the *single* line σ=½ (density matches on the nose, q=4
+  supplying η's doubling). Comb `L_comb_K=G+½−Σ_k D_k/(πk)→L` (`D_k` at the odd-quarter
+  frequencies `(2k±½)π`), zeros born-onto-½ at `O(1/K)`. Warp of the **phase-½ carrier**
+  `sin(πy)` (the α=½-survivor dual of `warp_eta`'s cos/α=1) lands on `2^s L(s,χ₄)=L(½,½,s)`
+  (Lerch tie-in), load-bearing `+2^s`, single line (2^s never vanishes). Documented aside: warping
+  the *genuine* χ₄ carrier `sin(πx/2)` at midpoints lands on a **mod-8** character
+  `2^s(√2/2)L(s,χ₋₈)` (a period-q carrier's half-integer samples reveal period-2q). Reuses
+  `harmonic_bridge` (Smom/Cmom, migrate) + `warp_bridge` (grid+moment machinery; sin-weighted).
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→

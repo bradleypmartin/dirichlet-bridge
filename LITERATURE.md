@@ -262,6 +262,11 @@ foreground are `FornbergKolbig1975` (argument knob, §2) and `GarunkstisSteuding
 
 Our motion is the only one whose arrow points **onto** the line from **nothing**.
 
+> **Update — fork-2 executed (issue #20).** The K-knob + warp have now been run on a genuine
+> primitive **Dirichlet L-function**, `L(s,χ₄)` (`bridge/lfunction_bridge.py`), and the
+> `born-and-migrate-onto-½` behaviour **survives** — and is *cleaner* there than for ζ/η. Full
+> write-up in **§4.10**; the ledger row (§5) is updated accordingly.
+
 ### 4.1 Polylogarithm / Jonquière (argument knob) — the ancestor + a documented negative
 - **`FornbergKolbig1975`** — the ancestor; full treatment in §2.
 - **Campbell (2012)**, *Polylogarithm Approaches to Riemann Zeta Zeroes*, arXiv:1212.2246
@@ -357,6 +362,10 @@ Our motion is the only one whose arrow points **onto** the line from **nothing**
 1. **No deform-and-track for genuine higher-rank objects** — Dirichlet `L(s,χ)` *directly*
    (only via Lerch specialization), Dedekind ζ (only partial-sum), **automorphic / GL(n)**,
    and the **Selberg class** were not reached; the trail stops at Hurwitz/Lerch/DH/Epstein.
+   *(Partially addressed by us, issue #20 / §4.10: the bridge's own K-knob is now run directly
+   on `L(s,χ₄)` — the first zeroless/structured-endpoint → born → onto-½ demonstration for a
+   Dirichlet L-function. This is the **bridge's** discreteness knob, not a revival of FK's
+   argument knob, so gap #3 below stays open.)*
 2. **No prior work matches all three bridge ingredients** (zeroless endpoint + born + onto
    ½) for any family beyond ζ/η.
 3. **No continuation of FK's argument-knob numerical program past Campbell 2012** — is
@@ -373,6 +382,51 @@ the authors' own preprints rather than a second full-text read — verify the ex
 Lerch parameter-control claims carried some 2–1 votes but with high verifier evidence and
 unanimous sibling claims. (Full per-claim verdicts: task `w5x6bcw1x` output.)
 
+### 4.10 The `K`-knob (+ warp) on `L(s,χ₄)` — the fork-2 headline, executed (issue #20)
+
+`bridge/lfunction_bridge.py` runs the bridge's own machinery — the harmonic-truncation `K`-knob
+(`harmonic_bridge`) and the nonlinear warp (`warp_bridge`/`warp_eta`) — on the odd non-principal
+character mod 4, `L(s,χ₄)=Σχ₄(n)n^{−s}=1−3^{−s}+5^{−s}−⋯` (its own critical line `Re s=½`, its own
+functional equation `Λ(s)=Λ(1−s)`, root number `W=1`; entire, no pole). The verified findings:
+
+- **Design crux resolved — the endpoint is *structured*, not zeroless.** The one identity
+  `χ₄(n)=sin(πn/2)` makes χ₄ a mean-zero periodic coefficient, exactly like η's `(−1)^{n−1}`. So the
+  bland continuous endpoint is *not* the zeroless `1/(s−1)` of the ζ side but the **oscillatory
+  integral** `G(s)=∫₁^∞ sin(πx/2)x^{−s}dx = Smom(π/2,s)`, the χ₄ analogue of η's `F` (`cont_eta`),
+  carrying an **off-critical Riemann–von Mangoldt string** `σ→3/2` (cont_eta's laws at frequency
+  `π/2`; verified to ~3 digits). χ₄ is therefore **η-type** — zeros migrate from a ground string —
+  not ζ-type.
+- **Single line, no companion — cleaner than η.** `L(s,χ₄)` is **primitive** (does not factor as
+  prefactor·ζ), so unlike η (`σ=½ ∪ σ=1`) and the ζ-warp (`σ=½ ∪ σ=0`) there is **no companion
+  line**: the whole ground string maps 1:1 onto the *single* line `σ=½`. The densities match on
+  the nose — `G`'s string and the `L(s,χ₄)` zeros both have density `(t/2π)ln(2t/πe)`, the
+  conductor `q=4` supplying exactly the doubling η got from its `σ=1` comb — so the migration is a
+  clean bijection with **no split** to account for (5 G-string zeros = 5 `L` zeros for `0<t<20`).
+- **Comb (the K-knob).** `L_comb_K = G+½ − Σ_{k≤K} D_k/(πk) → L(s,χ₄)`, the sawtooth modes `D_k`
+  living at the odd-**quarter** frequencies `(2k±½)π` (χ₄'s carrier `sin(πx/2)` has fundamental
+  `π/2`, where η's `cos(πx)` sat at `(2k±1)π`). Zeros born onto `σ=½` at `O(1/K)` (`rate_law`'s
+  `s/2π²`): `K=0` ground `Re∈[0.80,0.96]` → `K=45` `Re≈0.50`.
+- **Warp — the Lerch tie-in (issue #20's lead), and its dual to `warp_eta`.** Warping the
+  **phase-½ carrier** `sin(πy)` at the midpoints lands on `2^s L(s,χ₄)=L(½,½,s)=Φ(−1,s,½)` (the
+  Lerch specialisation, `GarunkstisTamosiunas2017` family), with the load-bearing `+2^s=(1/2)^{−s}`
+  the omitted m=0 midpoint cell — the *same* half-weight the ζ-warp used (`warp_half_K`). This is
+  the exact **half-cell-shifted dual** of `warp_eta`: there `cos(πy)`'s `α=1` (integers) survived
+  and `α=½` died; here `sin(πy)`'s `α=½` (midpoints) survives and `α=1` dies. All zeros on the
+  single `σ=½` (`2^s` never vanishes → no companion).
+- **A modulus surprise (documented aside).** Warping the *genuine* χ₄ carrier `sin(πx/2)` at the
+  midpoints lands **not** on χ₄ but on a **mod-8** character: `Σ sin(π(m+½)/2)(m+½)^{−s} =
+  2^s(√2/2)L(s,χ₋₈)`, χ₋₈ the odd character mod 8. Sampling a period-`q` carrier on the
+  half-integer lattice can reveal a period-`2q` character. (Verified as an identity to machine
+  precision.)
+
+**Honest framing.** This is a **computational demonstration**, not a theorem — the born-onto-½
+behaviour is exhibited numerically (`O(1/K)` migration, GRH assumed for the target's zeros as
+usual), not proven. Its novelty is the **combination** (§4.0): no prior deform-and-track work pairs
+a structured/zeroless endpoint + zeros born from it + migration **onto** ½ for a family ≠ ζ/η. It
+uses the **bridge's** discreteness knob, so it does *not* answer §4.8's open gap #3 (a modern
+FK-style *argument-knob* study for L-functions). Kept public/exploratory; folds into the main draft
+(#5) only if a result warrants it (that draft stays ζ/η-only for now).
+
 ---
 
 ## 5. Consolidated novelty ledger
@@ -386,6 +440,7 @@ unanimous sibling claims. (Full per-claim verdicts: task `w5x6bcw1x` output.)
 | η crystal×GUE / `p=2` ghost | survives (exposed) | `Berry1988`, `LugarMilinovichQuesadaHerrera2022` | superposition + single-prime + eta tie-in |
 | Deform-ζ-and-track-zeros (overall) | **ancestor exists** | **`FornbergKolbig1975`** | clean `O(1/K)` *convergence* (vs FK's transient brush) |
 | Generalise beyond ζ/η | **survives** (§4) | `GarunkstisSteuding2007` (Hurwitz α-track); `TravenecSamaj2022` (Epstein, reverse) | zeroless→born→**onto** ½ unmatched for any family ≠ ζ/η |
+| **Executed: `L(s,χ₄)`** (§4.10, #20) | **demonstrated** | (fills §4.8 gap 1, via the bridge's knob not FK's) | born→onto-½ survives for a primitive Dirichlet L; *cleaner* than η (single line, no companion); Lerch tie-in + a mod-8 warp surprise |
 
 ---
 
