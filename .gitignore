@@ -8,6 +8,10 @@ __pycache__/
 .venv/
 venv/
 
+# Local-only stash: full-text papers / scratch material we keep organized but
+# never commit (copyright + bulk). Reproductions cite the paper, not ship it.
+_private/
+
 # Generated artifacts (figures + text dumps the drivers rewrite)
 bridge/figures/*.png
 *.txt
@@ -26,3 +30,4 @@ bridge/figures/*.png
 !bridge/figures/eta_two_component.png
 !bridge/figures/warp_eta.png
 !bridge/figures/stability.png
+!bridge/figures/jonquiere_zeros.png

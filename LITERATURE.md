@@ -98,6 +98,14 @@ treating the argument `x ∈ (−1, 1)` as a **deformation knob** and numericall
 the zeros" move, done in 1975. The endpoints are ours: `F(1,s)=ζ(s)`,
 `F(−1,s)=−η(s)`.
 
+> **Reproduced in code (issue #15).** `bridge/jonquiere_zeros.py` now reproduces FK1975
+> on a laptop in ~40 s: the two zero-trajectory classes, the transient σ=½ brush +
+> spiral about `s₁` (Figs. 6–7), the σ=1 log-2 comb (Eq. 23), the trivial-zero
+> trajectories → `−2N` (§6), the argument-principle counts `Z(0.1)=27`/`Z(−0.1)=26`
+> (Eq. 25), and the `α±` counting constants (Eqs. 39–40) — the code-side foil the
+> preprint's contrast figure draws on (#18). The full-text PDF lives in
+> `_private/papers/` (gitignored).
+
 ### 2.1 What FK1975 already contains (four correspondences)
 
 | FK1975 | bridge analogue |
