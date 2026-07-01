@@ -524,6 +524,26 @@ arithmetic sibling.
 
 ---
 
+### 4.13 The geometric-series miniature — the bridge with no zeros (epic #29 / issue #30, executed)
+
+`bridge/geometric_bridge.py` runs the construction on the geometric series `Σ_{n≥0} sⁿ = 1/(1-s)`
+(continuous shadow `∫₀^∞ sˣ dx = −1/ln s`). **No novelty claim, and nothing here needs
+novelty-hardening** — the flag is deliberate so a future pass doesn't mistake it for an open claim.
+Every step is an elementary closed form and the mathematics is entirely classical: the comb
+telescopes by the `coth` partial fraction (= the Bernoulli generating function; DLMF Ch. 24), and
+summing the divergent series to their analytic values (`1+2+4+… = −1`, Grandi `1−1+1−… = ½`) is
+textbook Abel/Euler summability (`Hardy1949`, *Divergent Series* — the one citation added to
+`references.bib` for this). Its role is a fully-elementary **consistency check** of the apparatus
+and an expository on-ramp: it exhibits pole preservation, the `O(1/K)` rate (the arc's `s/(2π²K)` law
+with **`s ↦ ln s`**, so the height/cost coordinate is `|ln s|`), the no-abscissa stability (converges
+for `|s|>1`, Abel-summing the divergent series), and the comb/warp duality (the warp factorizes into a
+single scalar `J_K→1`) — all with **no special functions and no zeros**. Because it carries no zeros
+it sits *outside* the directional taxonomy of §4.0 (the "vertical" strip-down, not a "lateral"
+family). Lives in the preprint as **Appendix B** (`app:geometric`), framed explicitly as a check, not
+a result.
+
+---
+
 ## 5. Consolidated novelty ledger
 
 | Claim | Status | Nearest prior art | What survives |

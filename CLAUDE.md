@@ -135,6 +135,17 @@ for pytest.
   An argument-principle count (0 real zeros for `d<d*`, 2 for `d>d*`) certifies the split independently.
   Contrast panel reuses `harmonic_bridge.zeta_K`+`migrate` (born-onto-½). Self-contained (only
   `harmonic_bridge` for the contrast).
+- `geometric_bridge.py` — the **geometric-series miniature** (epic #29 / issue #30): the whole
+  bridge on `Σ_{n≥0} s^n = 1/(1-s)` (continuous shadow `∫₀^∞ s^x dx = −1/ln s`), where every step is
+  an **elementary closed form** and there are **no special functions and no zeros**. The comb
+  `g_K = −1/ln s + ½ − Σ_{k≤K} 2 ln s/((ln s)²+4π²k²)` telescopes *exactly* to `1/(1-s)` via the
+  `coth` partial fraction (= Bernoulli generating function); the rate is the arc's `O(1/K)` law with
+  **`s ↦ ln s`** (so the height/cost coordinate is `|ln s|`); **no abscissa** (converges for `|s|>1`,
+  Abel-summing `1+2+4+…=−1`, Grandi `½`); the warp *factorizes* into one scalar `J_K = ∫₀¹ s^{u−½+φ_K}du
+  → 1` (`warp_K = (1/(1-s))·J_K`, no Hurwitz zeta); and the same harmonics run backwards (ascending
+  comb → shadow). Classical throughout (Hardy 1949 *Divergent Series*; `coth`/Bernoulli) — an
+  **illustrative consistency check, not a result**; lives in the preprint as **Appendix B**
+  (`app:geometric`). Self-contained (no bridge cross-imports).
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→
@@ -142,9 +153,9 @@ for pytest.
 - `figstyle.py` — shared Matplotlib font bump (`figstyle.enlarge()`); each driver
   calls it before plotting so the embedded figures stay legible when scaled down in
   the preprint. The dense/long-title figures (`rate_law`, `eta_two_component`,
-  `warp_coordinate`, `warp_eta`, `comb_vs_warp`, `jonquiere_zeros`) override
-  `axes.titlesize`/`figure.titlesize` locally so titles don't overrun. Changing sizes
-  here means re-running `python repro.py`.
+  `warp_coordinate`, `warp_eta`, `comb_vs_warp`, `jonquiere_zeros`, `geometric_bridge`)
+  override `axes.titlesize`/`figure.titlesize` locally so titles don't overrun. Changing
+  sizes here means re-running `python repro.py`.
 
 `data/riemann_zeros.csv` — cached non-trivial zeros (the **only** runtime data
 dependency). `tests/` — one test module per driver. `paper/` — the arXiv preprint
@@ -175,15 +186,20 @@ referenced from `bridge/figures/` via `\graphicspath` (not copied).
 - **#4 — Presentation & reproducibility** (open): `RESULTS.md` walkthrough,
   one-command figure regen, and the self-bootstrap-header cleanup above.
 - **#5 — arXiv preprint** (open): **draft complete in `paper/`** — `main.tex`
-  (~19-page methods/experimental-math write-up; includes the §"Two routes, side by
-  side" integrand comparison from #11 and the §"The trivial zeros" section from #10),
-  a verified `references.bib` (30 entries), `make_arxiv.py` packager, and a built
-  `main.pdf`. Build with `tectonic main.tex` from `paper/` (Tectonic + Poppler live in
-  `~/.local/bin` / installed via winget). Framing/citations come from #2; the 13
+  (~29-page methods/experimental-math write-up; body includes the §"Two routes, side by
+  side" integrand comparison from #11 and the §"The trivial zeros" section from #10;
+  Appendix A is the four beyond-ζ/η rhyming cases from #18, Appendix B the geometric-series
+  miniature from #30), a verified `references.bib` (36 entries), `make_arxiv.py` packager,
+  and a built `main.pdf`. Build with `tectonic main.tex` from `paper/` (Tectonic + Poppler
+  live in `~/.local/bin` / installed via winget). Framing/citations come from #2; the 18
   figures are pulled straight from `bridge/figures/` via `\graphicspath`, so no figure
   is duplicated.
 - **#6 — Senior-collaborator outreach** (open): one-pager + draft email; depends
   on #2/#4/#5.
+- **#29 — Epic: geometric-series Appendix B** / **#30 — experimentation — DONE.** The
+  geometric series `Σ sⁿ` run through the whole apparatus in elementary closed form
+  (`geometric_bridge.py` + tests + Appendix B). No zeros, no novelty — an illustrative
+  consistency check; framed as such. Bare issues `#29/#30` are *this* repo's.
 
 > Bare issue numbers like `#117`/`#132` that appear *inside the issue text* refer
 > to findings in the originating research project, not to issues in this repo.
