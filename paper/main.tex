@@ -13,6 +13,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{microtype}
+% Last-resort line-breaking slack: only engages on lines that would otherwise be
+% overfull (e.g. the inline-math-dense appendix paragraphs), leaving the rest untouched.
+\setlength{\emergencystretch}{3em}
 
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{graphicx}
@@ -79,11 +82,17 @@ they surface as a receding $O(1/K)$ tide uncovers $-2,-4,-6,\dots$, the first
 inherited from the endpoint and the rest born as conjugate pairs that pinch onto
 the axis. Finally we read
 the Dirichlet-$\eta$ zeros as a two-component ``crystal $\times$ GUE'' spectrum
-and isolate the single prime $p=2$. This is a \emph{computational /
-experimental-mathematics} synthesis: every individual endpoint is classical and
-is cited as such; the contribution is the unifying construction, the rate law,
-and the spectral readings, not a new theorem about where zeros live. All figures
-and numbers are reproducible from the accompanying repository.
+and isolate the single prime $p=2$. The construction belongs to a half-century-old
+lineage of deforming a Dirichlet series and following where its zeros go; its point
+of departure is that the harmonic-count knob makes those zeros \emph{converge} onto
+the critical line and stay there, rather than merely graze it in passing. This is a
+\emph{computational / experimental-mathematics} synthesis: every individual endpoint
+is classical and is cited as such; the contribution is the unifying construction, the
+rate law, and the spectral readings, not a new theorem about where zeros live. An
+appendix carries the picture to four families beyond $\zeta$ and $\eta$, reproducing
+the construction's published deform-and-track ancestors and running its own knob
+forward on a primitive Dirichlet $L$-function. All figures and numbers are
+reproducible from the accompanying repository.
 \end{abstract}
 
 \tableofcontents
@@ -100,6 +109,10 @@ that replaces the sum by its leading Euler--Maclaurin term,
 \end{equation}
 which retains $\zeta$'s pole at $s=1$ but is otherwise inert: it has \emph{no}
 non-trivial zeros, no functional equation, and no arithmetic content whatsoever.
+Replacing a discrete arithmetic sum by such a continuous integral is the general
+``continuous model'' of an arithmetic function \citep{Tao2017Continuous};
+\eqref{eq:bland} is its $\zeta$ instance, and the zeroless starting point of
+everything that follows.
 The gap between \eqref{eq:bland} and the genuine $\zeta(s)$ is the
 discreteness of the integers, and the Euler--Maclaurin formula makes that gap
 explicit as a sum of correction terms built from the periodic Bernoulli
@@ -119,6 +132,18 @@ $K\to\infty$. Because the $K=0$ endpoint is genuinely zeroless, this is a
 \emph{creation-and-migration} mechanism, not a rearrangement of a pre-existing
 zero set; we contrast it carefully with the de Bruijn--Newman heat flow in
 \cref{sec:prior}.
+
+The idea of deforming a Dirichlet series by a parameter and tracking its zeros is
+itself classical, and its direct ancestor is the study of the complex zeros of the
+polylogarithm by \citet{FornbergKolbig1975}, which sweeps the polylogarithm's
+argument from $-1$ to $+1$ (the endpoints being $-\eta$ and $\zeta$) and numerically
+follows the zero trajectories. There the moving zeros only \emph{graze} the critical
+line before being absorbed into the pole that emerges at the endpoint; the
+harmonic-count knob studied here instead drives them to \emph{converge} onto it and
+stay. We reproduce that contrast, the closest published deform-and-track analogues,
+and a reverse-direction foil, and run the bridge's own knob forward on a primitive
+Dirichlet $L$-function---four families beyond $\zeta$ and $\eta$---in
+\cref{app:beyond}.
 
 \paragraph{Honest framing.}
 We state at the outset, as a deliberate decision, that this is a \emph{methods /
@@ -173,7 +198,10 @@ $\mathbb{C}$, with no abscissa of convergence. A short section
 \emph{trivial} zeros be born there. \Cref{sec:two} reads the
 $\eta$ zeros as a two-component spectrum. \Cref{sec:prior} foregrounds the
 prior-art deflators and gives the de Bruijn--Newman contrast, and
-\cref{sec:repro} points to the reproducible code.
+\cref{sec:repro} points to the reproducible code. \Cref{app:beyond}, a
+self-contained appendix, carries the picture to four families beyond $\zeta$ and
+$\eta$: reproducing the published deform-and-track ancestors and a reverse-direction
+foil, and running the bridge's own knob on a primitive Dirichlet $L$-function.
 
 % =====================================================================
 \section{The two endpoints}\label{sec:endpoints}
@@ -875,8 +903,34 @@ $\ln 2$ frequency itself. See \cref{sec:prior}.
 
 The endpoints and most ingredients of this study are classical; we cite them
 rather than claim them. We have made two adversarial passes through the
-literature, and we foreground the two closest prior-art results explicitly so a
+literature, and we foreground the closest prior-art results explicitly so a
 reader can locate our residual contribution precisely.
+
+\subsection{The deform-and-track lineage and its direct ancestor}
+\label{sec:lineage}
+Deforming a Dirichlet series by a parameter and following its zeros is a program
+roughly half a century old, and its direct ancestor is \citet{FornbergKolbig1975}:
+taking the polylogarithm $F(x,s)=\sum_{k\ge1}x^k k^{-s}$ (with $F(1,s)=\zeta(s)$
+and $F(-1,s)=-\eta(s)$), they sweep the argument $x$ across $(-1,1)$ and
+numerically track the complex zeros in the $s$-plane. The distinction from the
+present construction is the one we lead with: on their argument knob the moving
+zeros \emph{graze} the critical line and are then absorbed into the pole emerging
+at $x=1$, so the approach is transient; the harmonic-count knob here, off a
+genuinely zeroless endpoint, instead makes the zeros \emph{converge} onto
+$\sigma=\tfrac12$ at the $O(1/K)$ rate of \cref{sec:rate} and stay. This is a
+sharper statement than ``we use a different knob'': it is a knob on which the
+convergence the classical deformation set out toward actually occurs. The closest
+\emph{published} analogue in the same spirit is the Hurwitz $\zeta(s,\alpha)$
+zero-trajectory study of \citet{GarunkstisSteuding2007}, which deforms the shift
+$\alpha$ and calls a zero ``stable'' when its trajectory begins and ends on
+$\sigma=\tfrac12$; the reverse-direction mirror is the Davenport--Heilbronn
+homotopy of \citet{BalanzarioSanchezOrtiz2007}, in which zeros start \emph{on} the
+line and are driven \emph{off} it as the periodic structure is switched on.
+\Cref{app:beyond} reproduces the polylogarithm ancestor and the Hurwitz/Lerch
+analogues, sets against them the reverse-direction Epstein foil of
+\citet{TravenecSamaj2022}, and runs the bridge's own knob forward on a primitive
+Dirichlet $L$-function---four families beyond $\zeta/\eta$, organized by a directional
+taxonomy.
 
 \subsection{Cite, do not claim}
 \begin{itemize}[leftmargin=1.4em]
@@ -889,14 +943,16 @@ reader can locate our residual contribution precisely.
   \citet{SaiasWeingartner2009}; generic off-line $\zeta(s,\alpha)$ zeros:
   \citet{DavenportHeilbronn1936,Cassels1961}.
 \item The $\sigma=1$ eta comb at $t=2\pi k/\ln 2$: \citet{Sondow2003};
-  tabulated by \citet{BeliakovMatiyasevich2015}; \citealp[\S25.2.3]{DLMF}.
+  tabulated by \citet{BeliakovMatiyasevich2015}; \citealp[\S25.2.3]{DLMF}. These
+  points appear earlier still, in a deform-and-track setting, as the $x\to-1$
+  endpoint zeros of \citet[Eq.~23]{FornbergKolbig1975}; since the points are
+  elementary (the zeros of $1-2^{1-s}$), this predates but does not displace
+  Sondow's $\eta$-specific result.
 \item The closest ``knob'' cousins use partial-sum \emph{length} $N$ rather than
   the harmonic count $K$, and none start from a zeroless endpoint:
   \citet{GonekLedoan2010,GonekMontgomery2013}; see also
   \citet{PlattTrudgian2016}. Zeros of combinations of Euler products for
-  $\sigma>1$: \citet{BookerThorne2014,Righetti2016}. A numerical study of the
-  off-line zeros of the Davenport--Heilbronn counterexample (by a
-  deform-and-track homotopy): \citet{BalanzarioSanchezOrtiz2007}.
+  $\sigma>1$: \citet{BookerThorne2014,Righetti2016}.
 \end{itemize}
 
 \subsection{The deflator to foreground (the $p=2$ ghost)}
@@ -977,8 +1033,9 @@ family uniformly $O(1/K)$ across all routes.
 
 Every figure in this paper is produced by a driver of the same name in the
 accompanying repository, and every driver self-validates its identities to full
-precision before it plots, so each figure doubles as a numerical certificate. The
-eleven figures are regenerated together by a single command:
+precision before it plots, so each figure doubles as a numerical certificate. All
+seventeen figures---the thirteen in the body and the four of \cref{app:beyond}---are
+regenerated together by a single command:
 \begin{quote}
 \texttt{python repro.py}\quad(regenerates all figures);\qquad
 \texttt{pytest}\quad(fast self-checks; \texttt{pytest -m slow} for the
@@ -996,9 +1053,368 @@ bibliography accompany the source at
 % =====================================================================
 \addcontentsline{toc}{section}{Acknowledgments}
 This study was extracted as a self-contained arc from a larger research project.
-The novelty framing above rests on two adversarial literature passes; the author
-thanks the reviewers and tools that contributed to that vetting. Any errors of
-attribution are the author's own.
+The author thanks Bengt Fornberg for flagging the program's direct ancestor---his
+own study of the complex zeros of the polylogarithm \citep{FornbergKolbig1975},
+whose zero-trajectory computation was run on the CDC~7600 at CERN in the
+mid-1970s, then among the fastest machines in the world, and is reproduced here
+(\cref{app:beyond}) in seconds on a laptop half a century later. The novelty
+framing above rests on two adversarial literature passes; the author thanks the
+reviewers and tools that contributed to that vetting. Any errors of attribution
+are the author's own.
+
+% =====================================================================
+\appendix
+% =====================================================================
+\section{Beyond $\zeta$ and $\eta$: four rhyming cases}\label{app:beyond}
+% =====================================================================
+
+The body used $\zeta$ and $\eta$ as the two showcase test cases. This appendix
+records four \emph{rhyming} cases beyond them: the program's direct ancestor
+(\cref{app:fk}), a genuine primitive Dirichlet $L$-function to which the bridge's own
+knob is applied (\cref{app:chi4}), the closest published parameter-sweep analogues
+(\cref{app:hurwitzlerch}), and a reverse-direction foil (\cref{app:epstein}). Each is
+a self-validating driver in the repository (\cref{sec:repro}), and each section is a
+faithful \emph{reproduction} of prior art together with a \emph{compare-and-contrast}
+against the bridge; none is a new theorem. The main technical arc stays
+$\zeta/\eta$-only, and this material is deliberately supplementary.
+
+\paragraph{A directional taxonomy.}
+The organizing idea is a taxonomy of \emph{where the zeros go} under a one-parameter
+deformation (\cref{tab:taxonomy}). The half-century deform-and-track lineage
+(\cref{sec:lineage}) is large, but every ancestor we found either deforms between two
+endpoints that \emph{both} already carry infinitely many zeros---so no zero is
+\emph{born}, and the trajectories merely wander on and off $\sigma=\tfrac12$---or
+\emph{births} zeros \emph{off} the critical line and pushes them \emph{away}. The
+bridge's motion is the only one whose arrow points \emph{onto} the line from a
+zeroless start (or, for a mean-zero periodic coefficient, from a structured
+off-critical string).
+
+\begin{table}[h]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}lXl@{}}
+    \toprule
+    Direction of the zeros & Family / knob & Closest sources \\
+    \midrule
+    zeroless $\to$ \textbf{born $\to$ onto $\tfrac12$} \emph{(bridge)}
+      & $\zeta,\eta,L(s,\chi_4)$; harmonic count $K$
+      & \emph{this work} (\cref{app:chi4}) \\
+    zero-rich $\to$ zero-rich; \textbf{wander on/off $\tfrac12$}
+      & polylog (arg $x$), Hurwitz ($\alpha$), Lerch ($\lambda,\alpha$)
+      & \citep{FornbergKolbig1975,GarunkstisSteuding2007,GarunkstisTamosiunas2017} \\
+    \textbf{born off $\tfrac12$ $\to$ migrate away}
+      & Davenport--Heilbronn (homotopy), Epstein (dim.\ $d$)
+      & \citep{BalanzarioSanchezOrtiz2007,TravenecSamaj2022} \\
+    \bottomrule
+  \end{tabularx}
+  \caption{The directional taxonomy of the deform-and-track lineage. The bridge's
+  arrow (top row) is the only one that points \emph{onto} $\sigma=\tfrac12$ from a
+  start that carries none of the destination's zeros.}
+  \label{tab:taxonomy}
+\end{table}
+
+% ---------------------------------------------------------------------
+\subsection{The direct ancestor: the polylogarithm deformation}\label{app:fk}
+% ---------------------------------------------------------------------
+
+The program's direct ancestor is \citet{FornbergKolbig1975}, who study the complex
+zeros, in the $s$-plane, of the Jonqui\`ere (polylogarithm) function
+\begin{equation}\label{eq:polylog}
+  F(x,s) \;=\; \sum_{k\ge1}\frac{x^{k}}{k^{s}}\qquad(|x|<1),
+  \qquad F(1,s)=\zeta(s),\quad F(-1,s)=-\eta(s),
+\end{equation}
+using the argument $x$ as a deformation knob and tracking the zero trajectories as
+$x$ sweeps $(-1,1)$. The endpoints are exactly the bridge's two showcase objects. The
+driver \texttt{jonquiere\_zeros.py} reproduces their half-century-old CDC~7600
+computation on a laptop in seconds, recovering (\cref{fig:jonquiere}) the two
+trajectory classes; the transient $\sigma=\tfrac12$ \emph{brush} of the first $\zeta$
+zero $s_1\approx\tfrac12+14.13\,\iu$ and the \emph{spiral} about it (FK Figs.~6--7);
+the $\sigma=1$ log-$2$ comb at $1+2\pi\iu m/\ln2$ (FK Eq.~23); the trivial-zero
+trajectories running onto $-2m$ (FK \S6); the argument-principle counts $Z(0.1)=27$,
+$Z(-0.1)=26$ (FK Eq.~25); and the Riemann--von Mangoldt counting constants
+$\alpha^{+}=0.00580756$, $\alpha^{-}=0.01845107$ (FK Eqs.~39--40), all to the printed
+digits.
+
+\paragraph{The contrast: a transient brush, not convergence.}
+The distinction that motivates the whole bridge is visible in this reproduction. On
+FK's argument knob the moving zeros \emph{do not converge} onto $\sigma=\tfrac12$:
+they are born far out in the left half-plane, migrate rightward, and are all
+eventually absorbed into the pole emerging at $s=1$---some bypassing $\zeta$'s zeros,
+others approaching to within $|s-s_1|\approx9\times10^{-7}$ before being
+\emph{ejected} and spiralling back out to $|s-s_1|\approx7\times10^{-3}$, also ending
+at $s=1$. The mechanism is that the $x\to1$ expansion (FK Eq.~26) carries a branch
+term $\Gamma(1-s)(-\ln x)^{s-1}$ whose phase winds as $\ln(-\ln x)\to-\infty$, while
+$F(x,s)$ is \emph{entire} for $|x|<1$, so the $s=1$ pole only emerges at the endpoint
+and swallows the migrating zeros. The bridge's harmonic-count knob, off a genuinely
+zeroless endpoint, is the knob on which this chased convergence actually happens: the
+zeros land on $\sigma=\tfrac12$ and stay, at $O(1/K)$ (\cref{sec:rate}).
+
+\begin{remark}
+At the \emph{other} endpoint, $x\to-1$, some trajectories \emph{do} coincide with
+$\zeta$'s non-trivial zeros---but only because $F(-1,s)=-\eta(s)$ already carries
+them. That is the endpoint \emph{having} the zeros, not a dynamical convergence onto
+the line; the genuine dynamical approach, $x\to+1$, is the transient/spiral one.
+\end{remark}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{jonquiere_zeros.png}
+  \caption{Reproduction of \citet{FornbergKolbig1975}: the polylogarithm's zero
+  trajectories as the argument $x$ sweeps $(-1,1)$. The transient $\sigma=\tfrac12$
+  brush and spiral about $s_1$ (the money contrast---FK's zeros approach but never
+  land), the $\sigma=1$ log-$2$ comb at the $\eta$ endpoint, the trivial-zero
+  trajectories onto $-2m$, and the argument-principle counts. The bridge's knob, by
+  contrast, drives the zeros to \emph{converge} onto $\sigma=\tfrac12$
+  (\cref{sec:rate}).}
+  \label{fig:jonquiere}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\subsection{A primitive Dirichlet $L$-function: $L(s,\chi_4)$}\label{app:chi4}
+% ---------------------------------------------------------------------
+
+The sharpest test of the bridge is to run its \emph{own} knob---the harmonic
+truncation $K$ and the warp---on a family with its own critical line and functional
+equation. We take the odd non-principal character mod $4$,
+\begin{equation}\label{eq:Lchi4}
+  L(s,\chi_4)=\sum_{n\ge1}\chi_4(n)\,n^{-s}=1-3^{-s}+5^{-s}-7^{-s}+\cdots,
+  \qquad \chi_4(n)=\sin\!\bigl(\tfrac{\pi n}{2}\bigr),
+\end{equation}
+a \emph{primitive} $L$-function: entire (no pole), root number $W=1$, its own
+critical line $\Re s=\tfrac12$, and the Lerch specialisation
+$L(\tfrac12,\tfrac12,s)=2^{s}L(s,\chi_4)$. The driver \texttt{lfunction\_bridge.py}
+runs the bridge on it (\cref{fig:lfunction}); the findings sharpen the taxonomy.
+
+\paragraph{The endpoint is \emph{structured}, not zeroless.}
+The identity $\chi_4(n)=\sin(\pi n/2)$ makes $\chi_4$ a mean-zero periodic
+coefficient, exactly like $\eta$'s $(-1)^{n-1}=\cos(\pi n)$. So the bland continuous
+endpoint is \emph{not} the zeroless $1/(s-1)$ of the $\zeta$ side but the structured
+oscillatory integral
+\begin{equation}\label{eq:Gchi4}
+  G(s)=\int_1^\infty \sin\!\bigl(\tfrac{\pi x}{2}\bigr)\,x^{-s}\,\dd x,
+\end{equation}
+the $\chi_4$ analogue of the continuous-$\eta$ integral \eqref{eq:conteta}, carrying
+an off-critical Riemann--von Mangoldt zero string that drifts toward $\sigma=\tfrac32$
+(the laws \eqref{eq:re32}--\eqref{eq:rvm} at frequency $\pi/2$). So $\chi_4$ is
+\emph{$\eta$-type}: its zeros migrate from a ground string, they are not born from
+nothing. (This is why the ``zeroless endpoint'' of the introduction is specific to
+the constant-coefficient $\zeta$ side; a mean-zero periodic coefficient gives a
+structured off-critical string instead.)
+
+\paragraph{One line, no companion---cleaner than $\eta$.}
+The additive comb $L^{(K)}=G+\tfrac12-\sum_{k\le K}D_k/(\pi k)\to L(s,\chi_4)$ (the
+sawtooth modes $D_k$ now living at the odd-\emph{quarter} frequencies
+$(2k\pm\tfrac12)\pi$, where $\eta$'s sat at $(2k\pm1)\pi$) births the zeros onto
+$\sigma=\tfrac12$ at the same $O(1/K)$ rate: the $K=0$ ground string near
+$\Re\in[0.80,0.96]$ reaches $\Re\approx0.50$ by $K=45$. But because $L(s,\chi_4)$ is
+\emph{primitive}---it does not factor as (prefactor)\,$\cdot\,\zeta$---there is
+\emph{no companion line}: where $\eta$ split onto $\sigma=\tfrac12\cup\sigma=1$ and
+the $\zeta$-warp onto $\sigma=\tfrac12\cup\sigma=0$, the whole $G$-ground string maps
+$1{:}1$ onto the single line $\sigma=\tfrac12$. The densities match on the nose (the
+conductor $q=4$ supplies exactly the doubling $\eta$ got from its $\sigma=1$ comb; $5$
+ground-string zeros $=5$ genuine $L$ zeros for $0<t<20$), so the migration is a clean
+bijection with no split to bookkeep.
+
+\paragraph{The warp: a Lerch tie-in, and the exact dual of the $\eta$-warp.}
+Warping the phase-$\tfrac12$ carrier $\sin(\pi y)$ so the cells collapse onto the
+midpoints lands on
+\begin{equation}\label{eq:chi4warp}
+  2^{s}L(s,\chi_4)=L(\tfrac12,\tfrac12,s)=\Phi(-1,s,\tfrac12),
+\end{equation}
+the Lerch specialisation (the Lerch family of \citealp{GarunkstisTamosiunas2017}),
+with the load-bearing lower-endpoint term $+2^{s}$ the same half-weight the $\zeta$-warp
+carried. This is the exact half-cell-shifted \emph{dual} of the $\eta$-warp
+(\cref{sec:etawarp}): there the $\cos$ carrier's integer phase $\alpha=1$ survived and
+the midpoint $\alpha=\tfrac12$ was annihilated; here the $\sin$ carrier's midpoint
+$\alpha=\tfrac12$ survives and $\alpha=1$ dies. All zeros lie on the single
+$\sigma=\tfrac12$ ($2^{s}$ never vanishes, so again no companion).
+
+\begin{remark}[A modulus surprise]
+Warping the \emph{genuine} $\chi_4$ carrier $\sin(\pi x/2)$ at the midpoints lands not
+on $\chi_4$ but on a \emph{mod-$8$} character:
+$\sum_{m}\sin\!\bigl(\tfrac{\pi}{2}(m+\tfrac12)\bigr)(m+\tfrac12)^{-s}
+=2^{s}\tfrac{\sqrt2}{2}\,L(s,\chi_{-8})$, with $\chi_{-8}$ the odd character mod $8$
+(verified as an identity to machine precision). Sampling a period-$q$ carrier on the
+half-integer lattice can reveal a period-$2q$ character.
+\end{remark}
+
+This is the one case in the appendix where the bridge's \emph{own} machinery is run
+forward on a new family, and it is the load-bearing data point for the top row of
+\cref{tab:taxonomy}: the born-and-migrate-\emph{onto}-$\tfrac12$ behaviour survives
+for a genuine primitive Dirichlet $L$-function, and is in fact \emph{cleaner} there
+than for $\eta$ (a single line, no companion). It is a computational demonstration,
+not a theorem---the migration is exhibited numerically, with GRH assumed for the
+target's zeros as usual---and it uses the bridge's discreteness knob, not FK's
+argument knob.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{lfunction_bridge.png}
+  \caption{The bridge's own knob on the primitive Dirichlet $L$-function
+  $L(s,\chi_4)$. The structured endpoint $G(s)$ \eqref{eq:Gchi4} supplies an
+  off-critical ground string ($\sigma\to\tfrac32$); the $K$-knob migrates it onto the
+  single line $\sigma=\tfrac12$ at $O(1/K)$, with \emph{no companion} (primitivity),
+  and the phase-$\tfrac12$ warp lands on $2^{s}L(s,\chi_4)=L(\tfrac12,\tfrac12,s)$
+  \eqref{eq:chi4warp}. The born-onto-$\tfrac12$ arrow of the taxonomy, surviving
+  beyond $\zeta/\eta$.}
+  \label{fig:lfunction}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\subsection{The published $\alpha$-sweep analogues: Hurwitz and Lerch}
+\label{app:hurwitzlerch}
+% ---------------------------------------------------------------------
+
+The closest \emph{published} deform-and-track studies vary a continuous
+\emph{parameter} of a Hurwitz or Lerch zeta rather than a harmonic count. The driver
+\texttt{hurwitz\_lerch\_zeros.py} reproduces the two nearest ones and unifies them
+(\cref{fig:hurwitzlerch}).
+
+\paragraph{Garunk\v{s}tis--Steuding: stable and unstable Hurwitz trajectories.}
+\citet{GarunkstisSteuding2007} track the zeros of the Hurwitz zeta $\zeta(s,\alpha)$
+as the shift $\alpha$ sweeps from $1$ (where $\zeta(s,1)=\zeta(s)$) to $\tfrac12$ (the
+half-shift), calling a zero \emph{stable} when its trajectory begins and ends on
+$\sigma=\tfrac12$. Newton-continuing the first eight Riemann zeros in $\alpha$
+reproduces the split: \emph{five} are stable (they bulge off $\tfrac12$---one wanders
+to $\Re\approx0.9$, another to $\Re<0$---then return to a Riemann zero at
+$\alpha=\tfrac12$), and \emph{three} are unstable, landing exactly on the $\sigma=0$
+companion comb $s=2\pi\iu m/\ln2=9.0647\,m\,\iu$ (the $2^{s}-1$ zeros the half-shift
+carries, \eqref{eq:zerosplit}). Extending below $\alpha=\tfrac12$ exhibits the
+Davenport--Heilbronn off-line wandering---the continuous-trajectory view of the
+$\alpha$-scatter in \cref{fig:alpha}.
+
+\paragraph{The Lerch family square: three ancestors in one picture.}
+The two-parameter Lerch zeta $L(\lambda,\alpha,s)=\sum_{m\ge0}\eu^{2\pi\iu\lambda
+m}(m+\alpha)^{-s}$ holds the bridge's four objects at the corners of the
+$(\lambda,\alpha)$ unit square, all verified to $\sim10^{-31}$:
+\begin{equation}\label{eq:lerchcorners}
+  L(1,1,s)=\zeta(s),\quad
+  L(1,\tfrac12,s)=(2^{s}-1)\zeta(s),\quad
+  L(\tfrac12,1,s)=\eta(s),\quad
+  L(\tfrac12,\tfrac12,s)=2^{s}L(s,\chi_4).
+\end{equation}
+Its three deformation edges are exactly the three published deform-and-track
+programs, each landing on a \emph{different} companion line:
+\begin{itemize}[leftmargin=1.4em]
+\item the $\lambda=1$ edge ($\alpha:1\to\tfrac12$) is the \citet{GarunkstisSteuding2007}
+  Hurwitz shift, $\to(2^{s}-1)\zeta$, with its companion on $\sigma=0$;
+\item the $\alpha=1$ edge ($\lambda:1\to\tfrac12$) is \citet{FornbergKolbig1975} in
+  disguise---$z=\eu^{2\pi\iu\lambda}$ sweeps the unit circle from $1$ to $-1$, and
+  $F(-1,s)=-\eta$---$\to\eta$, companion on $\sigma=1$;
+\item the $\lambda=\alpha$ diagonal ($1\to\tfrac12$) is the equal-parameter sweep of
+  \citet{GarunkstisTamosiunas2017}, $\to2^{s}L(s,\chi_4)$, with \emph{no} companion:
+  $L(s,\chi_4)$ is primitive, so the first three Riemann zeros ride down onto the
+  first three $L(s,\chi_4)$ zeros ($6.02,10.24,12.99$) without ever leaving
+  $\sigma=\tfrac12$.
+\end{itemize}
+One family thus knits Fornberg--K\"olbig, Garunk\v{s}tis--Steuding,
+Garunk\v{s}tis--Tamo\v{s}i\=unas, and the bridge's $\zeta$, half-shift, $\eta$, and
+$\chi_4$ objects together, with the companion line ($\sigma=0$, $\sigma=1$, or none)
+reading off which edge one took. (An evaluator note: \texttt{mpmath}'s
+\texttt{lerchphi} diverges as $z\to1$; we splice in the Hurwitz zeta there, since
+$L(\lambda,\alpha,s)\to\zeta(s,\alpha)$ at integer $\lambda$.)
+
+\paragraph{The contrast with the $K$-knob.}
+The $\alpha$- and $\lambda$-sweeps deform between two configurations that \emph{both}
+already carry infinitely many zeros---no zero is \emph{born}; a ``stable'' zero merely
+leaves $\tfrac12$ and returns, its arrow pointing \emph{on and off} the line. The
+bridge's $K$-knob starts from a zeroless or structured endpoint, the zeros are
+\emph{born}, and they climb \emph{onto} $\tfrac12$ and stay ($O(1/K)$). The driver's
+final panel overlays a stable $\alpha$-trajectory (both ends on $\tfrac12$, wandering
+between) against a genuine $\zeta^{(K)}$ trajectory (off-line at $K=1$, onto
+$\tfrac12$): the middle row of \cref{tab:taxonomy} beside the top row, in one axis.
+Nothing here is claimed as new---G--S and G--T are reproduced, and the family-square
+unification is expository, a re-presentation of known objects.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{hurwitz_lerch_zeros.png}
+  \caption{Reproduction of the closest published analogues:
+  \citet{GarunkstisSteuding2007} Hurwitz $\alpha$-trajectories (stable zeros returning
+  to $\sigma=\tfrac12$; unstable ones landing on the $\sigma=0$ comb) and the
+  \citet{GarunkstisTamosiunas2017} $\lambda=\alpha$ diagonal, inside the Lerch family
+  square \eqref{eq:lerchcorners} whose three edges are the three published ancestors.
+  The last panel contrasts a parameter-sweep's \emph{on/off}-$\tfrac12$ wandering with
+  the $K$-knob's \emph{onto}-$\tfrac12$ birth.}
+  \label{fig:hurwitzlerch}
+\end{figure}
+
+% ---------------------------------------------------------------------
+\subsection{The reverse-direction foil: Epstein lattice zeta}\label{app:epstein}
+% ---------------------------------------------------------------------
+
+The sharpest single foil is a family in which a continuous knob \emph{generates}
+off-critical zeros that move the \emph{opposite} way to the bridge's. The driver
+\texttt{epstein\_zeros.py} reproduces \citet{TravenecSamaj2022} on the hypercubic
+Epstein zeta
+\begin{equation}\label{eq:epstein}
+  Z_d(s)=\sideset{}{'}\sum_{n\in\mathbb{Z}^{d}}|n|^{-2s},
+\end{equation}
+with the spatial dimension $d$ as a continuous (analytically continued) knob. We
+evaluate it through the Terras/theta completed form
+\begin{equation}\label{eq:epsteincompleted}
+  \Lambda_d(s)=\pi^{-s}\Gamma(s)Z_d(s)
+  =\int_1^\infty\!\bigl[t^{s-1}+t^{d/2-s-1}\bigr]\bigl(\psi(t)^{d}-1\bigr)\,\dd t
+  +\frac{1}{s-d/2}-\frac1s,
+\end{equation}
+where $\psi(t)=\sum_{n\in\mathbb{Z}}\eu^{-\pi n^{2}t}$ is a Jacobi theta and
+$\psi(t)^{d}$ for \emph{real} $d$ is Trav\v{e}nec--\v{S}amaj's continuation in the
+dimension. This is fast, entire except for poles, and valid for all $s$; it is
+validated against the direct lattice sum ($\Re s>d/2$), the closed forms
+$Z_1(s)=2\zeta(2s)$ and $Z_2(s)=4\zeta(s)\beta(s)$, the functional equation
+$\Lambda_d(s)=\Lambda_d(d/2-s)$ (critical line $\sigma=d/4$), and the pole residue
+$\pi^{d/2}/\Gamma(d/2)$, all to $\sim10^{-29}$.
+
+\paragraph{A pitchfork at the critical dimension.}
+Because $\Lambda_d$ is even about the real centre $s=d/4$, that centre is a
+\emph{double} zero exactly when $g(d)=\Lambda_d(d/4)=0$; its root is reproduced to ten
+digits as $d^{\ast}=9.2455524667$ (Trav\v{e}nec--\v{S}amaj's $9.24555$). The sign of
+$\Lambda_d(d/4)\,\Lambda_d''(d/4)$ decides the branch: for $d<d^{\ast}$ the lowest
+pair sits \emph{on} the critical line at $d/4\pm\iu\,t_1(d)$ with $t_1(d)\to0$ as
+$d\uparrow d^{\ast}$ (they slide down the line to collide); at $d^{\ast}$ they meet at
+the real centre; and for $d>d^{\ast}$ they split into a \emph{real} off-critical pair
+$d/4\pm\delta(d)$ that leaves the line and migrates to the strip boundaries
+$\{0,d/2\}$ (at $d=25$, $\sigma_-\approx2\times10^{-4}$ and
+$\sigma_+\approx d/2-2\times10^{-4}$). An argument-principle count certifies this
+independently of any root-finder: \emph{zero} real zeros in the strip for
+$d<d^{\ast}$, exactly \emph{two} for $d>d^{\ast}$.
+
+\paragraph{The reverse arrow.}
+This is the bottom row of \cref{tab:taxonomy} made concrete: zeros \emph{born off}
+$\sigma=d/4$ and \emph{migrating away} to the strip edges---the opposite of the
+bridge's zeroless-$\to$-born-$\to$-onto-$\tfrac12$. The driver's final panel overlays
+the Epstein real zero (born off, moving away as $d:d^{\ast}\to25$) against a genuine
+$\zeta^{(K)}$ zero (born from the zeroless endpoint, climbing onto $\tfrac12$ as
+$K:1\to89$) on one axis of $\Re s-(\text{critical line})$: two arrows, opposite ways.
+The caveat that keeps the contrast honest is that Epstein zeta lacks an Euler product
+(the sum \eqref{eq:epstein} is geometric, over a lattice, not arithmetic), so this is
+a \emph{cross-family} foil about the \emph{breadth} of the directional phenomenon, not
+a shared arithmetic mechanism. A two-dimensional shape-knob variant moves the zeros
+the same way under a lattice deformation \citep{BeterminSamajTravenec2021}. As with
+the other three cases, this is a faithful reproduction plus the contrast figure, not a
+claim: the generation of off-critical zeros is Trav\v{e}nec--\v{S}amaj's result.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.96\textwidth]{epstein_zeros.png}
+  \caption{Reproduction of the reverse-direction foil \citep{TravenecSamaj2022}. The
+  hypercubic Epstein zeta $Z_d$ \eqref{eq:epstein}, evaluated through the completed
+  form \eqref{eq:epsteincompleted}, undergoes a pitchfork at $d^{\ast}=9.24555\ldots$:
+  for $d>d^{\ast}$ a real pair is born \emph{off} $\sigma=d/4$ and migrates
+  \emph{away} to the strip edges. The last panel sets this reverse arrow beside the
+  bridge's born-\emph{onto}-$\tfrac12$ motion.}
+  \label{fig:epstein}
+\end{figure}
+
+\paragraph{What the four cases establish.}
+Together they locate the bridge inside its lineage without over-claiming. The
+born-onto-$\tfrac12$-from-a-zeroless-start arrow (top row of \cref{tab:taxonomy}) is
+unmatched in the deform-and-track literature for any family other than $\zeta$ and
+$\eta$: its two published relatives (\cref{app:fk,app:hurwitzlerch}) merely
+\emph{wander} on and off the line between two zero-rich ends, and the closest
+lattice-zeta analogue (\cref{app:epstein}) drives its zeros the opposite way. That the
+same arrow \emph{does} survive for a genuine primitive Dirichlet $L$-function
+(\cref{app:chi4}) is the appendix's one forward step beyond reproduction---and even
+there the claim is a computational demonstration, not a theorem.
 
 % =====================================================================
 \bibliographystyle{plainnat}

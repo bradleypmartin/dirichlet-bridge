@@ -6,13 +6,21 @@
 % Mor{\'a}n, {\v S}iauliai.
 %
 % Every entry below was verified against publisher pages, arXiv abstract
-% pages, Crossref, and/or DLMF on 2026-06-29. Residual unverified details
-% (BibTeX has no in-entry comment syntax, so they are collected here):
+% pages, Crossref, and/or DLMF on 2026-06-29; the beyond-zeta/eta additions
+% (FornbergKolbig1975, Tao2017Continuous, GarunkstisTamosiunas2017,
+% TravenecSamaj2022, BeterminSamajTravenec2021) come from the 2026-06-30
+% deform-and-track deep-research pass (LITERATURE.md §4/§6). Residual
+% unverified details (BibTeX has no in-entry comment syntax, so they are
+% collected here):
 %   - Montgomery1973         : no chapter-level DOI for the 1973 PSPUM vol.
 %   - GarunkstisTamosiunas2013: journal assigns no DOI; volume printed "8(16)".
 %   - GonekMontgomery2013    : no arXiv preprint located.
 %   - Righetti2016           : first name "Mattia" inferred from the author's
 %                              other papers, not reconfirmed on the title page.
+%   - TravenecSamaj2022      : Appl. Math. Comput. 413:126611; DOI omitted
+%                              pending a title-page check (arXiv:1909.07112).
+%   - BeterminSamajTravenec2021: cited from arXiv:2110.09368 (preprint;
+%                              follow-up arXiv:2307.06002), no journal DOI.
 
 % ============================================================
 % FOUNDATIONAL
@@ -75,6 +83,30 @@
 }
 
 % ============================================================
+% DIRECT ANCESTOR (POLYLOGARITHM DEFORM-AND-TRACK) + CONTINUOUS MODEL
+% ============================================================
+
+@article{FornbergKolbig1975,
+  author    = {Fornberg, Bengt and K{\"o}lbig, K. S.},
+  title     = {Complex Zeros of the {Jonqui\`ere} or Polylogarithm Function},
+  journal   = {Mathematics of Computation},
+  volume    = {29},
+  number    = {130},
+  pages     = {582--599},
+  year      = {1975},
+  doi       = {10.2307/2005579},
+  publisher = {American Mathematical Society}
+}
+
+@misc{Tao2017Continuous,
+  author       = {Tao, Terence},
+  title        = {Continuous approximations to arithmetic functions},
+  year         = {2017},
+  howpublished = {Blog post, \url{https://terrytao.wordpress.com/2017/11/09/continuous-approximations-to-arithmetic-functions/}},
+  note         = {Accessed 2026}
+}
+
+% ============================================================
 % HALF-SHIFT / HURWITZ-ZERO TRAJECTORIES
 % ============================================================
 
@@ -110,6 +142,18 @@
   volume  = {8(16)},
   pages   = {49--62},
   year    = {2013}
+}
+
+@article{GarunkstisTamosiunas2017,
+  author  = {Garunk{\v{s}}tis, Ram{\=u}nas and Tamo{\v{s}}i{\=u}nas, Raivydas},
+  title   = {Symmetry of Zeros of the {Lerch} Zeta-Function for Equal Parameters},
+  journal = {Lithuanian Mathematical Journal},
+  volume  = {57},
+  number  = {4},
+  pages   = {433--440},
+  year    = {2017},
+  doi     = {10.1007/s10986-017-9373-0},
+  note    = {arXiv:1901.10790; companion arXiv:1902.03064}
 }
 
 % ============================================================
@@ -280,6 +324,29 @@
   pages   = {2045--2049},
   year    = {2007},
   doi     = {10.1090/S0025-5718-07-01999-0}
+}
+
+% ============================================================
+% EPSTEIN / LATTICE ZETA (REVERSE-DIRECTION FOIL)
+% ============================================================
+
+@article{TravenecSamaj2022,
+  author  = {Trav{\v{e}}nec, Igor and {\v{S}}amaj, Ladislav},
+  title   = {Generation of Off-Critical Zeros for Hypercubic {Epstein} Zeta-Functions},
+  journal = {Applied Mathematics and Computation},
+  volume  = {413},
+  pages   = {126611},
+  year    = {2022},
+  note    = {arXiv:1909.07112}
+}
+
+@misc{BeterminSamajTravenec2021,
+  author        = {B{\'e}termin, Laurent and {\v{S}}amaj, Ladislav and Trav{\v{e}}nec, Igor},
+  title         = {Interplay Between Critical and Off-Critical Zeros of Two-Dimensional {Epstein} Zeta Functions},
+  year          = {2021},
+  eprint        = {2110.09368},
+  archivePrefix = {arXiv},
+  note          = {Preprint; follow-up arXiv:2307.06002.}
 }
 
 % ============================================================
