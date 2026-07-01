@@ -268,6 +268,9 @@ Our motion is the only one whose arrow points **onto** the line from **nothing**
 > Separately, the closest *published* analogues — the **Hurwitz/Lerch α-sweep** of Garunkštis–Steuding
 > (2007) and Garunkštis–Tamošiūnas (2017) — are now **reproduced** (`bridge/hurwitz_lerch_zeros.py`,
 > **§4.11**), foregrounding the closest sibling and drawing the on/off-½ vs onto-½ contrast explicitly.
+> Finally the **reverse-direction foil** — the Epstein `d`-knob of Travěnec–Šamaj (2022) — is
+> **reproduced** (`bridge/epstein_zeros.py`, **§4.12**, #22): zeros **born off** `σ=d/4` and
+> **migrating away**, the opposite arrow, drawn beside the bridge's born-onto-½ (the taxonomy figure).
 > The ledger rows (§5) are updated accordingly.
 
 ### 4.1 Polylogarithm / Jonquière (argument knob) — the ancestor + a documented negative
@@ -337,7 +340,9 @@ Our motion is the only one whose arrow points **onto** the line from **nothing**
   **shape `Δ`** as the deform knob (+ follow-up arXiv:2307.06002).
 - **NEW family** and the closest *literal zero-birth-via-a-continuous-knob* — but the
   arrow points **off and away** from `½`, and Epstein zeta lacks an Euler product.
-  **COUSIN (reverse direction).**
+  **COUSIN (reverse direction).** *Reproduced* in `bridge/epstein_zeros.py` (§4.12, #22):
+  the `d`-knob pitchfork at `d*=9.24555…`, zeros **born off** `σ=d/4` and **migrating away**
+  to the strip edges — drawn beside the bridge's own born-onto-½ motion (the taxonomy figure).
 
 ### 4.6 Partial-sum (guise c) generalizations beyond η
 - **Dirichlet λ and β** — *A note on the density of zeros of partial sums of the
@@ -480,6 +485,43 @@ reproduced, and the family-square + K-knob contrast are **expository synthesis**
 re-presentation of known objects). Its role is exactly the ticket's: validate our α-trajectory
 machinery and **foreground the closest published analogue** so the preprint distinguishes it cleanly.
 
+### 4.12 The reverse-direction foil — Epstein / lattice zeta (issue #22, executed)
+
+`bridge/epstein_zeros.py` reproduces the **sharpest single foil** in the lineage (§4.5
+`TravenecSamaj2022`): a family where a continuous knob **generates off-critical zeros** that move
+the *opposite* way to ours. This is the panel that turns the directional claim from generic ("we
+move zeros") into distinctive ("we move them *onto* ½ from a zeroless start, where the closest
+lattice-zeta analogue moves them *off and away*"). Verified findings:
+
+- **The evaluator.** The hypercubic Epstein zeta `Z_d(s)=Σ'_{n∈ℤᵈ}|n|^{-2s}` via the Terras/theta
+  completed formula `Λ_d(s)=π^{-s}Γ(s)Z_d(s)=∫₁^∞[t^{s-1}+t^{d/2-s-1}](ψ(t)ᵈ−1)dt+1/(s−d/2)−1/s`
+  (`ψ`=Jacobi θ₃; the lattice theta factorises as `ψ(t)ᵈ`, and `ψ(t)ᵈ` for **real** `d` *is*
+  Travěnec–Šamaj's analytic continuation in the dimension). Fast, entire-except-poles, valid for all
+  `s`. Validated against the direct lattice sum (`Re s>d/2`) and the closed forms `Z_1(s)=2ζ(2s)`,
+  `Z_2(s)=4ζ(s)β(s)`; the functional equation `Λ_d(s)=Λ_d(d/2−s)` (critical line `σ=d/4`) and the
+  pole residue `Res_{s=d/2}Z_d=π^{d/2}/Γ(d/2)` to ~1e-29.
+- **The pitchfork at the critical dimension `d*=9.24555…`, reproduced to 10 digits.** Since `Λ_d` is
+  even about the real center `s=d/4`, that center is a **double zero** exactly when `g(d)=Λ_d(d/4)=0`;
+  its root is `d*=9.2455524667` (Travěnec–Šamaj's value). The sign of `Λ_d(d/4)·Λ_d''(d/4)` decides
+  the branch: for `d<d*` the lowest pair sits **on** the critical line at `d/4±it₁(d)` with `t₁(d)→0`
+  as `d↗d*` (they slide down the line to collide); for `d>d*` they split into a **real off-critical
+  pair** `d/4±δ(d)` that leaves the line and **migrates to the strip boundaries** `{0,d/2}`
+  (`σ₋→0, σ₊→d/2`; at `d=25`, `σ₋≈2e-4`, `σ₊≈d/2−2e-4`). An **argument-principle** count (winding
+  number, no root-finding) certifies it independently: **0** real zeros in the strip for `d<d*`,
+  exactly **2** for `d>d*`.
+- **The directional taxonomy, made visible (checklist item: contrast panel).** The driver's last
+  panel overlays the Epstein real zero (born **off** `σ=d/4`, moving **away** as `d:d*→25`) against
+  a genuine `harmonic_bridge.zeta_K` zero (born from the zeroless endpoint, climbing **onto** `½` as
+  `K:1→89`) on one axis of `Re s − (critical line)`. The two arrows point opposite ways — the
+  taxonomy of §4.0 in a single figure.
+
+**Honest framing.** This is **reproduction + the contrast figure**, not a novelty claim: the Epstein
+generation-of-off-critical-zeros is Travěnec–Šamaj's result, reproduced faithfully (the `d*` value,
+the migration, the strip-edge limits). Its role is exactly the ticket's — make the *reverse* arrow
+concrete so the preprint's "zeroless → born → **onto** ½" reads as **distinctive**, not generic.
+Caveat kept straight: Epstein zeta lacks an Euler product, so it is a *geometric* foil, not an
+arithmetic sibling.
+
 ---
 
 ## 5. Consolidated novelty ledger
@@ -495,6 +537,7 @@ machinery and **foreground the closest published analogue** so the preprint dist
 | Generalise beyond ζ/η | **survives** (§4) | `GarunkstisSteuding2007` (Hurwitz α-track); `TravenecSamaj2022` (Epstein, reverse) | zeroless→born→**onto** ½ unmatched for any family ≠ ζ/η |
 | **Executed: `L(s,χ₄)`** (§4.10, #20) | **demonstrated** | (fills §4.8 gap 1, via the bridge's knob not FK's) | born→onto-½ survives for a primitive Dirichlet L; *cleaner* than η (single line, no companion); Lerch tie-in + a mod-8 warp surprise |
 | **Reproduced: Hurwitz/Lerch α-sweep** (§4.11, #21) | **reproduction + synthesis** (not a claim) | `GarunkstisSteuding2007`, `GarunkstisTamosiunas2017` (both *reproduced*) | the closest published analogue is foregrounded + distinguished (on/off-½ vs onto-½); the Lerch-square unification of FK/G–S/G–T as three edges is the only expository new bit |
+| **Reproduced: Epstein `d`-knob foil** (§4.12, #22) | **reproduction + contrast figure** (not a claim) | `TravenecSamaj2022` (*reproduced*); `BeterminSamajTravenec2021` (shape-knob companion, cited) | the reverse arrow made concrete — zeros **born off** `σ=d/4`, pitchfork at `d*=9.24555`, migrating **away** to the strip edges — so "zeroless→born→**onto** ½" reads as distinctive, not generic |
 
 ---
 

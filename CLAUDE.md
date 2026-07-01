@@ -120,6 +120,21 @@ for pytest.
   on/off ½ between two zero-rich ends) with our K-knob (born onto ½ from a zeroless endpoint,
   reusing `harmonic_bridge.zeta_K`). Evaluator gotcha: `lerchphi` diverges at `z→1`, spliced with
   the Hurwitz zeta. Self-contained (only `harmonic_bridge` for the K-knob contrast panel).
+- `epstein_zeros.py` — the **reverse-direction foil** (issue #22): reproduces **Travěnec–Šamaj
+  2022** (dimension knob; Bétermin–Šamaj–Travěnec 2021 shape knob is the cited companion) on the
+  hypercubic Epstein zeta `Z_d(s)=Σ'_{n∈ℤᵈ}|n|^{-2s}`. Zeros
+  are born **off** the critical line `σ=d/4` and migrate **away** — the *opposite* arrow to our
+  zeroless→born→**onto**-½, and the sharpest single foil for the directional taxonomy
+  (`LITERATURE.md` §4.0/§4.5). Evaluator is the Terras/theta completed formula `Λ_d(s)=π^{-s}Γ(s)Z_d
+  =∫₁^∞[t^{s-1}+t^{d/2-s-1}](ψ(t)ᵈ−1)dt+1/(s−d/2)−1/s` (`ψ`=Jacobi θ₃; `ψᵈ` for real `d` *is* the
+  analytic dimension continuation), fast + entire-except-poles, validated vs the direct lattice sum
+  and the closed forms `Z_1=2ζ(2s)`, `Z_2=4ζ(s)β(s)`. The mechanism is a **pitchfork at the critical
+  dimension `d*=9.24555…`** (root of `g(d)=Λ_d(d/4)`, reproduced to 10 digits): for `d<d*` the lowest
+  pair sits on `σ=d/4` at `d/4±it₁(d)` with `t₁→0`; at `d*` they collide at the real center; for `d>d*`
+  they split into a real pair `d/4±δ(d)` migrating to the strip edges `{0,d/2}` (σ₋→0, σ₊→d/2 at d=25).
+  An argument-principle count (0 real zeros for `d<d*`, 2 for `d>d*`) certifies the split independently.
+  Contrast panel reuses `harmonic_bridge.zeta_K`+`migrate` (born-onto-½). Self-contained (only
+  `harmonic_bridge` for the contrast).
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
 - vendored helpers used only by `eta_two_component`: `gue_spacing` (→

@@ -33,3 +33,4 @@ bridge/figures/*.png
 !bridge/figures/jonquiere_zeros.png
 !bridge/figures/lfunction_bridge.png
 !bridge/figures/hurwitz_lerch_zeros.png
+!bridge/figures/epstein_zeros.png
