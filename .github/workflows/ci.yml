@@ -2,20 +2,36 @@ name: tests
 
 on:
   push:
+    branches: [main]
   pull_request:
 
 jobs:
   pytest:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest,  python: "3.9"  }   # the declared floor
+          - { os: ubuntu-latest,  python: "3.12" }   # ceiling of the pinned wheels
+          - { os: windows-latest, python: "3.9"  }   # the dev platform (paths, encodings)
+          - { os: macos-latest,   python: "3.12" }   # arm64 runners ship no 3.9 build
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python 3.9
+      - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: ${{ matrix.python }}
+          cache: pip
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run fast test suite
         run: pytest -q
+      # Nothing in the suite exercises figure writing, the Agg backend forcing, or
+      # the CSV read end-to-end; smoke-run the five fastest drivers (~1 min) on the
+      # platform most likely to differ.
+      - name: Smoke-run the fast drivers
+        if: matrix.os == 'windows-latest'
+        run: python repro.py cont_eta warp_coordinate warp_phase_compare eta_two_component geometric_bridge

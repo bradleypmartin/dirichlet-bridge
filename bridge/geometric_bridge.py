@@ -93,6 +93,7 @@ if _HERE not in sys.path:
 mp.mp.dps = 30
 
 PI = mp.pi
+FOUR_PI2 = 4 * PI ** 2                     # hoisted: the comb denominators use it per k
 
 
 # --------------------------------------------------------------------------
@@ -114,7 +115,7 @@ def shadow(s):
 def harm(s, k):
     """The k-th comb harmonic  2 ln s/((ln s)^2 + 4 pi^2 k^2)  (~ (ln s)/(2 pi^2 k^2))."""
     L = mp.log(mp.mpc(s))
-    return 2 * L / (L ** 2 + 4 * PI ** 2 * k ** 2)
+    return 2 * L / (L * L + FOUR_PI2 * k ** 2)
 
 
 def geom_K(s, K):
@@ -125,9 +126,10 @@ def geom_K(s, K):
     """
     s = mp.mpc(s)
     L = mp.log(s)
+    L2 = L * L
     tot = -1 / L + mp.mpf("0.5")
     for k in range(1, K + 1):
-        tot -= 2 * L / (L ** 2 + 4 * PI ** 2 * k ** 2)
+        tot -= 2 * L / (L2 + FOUR_PI2 * k ** 2)
     return tot
 
 
@@ -157,9 +159,10 @@ def asc_K(s, K):
     """
     s = mp.mpc(s)
     L = mp.log(s)
+    L2 = L * L
     tot = discrete(s) - mp.mpf("0.5")
     for k in range(1, K + 1):
-        tot += 2 * L / (L ** 2 + 4 * PI ** 2 * k ** 2)
+        tot += 2 * L / (L2 + FOUR_PI2 * k ** 2)
     return tot
 
 
@@ -237,8 +240,7 @@ def _print_telescoping():
     print("== exact telescoping: full comb == (1/2)coth(L/2)-1/L == 1/(1-s) ==")
     print("   s                    |harm_sum_closed - partialsum(4000)|   |geom_limit - 1/(1-s)|")
     for lbl, s in SAMPLES:
-        L = mp.log(mp.mpc(s))
-        big = mp.fsum(2 * L / (L ** 2 + 4 * PI ** 2 * k ** 2) for k in range(1, 4001))
+        big = mp.fsum(harm(s, k) for k in range(1, 4001))
         e_hs = float(abs(harm_sum_closed(s) - big))
         e_tel = float(abs(geom_limit_closed(s) - discrete(s)))
         print(f"   {lbl:<20} {e_hs:>34.2e}   {e_tel:>20.2e}")

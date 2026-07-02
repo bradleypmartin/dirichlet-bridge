@@ -15,7 +15,6 @@ from __future__ import annotations
 import math
 
 import mpmath as mp
-import pytest
 
 import cont_eta as ce
 
@@ -28,14 +27,14 @@ def test_closed_matches_quad():
 
 
 def test_asym_reduction_converges():
-    """The two-term reduction tightens monotonically with t (1% by t~40)."""
+    """The two-term reduction tightens from t=20 to t=150 (1% by t~40)."""
     rels = []
     for t in [20, 40, 80, 150]:
         s = mp.mpc(ce.sigma_law(t), t)
         rels.append(float(abs((ce.F_asym(s) - ce.F_closed(s)) / ce.F_closed(s))))
     assert rels[0] < 2e-2
     assert rels[-1] < 5e-3
-    # monotone improvement (allow tiny non-monotone wiggle)
+    # endpoint improvement only: the decay can wiggle at intermediate t
     assert rels[-1] < rels[0]
 
 

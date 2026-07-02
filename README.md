@@ -80,9 +80,12 @@ cases (Appendix A) and the **geometric-series miniature** (Appendix B):
 ## Quickstart
 
 ```bash
+# any Python 3.9-3.12 (the pinned wheels don't cover 3.13+)
 python -m venv .venv && . .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt                  # numpy, scipy, mpmath, matplotlib, pytest (pinned)
-# (or, with uv:  uv venv --python 3.9 .venv  &&  uv pip install -r requirements.txt)
+# (or, with uv:  uv venv --python 3.9 .venv  &&  uv pip install -r requirements.txt
+#  -- then activate the same way; a uv-created venv has no pip inside, so use
+#  `uv pip ...` for any later installs)
 
 pytest                       # fast suite (slow high-precision checks deselected by default)
 pytest -m slow               # the expensive end-to-end regressions
@@ -91,9 +94,16 @@ python repro.py              # regenerate ALL 18 figures from scratch (~22 min)
 python bridge/cont_eta.py    # or run one driver: it self-validates and writes bridge/figures/<name>.png
 ```
 
-Targets **Python 3.9** (kept 3.9-compatible: `typing.Union`, not PEP-604 `X | Y`
-runtime unions). Every driver anchors its data reads and figure writes to the
-repo root, so it runs the same regardless of the working directory.
+Targets **Python 3.9** and runs unchanged through **3.12** (the pinned wheels
+cover 3.9–3.12 only; on 3.13+ the numpy/scipy install fails). The code is kept
+3.9-compatible (`typing.Union`, not PEP-604 `X | Y` runtime unions). Every
+driver anchors its data reads and figure writes to the repo root, so it runs
+the same regardless of the working directory. Windows note: a fresh PowerShell
+may refuse `Activate.ps1` under its default execution policy — either run
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or skip activation
+and call `.venv\Scripts\python.exe` / `.venv\Scripts\pytest.exe` directly
+(everything here works unactivated; `repro.py` launches its drivers via
+`sys.executable`).
 
 **Read next:** [`RESULTS.md`](RESULTS.md) walks through every figure ("what it
 shows / why it matters"); [`CONTRIBUTING.md`](CONTRIBUTING.md) covers setup and the

@@ -446,7 +446,6 @@ def test_c_warp_closed_quadratic_subtraction_is_required():
     s = mp.mpc(2, 0)
     z32 = mp.zeta(s, mp.mpf(3) / 2)
     D1 = -s * mp.zeta(s + 1, mp.mpf(3) / 2)
-    D2 = s * (s + 1) * mp.zeta(s + 2, mp.mpf(3) / 2)
 
     def naive_integrand(v):                                  # linear counterterm only (no -P^2 D2)
         p = rl.gibbs_profile(v)

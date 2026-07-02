@@ -68,7 +68,8 @@ def test_F_track_continuous_at_switch():
 
 # ----------------------------- seeds / asymptotes / comb --------------------
 def test_asymptotes_match_seed_imag():
-    """As x->0, Im of the FK seed -> the asymptote heights v+/-(P,N) (Eqs. 17,20)."""
+    """Im of the FK seed equals the asymptote height v+/-(P,N) exactly (Eqs. 17,20) --
+    only Re depends on x -- so the two independently-coded functions must agree."""
     x = mp.mpf("1e-12")
     for P, N in [(0, 1), (1, 1), (2, 3)]:
         assert abs(mp.im(jz.seed_plus(x, P, N)) - jz.asymptote_plus(P, N)) < 1e-25

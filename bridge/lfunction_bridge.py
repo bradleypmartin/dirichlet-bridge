@@ -88,7 +88,7 @@ Run directly to validate + plot: writes bridge/figures/lfunction_bridge.png.
 import math
 import sys
 from pathlib import Path
-from typing import List, Tuple
+from typing import List
 
 import mpmath as mp
 
@@ -108,7 +108,6 @@ mp.mp.dps = 30
 PI = mp.pi
 HALF_FREQ = PI / 2                         # chi_4's carrier sin(pi x/2) has fundamental pi/2
 _LN_HALF = float(mp.log(PI / 2))           # ln(pi/2), the pi -> pi/2 shift of cont_eta's laws
-_E = math.e
 
 
 # --------------------------------------------------------------------------
@@ -135,9 +134,13 @@ def L_chi4(s):
 
 
 def L_chi4_sum(s, terms=200000):
-    """L(s, chi_4) by direct summation of the defining series -- the sigma>1 reference."""
+    """L(s, chi_4) by direct summation of the defining series -- the sigma>1 reference.
+
+    chi_4 vanishes on the evens, so only the odd terms n = 2m+1 (with chi_4 = (-1)^m)
+    are computed -- half the mpc powers of the naive sum over every n <= terms.
+    """
     s = mp.mpc(s)
-    return mp.nsum(lambda n: chi4(n) * n ** (-s), [1, terms])
+    return mp.nsum(lambda m: (-1) ** m * (2 * m + 1) ** (-s), [0, (terms - 1) // 2])
 
 
 def completed_L(s):
@@ -309,16 +312,19 @@ def _chi4_moment_series(s, logs, sgw, nus, base_dps):
     warp_eta._eta_moment_series, here with the sin(pi g) weight)."""
     n = len(sgw)
     eps = mp.mpf(10) ** (-(base_dps - 1))
-    tot = mp.fsum((-1) ** m * mp.fsum(sgw[i] * mp.e ** (-s * logs[m - 1][i]) for i in range(n))
+    tot = mp.fsum((-1) ** m * mp.fsum(sgw[i] * mp.exp(-s * logs[m - 1][i]) for i in range(n))
                   for m in range(1, _M + 1))                        # sum_{m<=M} (-1)^m int sin(pi g)(m+g)^{-s}
     c = mp.mpf(1)                                                   # binom(-s, 0)
+    mpows = [(-1) ** m * mp.power(m, -s) for m in range(1, _M + 1)]  # (-1)^m m^{-(s+j)}, stepped /m per j
     for j in range(len(nus)):
-        altHM = mp.fsum((-1) ** m * mp.power(m, -(s + j)) for m in range(1, _M + 1))
+        altHM = mp.fsum(mpows)
         term = c * nus[j] * (-mp.altzeta(s + j) - altHM)           # m>M alternating tail, continued
         tot += term
         if j > 4 and abs(term) < eps * (abs(tot) + 1):
             break
         c = c * (-s - j) / (j + 1)                                 # binom(-s, j+1)
+        for m in range(2, _M + 1):
+            mpows[m - 1] /= m                                       # (-1)^m m^{-(s+j)} -> (-1)^m m^{-(s+j+1)}
     return tot
 
 
@@ -409,7 +415,7 @@ def midpoint_chi4_carrier_limit(s):
 # zero locations and the K schedule
 # --------------------------------------------------------------------------
 # First nontrivial zeros of L(s, chi_4) on sigma=1/2 (heights t), the migration targets.
-L_ZERO_HEIGHTS = [6.020948, 10.243770, 12.988098, 16.342605, 18.291998]
+L_ZERO_HEIGHTS = [6.020948, 10.243770, 12.988098, 16.342607, 18.291993]
 
 # K schedule for the migration -- both the comb (closed-form moments) and the fast warp are
 # affordable to K=45 (O(1/K) lands the zeros within ~2e-2 of sigma=1/2 by then).
@@ -447,7 +453,7 @@ def _print_endpoint(zeros):
     ts = [float(z.imag) for z in zeros]
     ss = [float(z.real) for z in zeros]
     print(f"   {len(zeros)} off-critical zeros with 0 < Im <= {ts[-1]:.0f}  (design-crux answer:")
-    print(f"   the endpoint is STRUCTURED, eta-type -- NOT zeroless):")
+    print("   the endpoint is STRUCTURED, eta-type -- NOT zeroless):")
     print("     n      t      sigma   sigma_law  |  gap    law     |  N     law")
     max_gap_rel = 0.0
     for i, (t, sg) in enumerate(zip(ts, ss)):
@@ -465,10 +471,10 @@ def _print_endpoint(zeros):
           f"= {max_gap_rel:.2e}")
 
 
-def _print_counting(t_max=20.0):
+def _print_counting(g_zeros, t_max=20.0):
     """Density conservation: G's string density == L(s, chi_4) zero density (the NO-SPLIT check)."""
     Lz = [t for t in L_ZERO_HEIGHTS if t <= t_max]
-    Gz = [float(z.imag) for z in find_G_zeros(t_max)]
+    Gz = [float(z.imag) for z in g_zeros if float(z.imag) <= t_max]
     print(f"\n== density bijection -- the SINGLE-LINE check (0 < t < {t_max:.0f}) ==")
     print(f"   L(s, chi_4) zeros on sigma=1/2:  {len(Lz)}   (heights {[round(t,2) for t in Lz]})")
     print(f"   G-string zeros (off-critical):   {len(Gz)}   RvM law N({t_max:.0f}) "
@@ -580,7 +586,7 @@ def _main():
     _print_evaluator()
     g_zeros = find_G_zeros(26.0)
     _print_endpoint(g_zeros)
-    _print_counting()
+    _print_counting(g_zeros)
     comb = _print_comb_migration()
     _print_rate_constant()
     _print_warp()

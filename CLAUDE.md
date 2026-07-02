@@ -35,8 +35,9 @@ deliberately-engineered warp landing on `ζ(s,½)`, and the unified `O(1/K)` rat
 law (+ the Gram's-law vertical-migration coupling).
 
 ## Environment & running
-Targets **Python 3.9** — keep code 3.9-compatible (`typing.Union`, *not* PEP 604
-`X | Y` runtime unions). Per-machine venv (gitignored):
+Targets **Python 3.9**, runs on 3.9–3.12 (the pins ship no 3.13+ wheels) — keep
+code 3.9-compatible (`typing.Union`, *not* PEP 604 `X | Y` runtime unions).
+Per-machine venv (gitignored):
 
 - Setup: `python -m venv .venv` then `pip install -r requirements.txt`
   (numpy, scipy, mpmath, matplotlib, pytest — pinned).
@@ -65,6 +66,11 @@ for pytest.
   companion; the measured σ=½ + σ=0 bijection.
 - `warp_alpha.py` — the general-phase `n+α` warp → `ζ(s,α)`; the
   Saias–Weingartner `P·L` dichotomy.
+- `warp_coordinate.py` — the warp map itself: `n* = x+φ_K(x)` bending from the
+  straight line into the midpoint staircase as `K` grows (Gibbs wobble and all);
+  the *coordinate*-space companion of `comb_vs_warp.py`.
+- `warp_phase_compare.py` — the midpoint staircase (`α=½`) vs. the integer one
+  (`α=1`), and why a pure-`x` start forces the former.
 - `warp_eta.py` — warps the **η** integrand `cos(πx)x^{-s}` (supplement to the
   warp): the midpoint `α=½` is annihilated (`cos(π(m+½))=0`), only `α=1` survives →
   `η=(1−2^{1-s})ζ`, reproducing the σ=½ ∪ σ=1 split by a second route. Reuses the
@@ -167,39 +173,36 @@ referenced from `bridge/figures/` via `\graphicspath` (not copied).
   `from gue_spacing import …`) resolve because the modules are siblings, and
   `Path(__file__).resolve().parents[1]` → repo root keeps data/figure paths
   correct. Don't move modules into subfolders without revisiting both.
-- Modules were copied **byte-identical** from the originating project, so each
-  cross-importing one still carries a self-bootstrapping `sys.path` header that
-  adds sibling dir names that don't exist here (`maass/`, `prime_zero/`, …) —
-  harmless; cleanup is tracked in **#4**.
+- Each cross-importing module keeps a short header that re-asserts its own
+  directory on `sys.path` (robustness for direct runs); the parent project's
+  stale bootstrap dirs (`maass/`, `prime_zero/`, …) were cleaned out under #4.
 - Only `riemann_zeros.csv` is needed at runtime; the Maass eigenvalue CSV is not.
 - `_private/` is a gitignored local stash for full-text papers (`_private/papers/`)
   and scratch material we keep organized but never commit (copyright + bulk).
   Reproductions cite the paper; they don't ship it. The FK1975 PDF lives there.
 
 ## Status & open work (issues in this repo)
-- **#1 — Epic** (the hub; full scope + dependency graph).
-- **#2 — Literature & novelty hardening — DONE.** Its two comments carry the
-  BibTeX, the honest "what's known / what we add" statement, the Berry/LMQ
-  deflator, and a ready-to-paste Rodgers–Tao contrast paragraph. **Read these
-  before drafting the paper.**
-- **#3 — Repo extraction — DONE** (this repo).
-- **#4 — Presentation & reproducibility** (open): `RESULTS.md` walkthrough,
-  one-command figure regen, and the self-bootstrap-header cleanup above.
-- **#5 — arXiv preprint** (open): **draft complete in `paper/`** — `main.tex`
-  (~29-page methods/experimental-math write-up; body includes the §"Two routes, side by
-  side" integrand comparison from #11 and the §"The trivial zeros" section from #10;
-  Appendix A is the four beyond-ζ/η rhyming cases from #18, Appendix B the geometric-series
-  miniature from #30), a verified `references.bib` (36 entries), `make_arxiv.py` packager,
-  and a built `main.pdf`. Build with `tectonic main.tex` from `paper/` (Tectonic + Poppler
-  live in `~/.local/bin` / installed via winget). Framing/citations come from #2; the 18
-  figures are pulled straight from `bridge/figures/` via `\graphicspath`, so no figure
-  is duplicated.
-- **#6 — Senior-collaborator outreach** (open): one-pager + draft email; depends
-  on #2/#4/#5.
-- **#29 — Epic: geometric-series Appendix B** / **#30 — experimentation — DONE.** The
-  geometric series `Σ sⁿ` run through the whole apparatus in elementary closed form
-  (`geometric_bridge.py` + tests + Appendix B). No zeros, no novelty — an illustrative
-  consistency check; framed as such. Bare issues `#29/#30` are *this* repo's.
+The original arc (#1 epic; #2 literature; #3 extraction; #4 presentation &
+reproducibility; #5 arXiv preprint; #6 outreach) and the appendix epics
+(#16/#20/#21/#22 → Appendix A; #29/#30 → Appendix B) are all **closed**.
+Still-load-bearing pointers into the closed issues:
+- **#2 — Literature & novelty hardening.** Its two comments carry the BibTeX,
+  the honest "what's known / what we add" statement, the Berry/LMQ deflator, and
+  a ready-to-paste Rodgers–Tao contrast paragraph. **Read these before touching
+  the paper's framing.**
+- **#5 — arXiv preprint**: the draft lives in `paper/` — `main.tex` (~29-page
+  methods/experimental-math write-up; Appendix A = the four beyond-ζ/η rhyming
+  cases from #18, Appendix B = the geometric-series miniature from #30), a
+  verified `references.bib` (36 entries), `make_arxiv.py` packager, and a built
+  `main.pdf`. Build with `tectonic main.tex` from `paper/` (Tectonic + Poppler
+  live in `~/.local/bin` / installed via winget). The 18 figures are pulled
+  straight from `bridge/figures/` via `\graphicspath`, so no figure is duplicated.
+
+Open — the two pre-external-review polish passes. PRs *reference* but never
+close these ("Part of #N"); Brad does his own final pass after merge, then closes:
+- **#26 — figure refinement pass.**
+- **#32 — code pass**: tests passing, multi-platform + clear onboarding docs,
+  efficiency/comment balance, Brad sign-off.
 
 > Bare issue numbers like `#117`/`#132` that appear *inside the issue text* refer
 > to findings in the originating research project, not to issues in this repo.

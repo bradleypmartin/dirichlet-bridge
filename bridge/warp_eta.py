@@ -70,14 +70,14 @@ Evaluators (mirroring warp_bridge: fast primary + transparent cross-checks)
   * warp_eta_lerch -- the transparent reference int_0^1 cos(pi g) (-Phi(-1, s, 1+g)) du via the
     Lerch transcendent (mp.lerchphi at z = -1, the alternating Hurwitz zeta); agrees with the
     fast form to ~1e-16.
-  * warp_eta_raw -- the literal oscillatory int_1^inf, integer breakpoints (sigma > 1 sanity),
-    the eta analog of warp_bridge.warp_raw.
+  * warp_eta_raw -- the literal oscillatory integral truncated at int_1^M (M=80), integer
+    breakpoints (sigma > 1 sanity), the eta analog of warp_bridge.warp_raw.
 
 Run directly to validate + plot: writes bridge/figures/warp_eta.png.
 """
 import sys
 from pathlib import Path
-from typing import List, Tuple
+from typing import List
 
 import mpmath as mp
 
@@ -137,16 +137,19 @@ def _eta_moment_series(s, logs, cgw, nus, base_dps):
     warp_bridge._moment_series, here with the (-1)^m cell sign and the alternating -eta tail)."""
     n = len(cgw)
     eps = mp.mpf(10) ** (-(base_dps - 1))
-    tot = mp.fsum((-1) ** m * mp.fsum(cgw[i] * mp.e ** (-s * logs[m - 1][i]) for i in range(n))
+    tot = mp.fsum((-1) ** m * mp.fsum(cgw[i] * mp.exp(-s * logs[m - 1][i]) for i in range(n))
                   for m in range(1, _M + 1))                       # sum_{m<=M} (-1)^m int cos(pi g)(m+g)^{-s}
     c = mp.mpf(1)                                                  # binom(-s, 0)
+    mpows = [(-1) ** m * mp.power(m, -s) for m in range(1, _M + 1)]  # (-1)^m m^{-(s+j)}, stepped /m per j
     for j in range(len(nus)):
-        altHM = mp.fsum((-1) ** m * mp.power(m, -(s + j)) for m in range(1, _M + 1))
+        altHM = mp.fsum(mpows)
         term = c * nus[j] * (-mp.altzeta(s + j) - altHM)          # m>M alternating tail, continued
         tot += term
         if j > 4 and abs(term) < eps * (abs(tot) + 1):
             break
         c = c * (-s - j) / (j + 1)                                # binom(-s, j+1)
+        for m in range(2, _M + 1):
+            mpows[m - 1] /= m                                      # (-1)^m m^{-(s+j)} -> (-1)^m m^{-(s+j+1)}
     return tot
 
 

@@ -45,7 +45,6 @@ Run directly to validate + plot: writes bridge/figures/stability.png.
 """
 import sys
 from pathlib import Path
-from typing import List
 
 import mpmath as mp
 
@@ -139,11 +138,13 @@ def _main():
     Ks = [2, 4, 8, 16, 32, 64, 128, 256, 512]
     t0 = 15.0
     sig_styles = [(-2.0, "C3", "o"), (-0.5, "C1", "s"), (0.5, "C0", "^"), (2.0, "C2", "D")]
+    guide0 = None
     for sigma, col, mk in sig_styles:
         errs = [conv_error(sigma, t0, K) for K in Ks]
         ax[0].loglog(Ks, errs, "-" + mk, color=col, ms=5, lw=1,
                      label=rf"$\sigma={sigma:+.1f}$")
-    ax[0].loglog(Ks, [errs[0] * Ks[0] / K for K in Ks], ":", color="0.5", label=r"$\propto 1/K$")
+        guide0 = errs[0]               # last curve drawn (sigma=+2.0) anchors the 1/K guide
+    ax[0].loglog(Ks, [guide0 * Ks[0] / K for K in Ks], ":", color="0.5", label=r"$\propto 1/K$")
     ax[0].set_xlabel("K (harmonics)")
     ax[0].set_ylabel(rf"$|\zeta^{{(K)}}-\zeta|$ at $t={t0:.0f}$")
     ax[0].set_title(r"no abscissa: convergence is the same for every $\sigma$")

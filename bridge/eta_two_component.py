@@ -70,7 +70,7 @@ Run directly to validate + plot: writes bridge/figures/eta_two_component.png.
 import math
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
@@ -82,9 +82,9 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 from gue_spacing import load_riemann_zeros, unfold_riemann_zeros  # noqa: E402
-import spectral_rigidity as sr  # noqa: E402  (number_variance + GUE reference)
-from zero_form_factor import gue_form_factor, poisson_form_factor  # noqa: E402
-import cone_log_prime as clp  # noqa: E402  (prime_power_peaks, zero_structure_factor)
+import spectral_rigidity as sr  # noqa: E402  (unfold_to_unit_density, number_variance + GUE reference)
+from zero_form_factor import gue_form_factor  # noqa: E402
+import cone_log_prime as clp  # noqa: E402  (von_mangoldt, prime_power_peaks)
 
 PI = math.pi
 LN2 = math.log(2.0)
@@ -141,7 +141,7 @@ def zeros_per_tooth(
     return np.arange(1, n_gaps + 1), counts, predicted
 
 
-def phase_uniformity(gammas: np.ndarray, n_bins: int = 12) -> Dict[str, float]:
+def phase_uniformity(gammas: np.ndarray, n_bins: int = 12) -> Dict[str, Any]:
     """Equidistribution diagnostic for the comb phase phi_n (LENS 1): histogram counts and
     a chi^2 against uniform, plus the first cosine Fourier coefficient.
 
@@ -248,7 +248,7 @@ def picket_number_variance(L: np.ndarray, frac: float) -> np.ndarray:
 
 def union_number_variance(
     gammas: np.ndarray, t_max: float, L_values: np.ndarray, n_windows: int = 4000
-) -> Dict[str, np.ndarray]:
+) -> Dict[str, Any]:
     """Sigma^2(L) of the unfolded union vs the references (LENS 2).
 
     Returns measured union Sigma^2, the GUE reference (number_variance_reference, the
@@ -280,7 +280,7 @@ def _print_packing(gammas: np.ndarray) -> None:
     print("   log2(t_c/2pi):      " + "  ".join(f"{p:4.1f}" for p in pred)
           + "   (predicted density ratio)")
     u = phase_uniformity(gammas)
-    print(f"   comb-phase: ASYMPTOTICALLY equidistributed (so the count works), but the")
+    print("   comb-phase: ASYMPTOTICALLY equidistributed (so the count works), but the")
     print(f"   finite-N histogram is NOT flat: chi^2/dof = {u['chi2_per_dof']:.2f} (uniform=1), "
           f"leading cosine c1 = {u['cos1_coeff']:+.4f}")
     print("   (= 2<cos(g ln2)>, the p=2 dip at phi=0). The histogram's j-th mode IS the")
@@ -343,7 +343,7 @@ def _print_rigidity(rig: Dict[str, np.ndarray]) -> None:
     print("      ~L (Poisson): the rigid comb is an ADDITIVE backbone, it does not change")
     print("      the GUE long-range class. Bulk-independent; the correlation is LENS 3's")
     print("      sharp p=2 resonance, invisible to the smooth Sigma^2. (Finite-sample: the")
-    print("      density nearly doubles over the cached zeros -- the usual unfolding caveat.)")
+    print("      union density grows ~4.5x across the cached zeros -- the usual unfolding caveat.)")
 
 
 def _main() -> None:

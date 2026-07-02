@@ -11,7 +11,7 @@ The warp
 n* = x + phi_K(x),  phi_K(x) = sum_{k=1}^K sin(2 pi k x)/(pi k)   (`warp_phi`).
 
 phi_K is the K-harmonic partial sum of the sawtooth 1/2 - {x} (= the Fourier series
-of 1 - x on [0,1], the bridge's kernel). As K -> infinity, phi_K(x) -> 1/2 - {x}, so
+of 1/2 - x on [0,1], the bridge's kernel). As K -> infinity, phi_K(x) -> 1/2 - {x}, so
 x + phi_K(x) -> floor(x) + 1/2: the warp collapses each unit cell [m, m+1] onto its
 **midpoint m + 1/2**. That half-integer pinning is the whole story: it is why the
 warp's natural target is a *half-shifted* zeta.
@@ -19,8 +19,8 @@ warp's natural target is a *half-shifted* zeta.
     warp_K(s, K) = int_1^inf (x + phi_K(x))^{-s} dx.
 
 Because phi_K has period 1, the period-by-period decomposition collapses to a single
-proper integral of the Hurwitz zeta (valid for all sigma incl. sigma <= 0 since Hurwitz
-zeta is entire in s):
+proper integral of the Hurwitz zeta (valid for all sigma incl. sigma <= 0: zeta(s, a)
+is analytic in s apart from the simple pole at s = 1, which is the bridge's own pole):
 
     warp_K(s, K) = int_0^1 zeta(s, 1 + u + phi_K(u)) du            (`warp_hurwitz`)
 
@@ -73,7 +73,7 @@ Run directly to validate + plot: writes bridge/figures/warp_bridge.png.
 import math
 import sys
 from pathlib import Path
-from typing import List, Tuple
+from typing import List
 
 import mpmath as mp
 
@@ -201,16 +201,19 @@ def _moment_series(s, logs, mus, degree, base_dps):
     us, ws = _gl_nodes(degree)
     n = len(us)
     eps = mp.mpf(10) ** (-(base_dps - 1))
-    tot = mp.fsum(ws[i] * mp.e ** (-s * logs[m - 1][i])
+    tot = mp.fsum(ws[i] * mp.exp(-s * logs[m - 1][i])
                   for m in range(1, _M + 1) for i in range(n))      # sum_{m<=M} int (m+psi)^{-s}
     c = mp.mpf(1)                                                   # binom(-s, 0)
+    mpows = [mp.power(m, -s) for m in range(1, _M + 1)]             # m^{-(s+j)}, stepped by /m per j
     for j in range(len(mus)):
-        HM = mp.fsum(mp.power(m, -(s + j)) for m in range(1, _M + 1))
+        HM = mp.fsum(mpows)
         term = c * mus[j] * (mp.zeta(s + j) - HM)                  # m>M tail, analytically continued
         tot += term
         if j > 4 and abs(term) < eps * (abs(tot) + 1):
             break
         c = c * (-s - j) / (j + 1)                                 # binom(-s, j+1)
+        for m in range(2, _M + 1):
+            mpows[m - 1] /= m                                       # m^{-(s+j)} -> m^{-(s+j+1)}
     return tot
 
 

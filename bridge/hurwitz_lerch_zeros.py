@@ -51,8 +51,9 @@ zero-rich ends; ours points *onto* 1/2 from nothing. Panel (1,2) draws both traj
 What this driver reproduces (all self-validated in __main__)
 -----------------------------------------------------------
   * Evaluators: zeta(s, alpha) = mpmath.zeta(s, alpha) and L(lambda, alpha, s) = mpmath.lerchphi(
-    e^{2 pi i lambda}, s, alpha), each checked against its direct sum; the mpmath z -> 1 blow-up
-    (lambda integer) handled by falling back to the Hurwitz zeta (lerchphi(1, s, a) = zeta(s, a)).
+    e^{2 pi i lambda}, s, alpha), each checked against its direct sum; the z ~ 1 hazard (integer
+    lambda rounds e^{2 pi i lam} to 1 + O(1e-33)j, where lerchphi silently returns garbage for
+    sigma <= 1) handled by splicing in the Hurwitz zeta (lerchphi(1, s, a) = zeta(s, a)).
   * The four unification identities at the corners of the (lambda, alpha) square (to ~1e-25).
   * The Hurwitz alpha-trajectories rho(alpha), alpha: 1 -> 1/2, seeded by the first Riemann zeros,
     Newton-continued in alpha; the G-S stable/unstable split (ends on sigma = 1/2 vs the sigma = 0
@@ -87,7 +88,7 @@ TWOPI_OVER_LOG2 = 2 * PI / LOG2          # 9.0647202836...: the sigma=0 (half-sh
 
 # First nontrivial zeros of L(s, chi_4) on sigma=1/2 (heights) -- the Lerch-diagonal targets
 # (shared with lfunction_bridge.py, issue #20).
-L_CHI4_HEIGHTS = [6.020948, 10.243770, 12.988098, 16.342605, 18.291998]
+L_CHI4_HEIGHTS = [6.020948, 10.243770, 12.988098, 16.342607, 18.291993]
 
 
 # --------------------------------------------------------------------------
@@ -98,7 +99,7 @@ def zeta_hurwitz(s, alpha):
     return mp.zeta(mp.mpc(s), mp.mpf(alpha))
 
 
-def zeta_hurwitz_sum(s, alpha, terms=200000):
+def zeta_hurwitz_sum(s, alpha, terms=50000):
     """zeta(s, alpha) = sum_{m>=0} (m + alpha)^{-s} by direct summation -- the sigma>1 reference."""
     s = mp.mpc(s)
     a = mp.mpf(alpha)
@@ -108,17 +109,19 @@ def zeta_hurwitz_sum(s, alpha, terms=200000):
 def lerch(lam, alpha, s):
     """L(lambda, alpha, s) = sum_{m>=0} e^{2 pi i lambda m} (m + alpha)^{-s}  (mpmath.lerchphi).
 
-    z = e^{2 pi i lambda}. mpmath's lerchphi BLOWS UP as z -> 1 (integer lambda) for sigma <= 1 --
-    each term of the continuation carries the emerging pole -- but lerchphi(1, s, a) is exactly the
-    Hurwitz zeta zeta(s, a), so we splice that in when z is (numerically) 1. This is the Lerch analog
-    of lfunction_bridge's L(1, chi_4) = pi/4 splice: a removable value the evaluator can't see.
+    z = e^{2 pi i lambda}. GOTCHA: at *exact* z = 1 mpmath special-cases lerchphi(1, s, a) =
+    zeta(s, a) correctly -- but e^{2 pi i lam} at integer lam never rounds to exactly 1 (it is
+    1 + O(1e-33)j at dps=30), and for z that close to 1 (but != 1) lerchphi silently returns
+    wildly wrong values for sigma <= 1, with no exception. So splice in the Hurwitz zeta
+    whenever z is numerically 1. The Lerch analog of lfunction_bridge's L(1, chi_4) = pi/4
+    splice, but sharper: the failure mode is silent garbage, not an inf.
     """
     lam = mp.mpf(lam)
     alpha = mp.mpf(alpha)
     s = mp.mpc(s)
-    z = mp.e ** (2j * PI * lam)
+    z = mp.exp(2j * PI * lam)
     if abs(z - 1) < mp.mpf("1e-18"):
-        return mp.zeta(s, alpha)                 # lerchphi(1, s, a) = zeta(s, a); mpmath diverges at z=1
+        return mp.zeta(s, alpha)                 # lerchphi(1,s,a) = zeta(s,a); z~1 (!=1) is the garbage regime
     return mp.lerchphi(z, s, alpha)
 
 
@@ -127,7 +130,7 @@ def lerch_sum(lam, alpha, s, terms=20000):
     lam = mp.mpf(lam)
     alpha = mp.mpf(alpha)
     s = mp.mpc(s)
-    z = mp.e ** (2j * PI * lam)
+    z = mp.exp(2j * PI * lam)
     return mp.fsum(z ** m * (m + alpha) ** (-s) for m in range(terms))
 
 
@@ -161,8 +164,9 @@ UNIFICATION = [
 # --------------------------------------------------------------------------
 # 3. zero-trajectory tracing (Newton continuation in a parameter)
 # --------------------------------------------------------------------------
-# Roots good to this tolerance are ample for tracing/plotting; mpmath's default (~1e-34 at
-# dps=30) is tighter than the secant reaches on these flat trajectories (cf jonquiere_zeros).
+# Roots good to this tolerance are ample for tracing/plotting; mpmath's default (eps*2^10
+# ~ 2e-28 at dps=30) is tighter than the secant reaches on these flat trajectories (cf
+# jonquiere_zeros).
 _TRACE_TOL = mp.mpf("1e-16")
 
 
@@ -253,11 +257,11 @@ def _print_evaluators():
         for s in [mp.mpc(3, 1), mp.mpc(4, 0.5)]:            # |z|=1 sum converges for sigma>1
             worst_l = max(worst_l, float(abs(lerch(lam, a, s) - lerch_sum(lam, a, s))))
     print(f"   L(lambda, alpha, s) vs direct sum (sigma>1):  worst |diff| = {worst_l:.2e}")
-    # the z -> 1 (integer lambda) blow-up handled by the Hurwitz fallback
+    # the z ~ 1 (integer lambda) silent-garbage regime handled by the Hurwitz splice
     s = mp.mpc(0.7, 12.0)
     fb = float(abs(lerch(1, 0.5, s) - mp.zeta(s, mp.mpf(1) / 2)))
-    print(f"   z=1 fallback  lerch(1, 1/2, s) == zeta(s, 1/2):  |diff| = {fb:.2e}  "
-          f"(mpmath lerchphi at z=1 diverges)")
+    print(f"   z~1 splice  lerch(1, 1/2, s) == zeta(s, 1/2):  |diff| = {fb:.2e}  "
+          f"(lerchphi near-but-not-at z=1 silently corrupts)")
 
 
 def _print_unification():
@@ -304,9 +308,9 @@ def _print_below_half(wander):
     print("\n== below alpha = 1/2: Davenport-Heilbronn off-line wandering (zeros leave 1/2) ==")
     for n, traj in wander:
         devs = [abs(float(s.real) - 0.5) for _a, s in traj]
-        amin = traj[[abs(float(s.real) - 0.5) for _a, s in traj].index(max(devs))][0]
+        a_at_max = traj[devs.index(max(devs))][0]
         print(f"   seed 1/2+{float(mp.zetazero(n).imag):.3f}i:  max |Re-1/2| = {max(devs):.3f} "
-              f"at alpha = {float(amin):.3f}   (generic alpha -> zeros scattered, cf warp_alpha.py)")
+              f"at alpha = {float(a_at_max):.3f}   (generic alpha -> zeros scattered, cf warp_alpha.py)")
 
 
 def _print_lerch_paths(diag, poly):
@@ -462,7 +466,6 @@ def _main():
                (0.5, 1.0): r"$\eta(s)$", (0.5, 0.5): r"$2^sL(s,\chi_4)$"}
     for (lm, al), lab in corners.items():
         ax.plot(lm, al, "o", color="k", ms=9, zorder=5)
-        dy = 0.05 if al > 0.7 else -0.08
         ax.annotate(lab, (lm, al), textcoords="offset points",
                     xytext=(0, 14 if al > 0.7 else -20), ha="center", fontsize=12)
     ax.text(1.02, 0.75, "G-S\n$\\sigma\\!=\\!0$", color="C3", fontsize=9.5, va="center")

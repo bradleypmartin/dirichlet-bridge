@@ -67,7 +67,7 @@ s_K of object^{(K)} near a zero rho of the target obeys s_K - rho ~ a_1/K with
 a_1 = -Delta_1(rho)/target'(rho) -- applies verbatim with target = zeta and rho = -2n:
 
         disp_coeff_trivial(n)  ==  rate_law.disp_coeff("comb_zeta", -2n)
-                               =   -(-2n) / (2 pi^2 zeta'(-2n)).
+                               =   (-2n) / (2 pi^2 zeta'(-2n)).
 
 a_1 is real here (everything is real on the axis) and its magnitude peaks in the middle
 (|a_1| at -2,-4,-6,-8,-10 is 3.3, 25, 52, 49, 27): the same "hardest in the middle"
@@ -80,7 +80,7 @@ Run directly to validate + plot: writes bridge/figures/trivial_zeros.png.
 """
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import List, Tuple
 
 import mpmath as mp
 
@@ -128,7 +128,7 @@ def predict_value(n, K):
 def disp_coeff_trivial(n):
     """a_1 in s_K - (-2n) ~ a_1/K -- the rate_law displacement coefficient at rho = -2n.
 
-    Identically rate_law.disp_coeff("comb_zeta", -2n) = -(-2n)/(2 pi^2 zeta'(-2n)); real
+    Identically rate_law.disp_coeff("comb_zeta", -2n) = (-2n)/(2 pi^2 zeta'(-2n)); real
     on the axis. Its sign is the approach side (a_1>0: zero limits onto -2n from the
     right/above in s; a_1<0: from the left), and |a_1| -- largest for the middle zeros --
     measures how many harmonics the zero needs to settle.
@@ -251,17 +251,16 @@ def _continue(seed, schedule, max_jump=3.0):
 def pinch_fork(j, span=70, n_steps=16, seed_imag=0.55):
     """The 'tuning-fork' birth of the j-th pair: a conjugate pair pinches onto the axis.
 
-    Returns dict(complex_branch, prong_left, prong_right, K_pinch_est):
+    Returns dict(complex_branch, prong_left, prong_right):
 
       * complex_branch -- the upper (Im > 0) member of the conjugate pair, continued
         DOWNWARD in K from just below the pinch (it climbs off the axis as K shrinks);
       * prong_right / prong_left -- the two real zeros above the pinch, continued downward
-        from large K toward the pinch (right -> -4j, left -> -(4j+2));
-      * K_pinch_est -- the largest sampled K at which the conjugate branch is still off
-        the axis (a measured pinch-K, to be compared with `pinch_K_law`).
+        from large K toward the pinch (right -> -4j, left -> -(4j+2)).
 
     The two prongs meet the descending conjugate pair at s ~ s_mid: born off the axis,
-    pinched onto it, split toward the even integers.
+    pinched onto it, split toward the even integers. (This function draws the fork;
+    the *measured* pinch-K compared against `pinch_K_law` is `pinch_K_measured`.)
     """
     mid = pair_mid(j)
     zr, zl = pair_zeros(j)                      # right (-4j), left (-(4j+2))
@@ -281,14 +280,12 @@ def pinch_fork(j, span=70, n_steps=16, seed_imag=0.55):
                        for i in range(n_steps + 1)}, reverse=True)
     complex_branch = _continue(mp.mpc(mid, seed_imag), sched_cx, max_jump=2.5)
     complex_branch = [(K, z) for (K, z) in complex_branch if z.imag > 1e-4]
-    complex_branch.sort()
+    complex_branch.sort(key=lambda kz: kz[0])   # K only: mpc's don't order
 
-    k_pinch_est = max((K for K, z in complex_branch), default=None)
     return {
         "complex_branch": complex_branch,
         "prong_right": prong_right,
         "prong_left": prong_left,
-        "K_pinch_est": k_pinch_est,
         "mid": mid, "zr": zr, "zl": zl,
     }
 
@@ -416,7 +413,7 @@ def _main():
     # three panels with longish titles; trim titles a touch like the other dense drivers.
     plt.rcParams.update({"axes.titlesize": 13, "legend.fontsize": 11})
 
-    measured = {j: pinch_K_measured(j) for j in (1, 2, 3, 4)}
+    measured = {j: pinch_K_measured(j) for j in (1, 2, 3)}   # the js _print_birth/panel 2 use
 
     _print_inherited()
     _print_convergence()

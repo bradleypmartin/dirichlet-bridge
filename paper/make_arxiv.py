@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """Assemble a self-contained arXiv upload for the preprint.
 
-arXiv builds from a flat source tree and cannot follow the ``../`` path to the
-canonical figures in ``../bridge/figures/``. This script copies ``main.tex``,
-``references.bib`` (and ``main.bbl`` if a local build has produced one) into a
-clean ``arxiv/`` directory, copies every figure referenced by ``main.tex`` into
-``arxiv/figures/``, and writes a ``arxiv.tar.gz`` ready to upload.
+arXiv builds from a flat source tree, cannot follow the ``../`` path to the
+canonical figures in ``../bridge/figures/``, and does **not** run BibTeX — the
+upload must carry the built ``main.bbl``. This script copies ``main.tex``,
+``references.bib`` and ``main.bbl`` into a clean ``arxiv/`` directory, copies
+every figure referenced by ``main.tex`` into ``arxiv/figures/``, and writes a
+``arxiv.tar.gz`` ready to upload.
 
 Run from the ``paper/`` directory:  ``python make_arxiv.py``
 
@@ -49,12 +50,16 @@ def main() -> None:
     else:
         print("WARNING: references.bib not found — bibliography will be empty.")
 
-    # Including the .bbl makes arXiv robust even if it skips the BibTeX pass.
+    # arXiv's AutoTeX does not run BibTeX, so an upload without main.bbl builds
+    # with an empty bibliography. Hard-fail rather than package a broken tarball.
     bbl = HERE / "main.bbl"
-    if bbl.exists():
-        shutil.copy2(bbl, OUT / "main.bbl")
-    else:
-        print("note: no main.bbl yet (run `tectonic main.tex` first to generate one).")
+    if not bbl.exists():
+        raise SystemExit(
+            "main.bbl not found — arXiv does not run BibTeX, so the upload needs it.\n"
+            "Build with `tectonic --keep-intermediates main.tex` (plain `tectonic\n"
+            "main.tex` discards the .bbl) or `latexmk -pdf main.tex`, then rerun."
+        )
+    shutil.copy2(bbl, OUT / "main.bbl")
 
     missing = []
     for name in referenced_figures(tex):

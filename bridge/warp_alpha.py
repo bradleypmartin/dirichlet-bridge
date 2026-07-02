@@ -96,16 +96,8 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 import warp_bridge as wb       # noqa: E402  (warp_phi, the shared GL grid + moment machinery, alpha=1/2 objects)
-import harmonic_bridge as hb   # noqa: E402  (migrate -- the backward-continuation zero tracker)
 
 mp.mp.dps = 30
-
-PI = mp.pi
-LN2 = mp.log(2)
-
-# the privileged phases (Saias-Weingartner P*L degeneracies) and a couple generic ones
-CLEAN_ALPHAS = [0.5, 1.0]                 # 0 lives in the honest endpoint (see module docstring)
-GENERIC_ALPHAS = [0.3, 0.7]
 
 
 # --------------------------------------------------------------------------

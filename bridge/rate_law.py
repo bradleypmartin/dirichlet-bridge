@@ -172,8 +172,6 @@ Run directly to validate + plot: writes bridge/figures/rate_law.png + rate_law_l
 """
 import sys
 from pathlib import Path
-from typing import Dict, Tuple
-
 import mpmath as mp
 
 # This module sits in a flat source dir alongside its bare cross-imports; put that
@@ -227,6 +225,9 @@ def rate_warp_bulk(s):
     return s * (s + 1) * mp.zeta(s + 2, mp.mpf(3) / 2) / (4 * PI**2)
 
 
+_RATE_WARP_CACHE = {}   # (s, K, richardson, closed, Vmax, prec) -> constant
+
+
 def rate_warp(s, K=40, richardson=False, closed=False, Vmax=30):
     """Warp full constant  lim_K K (warp_K(s,K) - zeta(s,3/2))  -- bulk + Gibbs boundary layer.
 
@@ -236,16 +237,25 @@ def rate_warp(s, K=40, richardson=False, closed=False, Vmax=30):
       * richardson=True: the slow exact warp_hurwitz at K=80,160 extrapolated (~5 digits);
       * closed=True: the CLOSED FORM `c_warp_closed` (the Si-Gibbs boundary-layer integral)
         -- exact, the cleanest. delta1/disp_coeff/catch_K forward this via **kw.
+
+    Memoized on (s, mode, precision): the driver re-asks the same few heights across its
+    print sections and figure panels, and each warp evaluation costs seconds.
     """
     s = mp.mpc(s)
+    key = (s, K, richardson, closed, Vmax, mp.mp.prec)
+    if key in _RATE_WARP_CACHE:
+        return _RATE_WARP_CACHE[key]
     if closed:
-        return c_warp_closed(s, Vmax=Vmax)
-    z32 = mp.zeta(s, mp.mpf(3) / 2)
-    if richardson:
+        out = c_warp_closed(s, Vmax=Vmax)
+    elif richardson:
+        z32 = mp.zeta(s, mp.mpf(3) / 2)
         v80 = 80 * (wb.warp_hurwitz(s, 80) - z32)
         v160 = 160 * (wb.warp_hurwitz(s, 160) - z32)
-        return 2 * v160 - v80                       # kill the 1/K term
-    return K * (wb.warp_K(s, K) - z32)
+        out = 2 * v160 - v80                        # kill the 1/K term
+    else:
+        out = K * (wb.warp_K(s, K) - mp.zeta(s, mp.mpf(3) / 2))
+    _RATE_WARP_CACHE[key] = out
+    return out
 
 
 def gibbs_profile(v):
@@ -707,7 +717,7 @@ def _main():
     ax[0].semilogx(Ks, comb, "-o", color="C0", label=r"comb $K|\zeta-\zeta^{(K)}|$")
     ax[0].axhline(float(abs(rate_comb(_S0))), ls=":", color="C0",
                   label=r"$|s/2\pi^2|$ (closed)")
-    ax[0].semilogx(Kw, warp, "-s", color="C3", label=r"warp $K|{-}\zeta(s,3/2)|$")
+    ax[0].semilogx(Kw, warp, "-s", color="C3", label=r"warp $K|warp_K-\zeta(s,3/2)|$")
     ax[0].axhline(float(abs(rate_warp(_S0, richardson=True))), ls="--", color="C3",
                   label=r"$|C_{\rm warp}|$ (bulk+Gibbs)")
     ax[0].axhline(float(abs(rate_warp_bulk(_S0))), ls=":", color="C1",

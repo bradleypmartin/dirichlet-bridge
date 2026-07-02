@@ -6,8 +6,9 @@ conventions worth knowing before you edit.
 ## Environment
 
 Targets **Python 3.9** and keeps the code 3.9-compatible (`typing.List`/`Union`,
-**not** PEP-604 `X | Y` runtime unions). Dependencies are pinned in
-`requirements.txt` (numpy, scipy, mpmath, matplotlib, pytest).
+**not** PEP-604 `X | Y` runtime unions). Any of **3.9–3.12** works; the pins in
+`requirements.txt` (numpy, scipy, mpmath, matplotlib, pytest) ship wheels for
+those versions only, so on 3.13+ the install fails at numpy/scipy.
 
 Either toolchain works:
 
@@ -15,6 +16,7 @@ Either toolchain works:
 # with uv (fast):
 uv venv --python 3.9 .venv
 uv pip install -r requirements.txt
+. .venv/bin/activate          # Windows: .venv\Scripts\activate
 
 # or with stock venv + pip:
 python -m venv .venv
@@ -22,7 +24,14 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-The `.venv/` is per-machine and gitignored.
+Don't mix the two command sets: a uv-created venv contains no `pip`, so later
+installs into it must also go through `uv pip ...`. The `.venv/` is per-machine
+and gitignored. Windows note: a fresh PowerShell may refuse `Activate.ps1`
+under its default execution policy — either run
+`Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or skip activation
+and call `.venv\Scripts\python.exe` / `.venv\Scripts\pytest.exe` directly
+(everything below works unactivated; `repro.py` launches its drivers via
+`sys.executable`).
 
 ## Run the tests
 
@@ -32,8 +41,10 @@ pytest -m slow         # the expensive high-precision regressions
 ```
 
 `pytest.ini` sets `addopts = -m "not slow"`, so a bare `pytest` skips the slow
-suite. The root `conftest.py` puts `bridge/` on `sys.path` so the flat
-cross-imports resolve during collection.
+suite. That default also silently deselects a slow test you name explicitly —
+to run one, override the marker filter: `pytest -m slow tests/test_x.py::test_y`
+(or `-m ""` for everything). The root `conftest.py` puts `bridge/` on
+`sys.path` so the flat cross-imports resolve during collection.
 
 ## Reproduce the figures
 
@@ -73,7 +84,8 @@ the η integrand), `stability` (no abscissa; height is the cost), and
 `trivial_zeros` (the trivial zeros born on the negative axis). Five **appendix
 drivers** carry the preprint's appendices: `jonquiere_zeros`, `lfunction_bridge`,
 `hurwitz_lerch_zeros`, `epstein_zeros` (Appendix A, beyond ζ/η), and
-`geometric_bridge` (Appendix B, the elementary miniature). The remaining
+`geometric_bridge` (Appendix B, the elementary miniature). `figstyle` is the
+shared Matplotlib font bump every driver calls before plotting. The remaining
 modules (`gue_spacing`, `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`,
 `maass_loader`) are vendored spectral-statistics helpers used only by
 `eta_two_component`. The only runtime data dependency is

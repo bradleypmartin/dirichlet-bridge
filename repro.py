@@ -57,8 +57,10 @@ def _run_driver(stem: str, figures: List[str], verbose: bool) -> Tuple[bool, flo
     if not script.exists():
         return False, 0.0, "driver script not found: {}".format(script)
 
-    # Force a non-interactive matplotlib backend so the run never blocks on a GUI.
-    env = dict(os.environ, MPLBACKEND="Agg")
+    # Force a non-interactive matplotlib backend so the run never blocks on a GUI,
+    # and UTF-8 child I/O so any non-ASCII driver output survives the pipe on
+    # Windows (whose locale default is cp1252).
+    env = dict(os.environ, MPLBACKEND="Agg", PYTHONIOENCODING="utf-8")
     started = time.time()
     proc = subprocess.run(
         [sys.executable, str(script)],
@@ -66,7 +68,8 @@ def _run_driver(stem: str, figures: List[str], verbose: bool) -> Tuple[bool, flo
         env=env,
         stdout=(None if verbose else subprocess.PIPE),
         stderr=subprocess.STDOUT,
-        text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     elapsed = time.time() - started
 
@@ -107,10 +110,16 @@ def main() -> int:
 
     results = []
     for stem, figures, note in selected:
-        print("=> {:<20} ({}) ...".format(stem, note), end="", flush=True)
+        if args.verbose:
+            # the driver's own output streams to the console next, so end the
+            # header line here and skip the \r overwrite below.
+            print("=> {} ({})".format(stem, note), flush=True)
+        else:
+            print("=> {:<20} ({}) ...".format(stem, note), end="", flush=True)
         ok, elapsed, detail = _run_driver(stem, figures, args.verbose)
         results.append((stem, ok, elapsed, detail))
-        print("\r{} {:<18} {:>7.1f}s  {}".format(
+        print("{}{} {:<18} {:>7.1f}s  {}".format(
+            "" if args.verbose else "\r",
             "[OK]  " if ok else "[FAIL]", stem, elapsed, detail))
 
     total = sum(elapsed for _s, _ok, elapsed, _d in results)

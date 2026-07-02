@@ -1,6 +1,13 @@
 """Nearest-neighbour spacing comparison for the modular-surface Maass
 spectrum vs Riemann zeros.
 
+VENDORED NOTE (this repo): copied from the originating research project as a
+dependency of `eta_two_component.py`, which uses only `load_riemann_zeros` and
+`unfold_riemann_zeros`. The Maass arc below needs
+`data/maass_eigenvalues_psl2z.csv`, which is NOT shipped here -- running this
+file as a script will fail at that load. Kept whole so the vendored code
+matches its source; see CLAUDE.md "Gotchas".
+
 Operates directly on two ordinate lists -- no Selberg zeta evaluation
 needed -- and KS-tests the *unfolded* nearest-neighbour spacings
 against two reference distributions:
@@ -95,7 +102,7 @@ def load_riemann_zeros(path: Path | None = None) -> list[float]:
     decimal strings stay in the CSV for callers who need them."""
     path = path or RIEMANN_ZEROS_CSV
     out: list[float] = []
-    with path.open() as fh:
+    with path.open(encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
             out.append(float(row["gamma"]))
     return out
@@ -150,7 +157,7 @@ def unfold_riemann_zeros(gammas: Iterable[float]) -> np.ndarray:
 
     keeping only the two smooth leading terms plus the +7/8 constant.
     S(T) is mean-zero, O(log T), and washes out of nearest-neighbour
-    spacings for the first 100 zeros.
+    spacings over the cached 2000 zeros.
     """
     arr = np.asarray(list(gammas), dtype=float)
     two_pi = 2.0 * math.pi
@@ -585,7 +592,7 @@ def main() -> None:
         rescaled_maass, rescaled_riemann,
         rescaled_parity,
     )
-    OUTPUT_TXT.write_text(text)
+    OUTPUT_TXT.write_text(text, encoding="utf-8")
     print(text)
     print(f"Wrote {OUTPUT_TXT.name}.")
 

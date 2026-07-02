@@ -12,8 +12,10 @@ venv/
 # never commit (copyright + bulk). Reproductions cite the paper, not ship it.
 _private/
 
-# Generated artifacts (figures + text dumps the drivers rewrite)
+# Generated artifacts (figures + text dumps the drivers rewrite). The vendored
+# spectral-statistics drivers, run standalone, drop their png/txt in the root.
 bridge/figures/*.png
+/*.png
 *.txt
 !requirements.txt
 
