@@ -24,6 +24,7 @@ from __future__ import annotations
 import mpmath as mp
 import pytest
 
+import harmonic_bridge as hb
 import warp_alpha as wa
 import warp_bridge as wb
 
@@ -172,14 +173,14 @@ def test_warp_migration_lands_on_clean_and_scattered():
     """Reuse harmonic_bridge.migrate on the general-alpha warp: alpha=1 lands a genuine zeta
     zero on sigma=1/2; alpha=0.3 lands on its scattered off-line zero (sigma ~ 0.28)."""
     # alpha = 1: warp_complete_alpha -> zeta(s); the Riemann zero migrates onto sigma = 1/2
-    t1 = dict((K, zz) for K, zz in wa.hb.migrate(
+    t1 = dict((K, zz) for K, zz in hb.migrate(
         lambda s, K: wa.warp_complete_alpha(s, K, 1.0), mp.mpc(0.5, 14.134725),
         schedule=SHORT) if zz is not None)
     assert 32 in t1 and abs(float(t1[32].real) - 0.5) < 0.05
 
     # alpha = 0.3: the warp tracks the scattered Davenport-Heilbronn zero, NOT sigma = 1/2
     z_off = mp.mpc("0.2799118238867328", "14.4877598801336641")
-    t2 = dict((K, zz) for K, zz in wa.hb.migrate(
+    t2 = dict((K, zz) for K, zz in hb.migrate(
         lambda s, K: wa.warp_complete_alpha(s, K, 0.3), z_off, schedule=SHORT) if zz is not None)
     assert 32 in t2
     assert abs(float(t2[32].real) - 0.28) < 0.05         # lands off the critical line

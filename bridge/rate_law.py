@@ -717,7 +717,7 @@ def _main():
     ax[0].semilogx(Ks, comb, "-o", color="C0", label=r"comb $K|\zeta-\zeta^{(K)}|$")
     ax[0].axhline(float(abs(rate_comb(_S0))), ls=":", color="C0",
                   label=r"$|s/2\pi^2|$ (closed)")
-    ax[0].semilogx(Kw, warp, "-s", color="C3", label=r"warp $K|warp_K-\zeta(s,3/2)|$")
+    ax[0].semilogx(Kw, warp, "-s", color="C3", label=r"warp $K|\mathrm{warp}_K-\zeta(s,3/2)|$")
     ax[0].axhline(float(abs(rate_warp(_S0, richardson=True))), ls="--", color="C3",
                   label=r"$|C_{\rm warp}|$ (bulk+Gibbs)")
     ax[0].axhline(float(abs(rate_warp_bulk(_S0))), ls=":", color="C1",
@@ -810,7 +810,7 @@ def _main():
     KwA = [4, 8, 16, 24, 32, 40]
     z32 = mp.zeta(_S0, mp.mpf(3) / 2)
     warpA = [float(abs(K * (wb.warp_K(_S0, K) - z32))) for K in KwA]
-    bx[0].semilogx(KwA, warpA, "-s", color="C3", label=r"$K|warp_K-\zeta(s,\frac{3}{2})|$")
+    bx[0].semilogx(KwA, warpA, "-s", color="C3", label=r"$K|\mathrm{warp}_K-\zeta(s,\frac{3}{2})|$")
     bx[0].axhline(float(abs(c_warp_closed(_S0))), ls="--", color="C0",
                   label=r"$|C_{\rm warp}|$ closed (Si-Gibbs)")
     bx[0].axhline(float(abs(rate_warp_bulk(_S0))), ls=":", color="C1",

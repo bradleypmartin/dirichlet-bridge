@@ -27,6 +27,7 @@ from __future__ import annotations
 import mpmath as mp
 import pytest
 
+import harmonic_bridge as hb
 import warp_bridge as wb
 
 # short continuation schedule for the migration tests (warp_K is the fast grid evaluator,
@@ -143,8 +144,8 @@ def test_warp_matches_raw_integral():
 @pytest.mark.slow
 def test_zeta_zeros_climb_to_half_from_below():
     """zeta zero 1/2+14.13i: migrates onto Re=1/2, approaching from below (warp's signature)."""
-    t = dict((K, zz) for K, zz in wb.hb.migrate(wb.warp_half_K, mp.mpc(0.5, 14.134725),
-                                                schedule=SHORT) if zz is not None)
+    t = dict((K, zz) for K, zz in hb.migrate(wb.warp_half_K, mp.mpc(0.5, 14.134725),
+                                             schedule=SHORT) if zz is not None)
     assert 1 in t and 32 in t
     assert float(t[1].real) < 0.4                 # born BELOW the critical line
     assert abs(float(t[32].real) - 0.5) < 0.05    # climbed onto it
@@ -155,8 +156,8 @@ def test_zeta_zeros_climb_to_half_from_below():
 def test_prefactor_companion_migrates_to_zero():
     """The 2^s-1 companion at t=2pi/ln2 migrates onto Re=0 (the eta-mirror line)."""
     pref_t = 2 * float(mp.pi) / float(mp.log(2))   # ~ 9.0647
-    t = dict((K, zz) for K, zz in wb.hb.migrate(wb.warp_half_K, mp.mpc(0, pref_t),
-                                                schedule=SHORT) if zz is not None)
+    t = dict((K, zz) for K, zz in hb.migrate(wb.warp_half_K, mp.mpc(0, pref_t),
+                                             schedule=SHORT) if zz is not None)
     assert 32 in t
     assert abs(float(t[32].real)) < 0.05           # -> Re = 0
     assert abs(float(t[32].imag) - pref_t) < 0.2   # stays at the prefactor height

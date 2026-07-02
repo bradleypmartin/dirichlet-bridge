@@ -13,8 +13,9 @@ Usage
     python repro.py cont_eta rate_law   # run only the named driver(s)
 
 Exit code is non-zero if any driver errors or fails to (re)write its figure(s).
-Total runtime is roughly 21-23 minutes (see the per-driver estimates below); the
-migration drivers `harmonic_bridge`, `warp_bridge` and `warp_eta` dominate.
+Total runtime is roughly 28 minutes (measured end-to-end on an otherwise idle
+laptop; per-driver notes below); the migration drivers `harmonic_bridge`,
+`warp_bridge`, `warp_eta` and `lfunction_bridge` dominate.
 """
 import argparse
 import os
@@ -29,25 +30,26 @@ BRIDGE_DIR = REPO_ROOT / "bridge"
 FIGURES_DIR = BRIDGE_DIR / "figures"
 
 # (driver stem, [figure file(s) it writes], approx runtime) -- in arc order.
-# Runtimes are wall-clock on a laptop; the two migration drivers dominate (~10 min total).
+# Runtimes are wall-clock on an idle laptop (whole run ~28 min); the four
+# migration drivers dominate (~16 min of it).
 DRIVERS: List[Tuple[str, List[str], str]] = [
     ("cont_eta",          ["cont_eta.png"],                              "~10 s"),
     ("comb_vs_warp",      ["comb_vs_warp.png"],                          "~1 min"),
     ("harmonic_bridge",   ["harmonic_bridge.png"],                       "~4 min"),
-    ("warp_bridge",       ["warp_bridge.png"],                           "~5 min"),
-    ("warp_coordinate",   ["warp_coordinate.png"],                       "~5 s"),
-    ("warp_phase_compare", ["warp_phase_compare.png"],                   "~5 s"),
-    ("warp_alpha",        ["warp_alpha.png"],                            "~20 s"),
-    ("warp_eta",          ["warp_eta.png"],                              "~3 min"),
-    ("rate_law",          ["rate_law.png", "rate_law_loose_ends.png"],   "~3 min"),
-    ("stability",         ["stability.png"],                             "~2 min"),
+    ("warp_bridge",       ["warp_bridge.png"],                           "~3.5 min"),
+    ("warp_coordinate",   ["warp_coordinate.png"],                       "~1 s"),
+    ("warp_phase_compare", ["warp_phase_compare.png"],                   "~1 s"),
+    ("warp_alpha",        ["warp_alpha.png"],                            "~15 s"),
+    ("warp_eta",          ["warp_eta.png"],                              "~6 min"),
+    ("rate_law",          ["rate_law.png", "rate_law_loose_ends.png"],   "~2 min"),
+    ("stability",         ["stability.png"],                             "~10 s"),
     ("trivial_zeros",     ["trivial_zeros.png"],                         "~2 min"),
     ("eta_two_component", ["eta_two_component.png"],                     "~2 s"),
-    ("jonquiere_zeros",   ["jonquiere_zeros.png"],                       "~1 min"),
-    ("lfunction_bridge",  ["lfunction_bridge.png"],                      "~3 min"),
-    ("hurwitz_lerch_zeros", ["hurwitz_lerch_zeros.png"],                 "~5 min"),
-    ("epstein_zeros",     ["epstein_zeros.png"],                         "~3 min"),
-    ("geometric_bridge",  ["geometric_bridge.png"],                      "~20 s"),
+    ("jonquiere_zeros",   ["jonquiere_zeros.png"],                       "~40 s"),
+    ("lfunction_bridge",  ["lfunction_bridge.png"],                      "~3.5 min"),
+    ("hurwitz_lerch_zeros", ["hurwitz_lerch_zeros.png"],                 "~3 min"),
+    ("epstein_zeros",     ["epstein_zeros.png"],                         "~1 min"),
+    ("geometric_bridge",  ["geometric_bridge.png"],                      "~1.5 min"),
 ]
 
 

@@ -90,7 +90,7 @@ pip install -r requirements.txt                  # numpy, scipy, mpmath, matplot
 pytest                       # fast suite (slow high-precision checks deselected by default)
 pytest -m slow               # the expensive end-to-end regressions
 
-python repro.py              # regenerate ALL 18 figures from scratch (~22 min)
+python repro.py              # regenerate ALL 18 figures from scratch (~28 min)
 python bridge/cont_eta.py    # or run one driver: it self-validates and writes bridge/figures/<name>.png
 ```
 

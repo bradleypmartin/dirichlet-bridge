@@ -4,7 +4,8 @@ position-space two-point lens.
 
 VENDORED NOTE (this repo): copied from the originating research project as a
 dependency of `eta_two_component.py`, which uses only `unfold_to_unit_density`,
-`number_variance`, `connected_form_factor` and `number_variance_reference`.
+`number_variance` and `number_variance_reference` (the last reaching
+`connected_form_factor` internally).
 The Maass arc needs `data/maass_eigenvalues_psl2z.csv`, which is NOT shipped
 here -- running this file as a script will fail at that load. Kept whole so the
 vendored code matches its source; see CLAUDE.md "Gotchas".

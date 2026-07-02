@@ -49,7 +49,7 @@ to run one, override the marker filter: `pytest -m slow tests/test_x.py::test_y`
 ## Reproduce the figures
 
 ```bash
-python repro.py            # regenerate all eighteen figures (~22 min; the migration drivers dominate)
+python repro.py            # regenerate all eighteen figures (~28 min; the migration drivers dominate)
 python repro.py -v         # also stream each driver's validation output
 python repro.py rate_law   # just one driver
 ```
