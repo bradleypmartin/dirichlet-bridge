@@ -1,6 +1,13 @@
 """Spectral form factor of the Riemann zeros: the GUE face (small tau) and the
 prime face (large u) of one Fourier transform.
 
+VENDORED NOTE (this repo): copied from the originating research project as a
+dependency of `eta_two_component.py`, which uses only `gue_form_factor` (and
+`spectral_rigidity` additionally imports `goe_form_factor`). The high-window
+CSVs below are parent-project artifacts, NOT shipped here (their absence is
+handled gracefully); this file does run standalone on the cached 2000 zeros.
+Kept whole so the vendored code matches its source; see CLAUDE.md "Gotchas".
+
 This is the bridge between the repo's two prime/zero forks:
 
   * nearest-neighbour spacings            -- "the Riemann zeros are textbook GUE",
@@ -72,8 +79,8 @@ OUTPUT_HIGH_PNG = _ROOT / "zero_form_factor_high.png"
 OUTPUT_HIGH_TXT = _ROOT / "zero_form_factor_high.txt"
 
 # Fixed-height windows for the slope-vs-height trend. W0 is the top of the
-# canonical cache (free); the higher windows are the committed CSVs written by
-# `maass/compute_riemann_zeros.py --start N` (skipped with a note if absent).
+# canonical cache (free); the higher windows are parent-project CSVs not shipped
+# in this repo (skipped with a note if absent).
 LOW_WINDOW_N = 1000
 HIGH_WINDOW_CSVS = (
     _ROOT / "data" / "riemann_zeros_window_n100000.csv",
@@ -876,27 +883,26 @@ def main() -> None:
     t0 = time.time()
     res = _compute_all()
     text = build_summary_text(res)
-    OUTPUT_TXT.write_text(text)
+    OUTPUT_TXT.write_text(text, encoding="utf-8")
     print(text)
     print(f"Wrote {OUTPUT_TXT.name}.")
     plot_form_factor(res)
     print(f"Wrote {OUTPUT_PNG.name} ({time.time() - t0:.1f}s).")
 
-    # The high-height follow-up: needs the committed window CSVs.
+    # The high-height follow-up: needs the parent-project window CSVs.
     windows = load_high_windows()
     if len(windows) >= 2:
         t1 = time.time()
         analyses = [analyze_high_window(w["gammas"]) for w in windows]
         htext = build_high_summary_text(windows, analyses)
-        OUTPUT_HIGH_TXT.write_text(htext)
+        OUTPUT_HIGH_TXT.write_text(htext, encoding="utf-8")
         print(htext)
         print(f"Wrote {OUTPUT_HIGH_TXT.name}.")
         plot_high_window(windows, analyses)
         print(f"Wrote {OUTPUT_HIGH_PNG.name} ({time.time() - t1:.1f}s).")
     else:
-        print("(high-height windows not found -- run "
-              "`maass/compute_riemann_zeros.py --start 100000 --n-zeros 1500` "
-              "and `--start 1000000 --n-zeros 1500` to generate them.)")
+        print("(high-height window CSVs not found -- they are parent-project "
+              "artifacts, not shipped in this repo; skipping the follow-up.)")
 
 
 if __name__ == "__main__":

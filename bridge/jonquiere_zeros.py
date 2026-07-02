@@ -282,6 +282,9 @@ def count_zeros(x, sig_lo, sig_hi, t_lo, t_hi, npts=300):
 
     Sums the principal-branch increments of arg F along the rectangle boundary;
     the total over 2pi is the argument-principle count (no derivative needed).
+    NB the count is only right while |Delta arg F| < pi per boundary step, so
+    `npts` (per edge) must grow with the rectangle -- 300 covers FK's boxes here;
+    a much taller box needs proportionally more points.
     """
     x = mp.mpf(x)
 
@@ -388,8 +391,9 @@ def _main():
     worst_ex = 0.0
     for x in [0.9, 0.999, -0.9, -0.999, -(1 - mp.mpf("1e-6"))]:
         for s in [mp.mpc(1, 9.06), mp.mpc(0.5, 14.13), mp.mpc(-2, 0.3)]:
-            if abs(mp.re(F(x, s))) + abs(mp.im(F(x, s))) > 1e-12:
-                worst_ex = max(worst_ex, float(abs((F_track(x, s) - F(x, s)) / F(x, s))))
+            ref = F(x, s)                       # the ~0.1 s/eval polylog: evaluate once
+            if abs(mp.re(ref)) + abs(mp.im(ref)) > 1e-12:
+                worst_ex = max(worst_ex, float(abs((F_track(x, s) - ref) / ref)))
     print(f"   worst expansion-vs-polylog rel err = {worst_ex:.2e}")
 
     # ---- 4. zero trajectories: the two classes (Eqs. 10, 17; Sec. 4) ----

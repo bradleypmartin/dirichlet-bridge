@@ -2,6 +2,14 @@
 spectrum: the number variance Sigma^2(L) and the Dyson-Mehta Delta_3(L), the
 position-space two-point lens.
 
+VENDORED NOTE (this repo): copied from the originating research project as a
+dependency of `eta_two_component.py`, which uses only `unfold_to_unit_density`,
+`number_variance` and `number_variance_reference` (the last reaching
+`connected_form_factor` internally).
+The Maass arc needs `data/maass_eigenvalues_psl2z.csv`, which is NOT shipped
+here -- running this file as a script will fail at that load. Kept whole so the
+vendored code matches its source; see CLAUDE.md "Gotchas".
+
 This is the long-range / rigidity companion to two earlier two-point views:
 
   * nearest-neighbour SPACINGS (a *short*-range, one-gap statistic).
@@ -24,8 +32,8 @@ small-tau RAMP of K (the level repulsion, slope 1 for GUE / 2 for GOE) is what
 makes Sigma^2 grow only logarithmically; the absence of a ramp (Poisson, K = 1)
 gives Sigma^2 = L. So the form-factor ramp and the log-rigidity here are
 literally the same physics, Fourier-dual. We BUILD the reference curves by
-integrating the gue/goe/poisson_form_factor against the Fejer kernel -- a
-direct cross-check between the two statistics.
+integrating the gue/goe_form_factor against the Fejer kernel (Poisson is just
+Sigma^2 = L) -- a direct cross-check between the two statistics.
 
 Delta_3 follows from Sigma^2 by the Pandey kernel,
 
@@ -96,7 +104,6 @@ from gue_spacing import (  # noqa: E402
 from zero_form_factor import (  # noqa: E402
     goe_form_factor,
     gue_form_factor,
-    poisson_form_factor,
 )
 
 OUTPUT_PNG = _ROOT / "spectral_rigidity.png"
@@ -723,7 +730,7 @@ def main() -> None:
     t0 = time.time()
     res = _compute_all()
     text = build_summary_text(res)
-    OUTPUT_TXT.write_text(text)
+    OUTPUT_TXT.write_text(text, encoding="utf-8")
     print(text)
     print(f"Wrote {OUTPUT_TXT.name}.")
     plot_rigidity(res)

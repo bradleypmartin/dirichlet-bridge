@@ -42,7 +42,6 @@ Run directly to validate + plot: writes bridge/figures/comb_vs_warp.png.
 import sys
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 from mpmath import mp
 
@@ -55,7 +54,6 @@ if _HERE not in sys.path:
 
 import harmonic_bridge as hb  # noqa: E402  (the additive comb zeta_K, for the area cross-check)
 import warp_bridge as wb      # noqa: E402  (the canonical warp_phi, warp_K, warp_raw)
-import figstyle               # noqa: E402  (larger fonts for the embedded figure)
 
 mp.dps = 30
 
@@ -159,6 +157,12 @@ def _validate():
 # figure -- the two integrands, side by side
 # --------------------------------------------------------------------------
 def _figure():
+    # matplotlib deferred to here (as in warp_eta/geometric_bridge): importing this module
+    # for its integrands -- e.g. under pytest -- shouldn't pay the pyplot/backend load.
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import figstyle
     figstyle.enlarge()
     # the panel titles carry the two integrand formulas; keep them a touch smaller than the
     # global style so they stay within each panel's width (as the other dense drivers do).

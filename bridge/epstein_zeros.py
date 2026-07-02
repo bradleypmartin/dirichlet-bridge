@@ -64,7 +64,7 @@ Run directly to validate + plot: writes bridge/figures/epstein_zeros.png.
 """
 import sys
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 import mpmath as mp
 
@@ -187,9 +187,10 @@ def pole_residue_numeric(d, eps=mp.mpf("1e-4")):
 # --------------------------------------------------------------------------
 # the dimension knob:  d* and the two zero branches about the center s = d/4
 # --------------------------------------------------------------------------
-# mpmath findroot's default tolerance (~1e-34 at dps=30) is tighter than the
-# secant reaches on these flat trajectories and *raises* on a good ~1e-24 root;
-# pass an explicit tol and wrap in try/except (the deform-and-track gotcha).
+# mpmath findroot's default tolerance (eps*2^10 ~ 2e-28 at dps=30) is tighter
+# than the secant reaches on these flat trajectories and *raises* on a good
+# ~1e-24 root; pass an explicit tol and wrap in try/except (the deform-and-track
+# gotcha).
 _TRACE_TOL = mp.mpf("1e-18")
 
 
@@ -307,7 +308,7 @@ def real_branch(d_values):
 
 
 # --------------------------------------------------------------------------
-# argument principle  Z(x) = (1/2 pi i) oint Z'/Z ds  -- an independent count
+# argument principle  N = (1/2 pi i) oint Z'/Z ds  -- an independent count
 # --------------------------------------------------------------------------
 def count_zeros(d, sig_lo, sig_hi, t_lo, t_hi, npts=120):
     """Number of zeros of Z_d in the rectangle, by the winding number of Z_d.
@@ -514,7 +515,10 @@ def _main():
     ax = axes[1, 1]
     yy = [0.02 * i for i in range(0, int(8 / 0.02) + 1)]
     for d, col in [(5, "C0"), (7, "C5"), (9, "C6"), (9.24, "C9")]:
-        vals = [float(crit_line_value(y, d)) for y in yy]
+        # purely visual, normalised shape sweep: dps=15 is ample and ~2x faster
+        # than the ambient dps=30 over these 401x4 quadratures.
+        with mp.workdps(15):
+            vals = [float(crit_line_value(y, d)) for y in yy]
         # normalise for shape comparison (the magnitudes differ across d)
         m = max(abs(v) for v in vals)
         ax.plot(yy, [v / m for v in vals], "-", color=col, lw=1.4, label=f"$d={d}$")

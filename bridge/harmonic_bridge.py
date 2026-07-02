@@ -17,7 +17,7 @@ The two routes
 
     so truncating the sine series at K harmonics gives `zeta_K` (closed form via the
     incomplete-gamma "moments" S(omega,a) = int_1^inf sin(omega x) x^{-a} dx). This
-    is the literal realization of the "Fourier series of 1-n on [0,1]".
+    is the literal realization of the "Fourier series of 1/2 - n on [0,1]".
 
 (b) Abel-Plana with the Bose kernel  1/(e^{2 pi x}-1) = sum_{k>=1} e^{-2 pi k x},
     truncated at K, gives `zeta_K_bose` (a clean, exponentially damped quadrature --
@@ -133,7 +133,7 @@ def zeta_K(s, K):
 def zeta_term_bose(s, k):
     """The k-th harmonic in Abel-Plana/Bose form -- equals zeta_term(s, k) exactly."""
     s = mp.mpc(s)
-    integ = lambda x: ((1 + _J * x) ** (-s) - (1 - _J * x) ** (-s)) * mp.e ** (-2 * PI * k * x)
+    integ = lambda x: ((1 + _J * x) ** (-s) - (1 - _J * x) ** (-s)) * mp.exp(-2 * PI * k * x)
     return _J * mp.quad(integ, [0, mp.inf])
 
 
@@ -182,7 +182,7 @@ def eta_K_bose(s, K):
     s = mp.mpc(s)
     tot = mp.mpf("0.5")
     for k in range(0, K + 1):
-        integ = lambda x: ((1 + _J * x) ** (-s) - (1 - _J * x) ** (-s)) * mp.e ** (-(2 * k + 1) * PI * x)
+        integ = lambda x: ((1 + _J * x) ** (-s) - (1 - _J * x) ** (-s)) * mp.exp(-(2 * k + 1) * PI * x)
         tot += _J * mp.quad(integ, [0, mp.inf])
     return tot
 
@@ -256,9 +256,13 @@ def _print_migration(title, fn, targets, schedule=None):
 def _print_counting(T=40.0):
     """Witness the density bijection: #eta-zeros(<T) ~ Riemann-von Mangoldt N(T)."""
     ln2 = float(mp.log(2))
-    crit = [float(mp.zetazero(n).imag) for n in range(1, 9)]
-    crit = [g for g in crit if g < T]
-    pref = [2 * float(PI) * m / ln2 for m in range(1, 20)]
+    crit = []                                 # all zeta zeros below T, however many
+    while True:
+        g = float(mp.zetazero(len(crit) + 1).imag)
+        if g >= T:
+            break
+        crit.append(g)
+    pref = [2 * float(PI) * m / ln2 for m in range(1, int(T * ln2 / (2 * float(PI))) + 2)]
     pref = [t for t in pref if t < T]
     rvm = float(ce.counting_law(T))           # (T/2pi)ln(T/pi e) + 5/8
     print(f"\n== density bijection check (0 < t < {T:.0f}) ==")

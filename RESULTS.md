@@ -500,7 +500,7 @@ illustrative consistency check and expository on-ramp, the preprint's Appendix B
 ## Reproducing everything
 
 ```bash
-python repro.py        # regenerates all eighteen figures above (~22 min; the migration drivers dominate)
+python repro.py        # regenerates all eighteen figures above (~28 min; the migration drivers dominate)
 pytest                 # fast self-checks (the slow high-precision suite: pytest -m slow)
 ```
 

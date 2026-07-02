@@ -1,6 +1,11 @@
 """Radial log-prime superlattice and the diffraction route to the Riemann zeros
-(sibling of cone_aperiodic / cone_bloch and the original
-harmonic-functions-and-zeta arc).
+(in its source project, a sibling of cone_aperiodic / cone_bloch and the
+original harmonic-functions-and-zeta arc -- neither lives in this repo).
+
+VENDORED NOTE (this repo): copied from the originating research project as a
+dependency of `eta_two_component.py`, which uses only `von_mangoldt` and
+`prime_power_peaks`. This file does run standalone on the cached zeros. Kept
+whole so the vendored code matches its source; see CLAUDE.md "Gotchas".
 
 Why the cone: the critical-line eigenfunction of the sign-changing cone is
 
@@ -124,7 +129,7 @@ def load_riemann_zeros(path: Optional[Path] = None) -> np.ndarray:
     """Load the cached imaginary ordinates gamma_n (float64), ascending."""
     path = Path(path) if path is not None else RIEMANN_ZEROS_CSV
     gammas: List[float] = []
-    with open(path, newline="") as fh:
+    with open(path, newline="", encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
             gammas.append(float(row["gamma"]))
     return np.array(sorted(gammas), dtype=float)

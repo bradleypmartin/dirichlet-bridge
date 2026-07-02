@@ -27,7 +27,6 @@ Run directly to validate + plot: writes bridge/figures/warp_coordinate.png.
 import sys
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 # This module sits in a flat source dir alongside its bare cross-imports; put that
@@ -38,7 +37,6 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 import warp_bridge as wb  # noqa: E402  (the canonical warp_phi, for the cross-check)
-import figstyle           # noqa: E402  (larger fonts for the embedded figure)
 
 
 def phi_K(x, K):
@@ -100,6 +98,12 @@ def _validate():
 # figure
 # --------------------------------------------------------------------------
 def _figure():
+    # matplotlib deferred to here (as in warp_eta/geometric_bridge): importing this module
+    # for phi_K -- e.g. under pytest -- shouldn't pay the pyplot/backend load.
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import figstyle
     figstyle.enlarge()
     # panel titles here are long (the warp-coordinate formula, the Gibbs note, the
     # Fourier sum), so keep them a touch smaller than the global style to stay within

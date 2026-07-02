@@ -42,13 +42,15 @@ latexmk -pdf main.tex      # runs pdflatex + bibtex as needed
 
 ## arXiv upload
 
-arXiv builds from a flat, self-contained source tree and cannot follow the `../`
-path to `../bridge/figures/`. `make_arxiv.py` assembles a clean upload directory
-(`arxiv/`) with `main.tex`, `references.bib`, and a local `figures/` copy, then
-prints the `tar` command:
+arXiv builds from a flat, self-contained source tree: it cannot follow the `../`
+path to `../bridge/figures/`, and it does **not** run BibTeX, so the upload must
+carry the built `main.bbl`. `make_arxiv.py` assembles a clean upload directory
+(`arxiv/`) with `main.tex`, `references.bib`, `main.bbl`, and a local `figures/`
+copy, and writes a ready-to-upload `arxiv.tar.gz`:
 
 ```bash
-python make_arxiv.py       # -> arxiv/  (and a ready-to-upload arxiv.tar.gz)
+tectonic --keep-intermediates main.tex   # rebuild, keeping main.bbl (plain tectonic discards it)
+python make_arxiv.py                     # -> arxiv/  and arxiv.tar.gz
 ```
 
 Suggested arXiv categories: **math.NT** (primary), cross-listed **math.HO**

@@ -32,7 +32,6 @@ Run directly to validate + plot: writes bridge/figures/warp_phase_compare.png.
 import sys
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 # This module sits in a flat source dir alongside its bare cross-imports; put that
@@ -44,7 +43,6 @@ if _HERE not in sys.path:
 
 import warp_alpha as wa            # noqa: E402  (the canonical warp_phi_alpha, for the cross-check)
 from warp_coordinate import phi_K  # noqa: E402  (the validated numpy sawtooth partial sum)
-import figstyle                    # noqa: E402  (larger fonts for the embedded figure)
 
 
 def warp_alpha_coord(x, K, alpha):
@@ -105,6 +103,12 @@ def _panel_warp(ax, alpha, k0_label, target_label, cmap):
 
 
 def _figure():
+    # matplotlib deferred to here (as in warp_eta/geometric_bridge): importing this module
+    # for its warp coordinates -- e.g. under pytest -- shouldn't pay the pyplot/backend load.
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import figstyle
     figstyle.enlarge()
     fig, ax = plt.subplots(1, 3, figsize=(16, 5))
 

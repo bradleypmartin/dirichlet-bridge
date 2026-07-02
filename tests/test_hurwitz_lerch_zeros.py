@@ -7,8 +7,9 @@ contains the bridge's four objects at the corners of the (lambda, alpha) square,
 deformation paths are the three published ancestors. The checks:
 
 * evaluators: zeta(s, alpha) = mpmath.zeta(s, alpha) and L(lambda, alpha, s) = mpmath.lerchphi(
-  e^{2 pi i lambda}, s, alpha) each match their direct sums (sigma>1); the z -> 1 (integer lambda)
-  blow-up of lerchphi is handled by the Hurwitz fallback lerchphi(1, s, a) = zeta(s, a);
+  e^{2 pi i lambda}, s, alpha) each match their direct sums (sigma>1); the z ~ 1 hazard (integer
+  lambda rounds z to 1 + O(1e-33)j, where lerchphi silently returns garbage for sigma <= 1) is
+  handled by the Hurwitz splice lerchphi(1, s, a) = zeta(s, a);
 * the four unification identities at the corners: (1,1)=zeta, (1,1/2)=(2^s-1)zeta, (1/2,1)=eta,
   (1/2,1/2)=2^s L(s, chi_4);
 * the Hurwitz alpha-trajectories (fast, via mp.zeta): a STABLE zero returns to Re=1/2, an unstable
@@ -49,7 +50,8 @@ def test_lerch_matches_sum():
 
 
 def test_lerch_z1_fallback():
-    """z=1 (integer lambda): lerchphi(1, s, a) = zeta(s, a); mpmath diverges at z=1, we splice it."""
+    """Integer lambda: z rounds to ~1 (not exactly 1), where lerchphi silently corrupts for
+    sigma <= 1 -- the evaluator must splice in lerchphi(1, s, a) = zeta(s, a) instead."""
     for s in [mp.mpc(0.7, 12), mp.mpc(2, 1)]:
         for a in [1.0, 0.5]:
             assert abs(hl.lerch(1, a, s) - mp.zeta(s, mp.mpf(a))) < mp.mpf("1e-25")

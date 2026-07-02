@@ -1,9 +1,15 @@
 """Loaders for the Maass-eigenvalue CSVs.
 
+VENDORED NOTE (this repo): copied from the originating research project because
+`gue_spacing` imports `load_maass_eigenvalues` at module level. NONE of the CSVs
+these loaders read are shipped here (only data/riemann_zeros.csv is), and no
+reachable code path in this repo calls them -- they raise FileNotFoundError if
+invoked. Kept whole so the vendored code matches its source; see CLAUDE.md.
+
 `load_maass_eigenvalues` reads the LMFDB level-1 PSL_2(Z) dump
 (data/maass_eigenvalues_psl2z.csv). `load_gq_maass_eigenvalues` reads the
-generalized Hecke-triangle-group G_q spectra cached by compute_gq_maass.py
-(data/maass_eigenvalues_g{q}.csv) -- a different, lighter schema.
+generalized Hecke-triangle-group G_q spectra cached by the parent project's
+compute_gq_maass.py (data/maass_eigenvalues_g{q}.csv) -- a lighter schema.
 
 Both return a list of dict rows with at least a float `tau`, the raw decimal
 string `tau_str`, and an int `symmetry` (0 = even, 1 = odd), so that the
@@ -31,7 +37,7 @@ DEFAULT_PATH = DATA_DIR / "maass_eigenvalues_psl2z.csv"
 def load_maass_eigenvalues(path: Path | None = None) -> list[dict]:
     path = Path(path) if path is not None else DEFAULT_PATH
     rows: list[dict] = []
-    with path.open() as fh:
+    with path.open(encoding="utf-8") as fh:
         reader = csv.DictReader(fh)
         for row in reader:
             rows.append(
@@ -66,7 +72,7 @@ def load_gq_maass_eigenvalues(q: int | None = None,
         path = DATA_DIR / f"maass_eigenvalues_g{q}.csv"
     path = Path(path)
     rows: list[dict] = []
-    with path.open() as fh:
+    with path.open(encoding="utf-8") as fh:
         for row in csv.DictReader(fh):
             rows.append(
                 {

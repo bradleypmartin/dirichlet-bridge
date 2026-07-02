@@ -117,11 +117,13 @@ def _polish(t_seed):
 
 
 def find_zeros(t_max, t_first=10.6714):
-    """Zeros of F with 0 < Im <= t_max, walked upward via the spacing law.
+    """Zeros of F with 0 < Im up to ~t_max, walked upward via the spacing law.
 
     The first zero is seeded near t_first; thereafter the next seed is the law
     prediction t + spacing_law(t), which lands within ~0.01 of the true zero, so a
-    single findroot per zero suffices.
+    single findroot per zero suffices. The walk stops once the next *seed* would
+    pass t_max, so the cut is fuzzy by a fraction of one spacing: the last root
+    kept can sit slightly above t_max.
     """
     zeros = []  # type: List[mp.mpc]
     z = _polish(t_first)
@@ -196,7 +198,7 @@ def _main():
           f"{sum(offs)/len(offs):.4f} +/- {max(offs)-min(offs):.0e}  (-> 5/8)")
 
     # ---- figure ----
-    tt = [t for t in [8 + 0.5 * k for k in range(int((t_max - 8) / 0.5) + 1)]]
+    tt = [8 + 0.5 * k for k in range(int((t_max - 8) / 0.5) + 1)]
     fig, ax = plt.subplots(1, 3, figsize=(15, 4.2))
 
     ax[0].plot(ss, ts, "o", ms=4, color="C0", label="zeros of F(s)")
