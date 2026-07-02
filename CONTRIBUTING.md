@@ -27,7 +27,7 @@ The `.venv/` is per-machine and gitignored.
 ## Run the tests
 
 ```bash
-pytest                 # 66 fast self-checks (~1.5 min); slow ones deselected by default
+pytest                 # 142 fast self-checks (~2 min); slow ones deselected by default
 pytest -m slow         # the expensive high-precision regressions
 ```
 
@@ -38,7 +38,7 @@ cross-imports resolve during collection.
 ## Reproduce the figures
 
 ```bash
-python repro.py            # regenerate all nine figures (~12 min; harmonic/warp dominate)
+python repro.py            # regenerate all eighteen figures (~22 min; the migration drivers dominate)
 python repro.py -v         # also stream each driver's validation output
 python repro.py rate_law   # just one driver
 ```
@@ -47,7 +47,8 @@ Every driver also runs standalone and writes its own figure(s) to
 `bridge/figures/`, e.g. `python bridge/cont_eta.py`. Each one self-validates
 (asserts its identities to full precision) before plotting.
 
-The nine canonical figures are committed (they are embedded in `RESULTS.md`).
+The eighteen canonical figures are committed (they are embedded in `RESULTS.md`
+and pulled into the preprint via `\graphicspath`).
 Regenerating them is reproducible; note that a re-run may show a PNG diff that is
 **only metadata** (matplotlib stamps a creation time) even when the plot is
 pixel-identical.
@@ -64,10 +65,15 @@ revisiting both mechanisms and the `Path(__file__).resolve().parents[1]` → rep
 root anchoring used for data/figure paths.
 
 The six **arc drivers** (`cont_eta`, `harmonic_bridge`, `warp_bridge`,
-`warp_alpha`, `rate_law`, `eta_two_component`) are the substance. `warp_coordinate`
-and `warp_phase_compare` are small **illustrative companions** to the warp drivers —
-they draw the warp map itself (linear → midpoint staircase) and the half-integer
-vs. integer (`α = ½` vs `α = 1`) trade-off, and assert no new result. The remaining
+`warp_alpha`, `rate_law`, `eta_two_component`) are the substance. Six
+**companions** extend them: `comb_vs_warp` (the two routes at the level of the
+integrand), `warp_coordinate` (the warp map itself, linear → midpoint staircase),
+`warp_phase_compare` (the `α = ½` vs `α = 1` trade-off), `warp_eta` (the warp on
+the η integrand), `stability` (no abscissa; height is the cost), and
+`trivial_zeros` (the trivial zeros born on the negative axis). Five **appendix
+drivers** carry the preprint's appendices: `jonquiere_zeros`, `lfunction_bridge`,
+`hurwitz_lerch_zeros`, `epstein_zeros` (Appendix A, beyond ζ/η), and
+`geometric_bridge` (Appendix B, the elementary miniature). The remaining
 modules (`gue_spacing`, `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`,
 `maass_loader`) are vendored spectral-statistics helpers used only by
 `eta_two_component`. The only runtime data dependency is

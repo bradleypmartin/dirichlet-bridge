@@ -369,10 +369,138 @@ tie-in** — not the `log 2` frequency itself. (See issue #2 for the full
 
 ---
 
+## 7. Beyond ζ and η — the four cases of the preprint's Appendix A
+
+The preprint's Appendix A locates the bridge inside its ~50-year deform-and-track
+lineage with four *rhyming* cases: the direct ancestor, reproduced; the bridge's
+own knob run forward on a primitive Dirichlet L-function; the closest published
+analogues, reproduced; and a reverse-direction foil, reproduced. The organizing
+idea is a **directional taxonomy** of where the zeros go under a one-parameter
+deformation — and the bridge's arrow (born → **onto** ½) is the only one that
+points onto the line from a start carrying none of the destination's zeros:
+zeroless on the ζ side, a structured off-critical string for the mean-zero
+periodic coefficients (η, χ₄). Nothing in these four sections is claimed as new mathematics; the one
+forward step (the L-function case) is a computational demonstration, not a theorem.
+
+### The direct ancestor, reproduced — `jonquiere_zeros.py`
+
+![Fornberg–Kölbig 1975 reproduced: polylog zero trajectories, the sigma=1/2 brush and spiral](bridge/figures/jonquiere_zeros.png)
+
+**What it shows.** A laptop reproduction of **Fornberg–Kölbig 1975**: the complex
+zeros of the polylogarithm `F(x,s) = Σ x^k k^{−s}` tracked in the `s`-plane as the
+argument `x` sweeps `(−1, 1)` — endpoints `F(1,s) = ζ(s)` and `F(−1,s) = −η(s)` —
+the "deform a Dirichlet series and follow its zeros" move, done at CERN in 1975 on
+a CDC 7600. Reproduced to the printed digits: the two trajectory classes, the
+transient σ=½ **brush and spiral** about the first ζ zero (FK Figs. 6–7), the σ=1
+log-2 comb (FK Eq. 23), the trivial-zero trajectories onto `−2m` (FK §6), the
+argument-principle counts `Z(0.1) = 27` / `Z(−0.1) = 26`, and the α± counting
+constants (FK Eqs. 39–40).
+
+**Why it matters.** This is the program's direct ancestor *and* the bridge's
+sharpest motivating contrast: on FK's argument knob the migrating zeros **never
+land** — they approach the critical line (one passes within ~10⁻⁶ of a genuine ζ
+zero), are ejected, spiral off, and are all eventually absorbed into the pole
+emerging at `x = 1`. The bridge's harmonic-count knob is a knob on which the
+convergence FK's deformation chased actually happens: onto σ=½, at `O(1/K)`, to
+stay.
+
+### The bridge's own knob on `L(s,χ₄)` — `lfunction_bridge.py`
+
+![The K-knob and warp on the primitive Dirichlet L-function L(s,chi4): born onto a single line](bridge/figures/lfunction_bridge.png)
+
+**What it shows.** The bridge's `K`-knob and warp run on a genuine **primitive
+Dirichlet L-function**, `L(s,χ₄) = 1 − 3^{−s} + 5^{−s} − ⋯` (the odd character mod
+4). The one identity `χ₄(n) = sin(πn/2)` makes the coefficient mean-zero periodic,
+exactly like η's `(−1)^{n−1}`, so the continuous endpoint is *structured* — the
+oscillatory integral `G(s) = ∫₁^∞ sin(πx/2)·x^{−s} dx`, carrying an off-critical
+Riemann–von Mangoldt string drifting to σ = 3/2 (§1's laws at frequency π/2). The
+comb migrates that string onto σ=½ at `O(1/K)`; because `L(s,χ₄)` is primitive (it
+does not factor as prefactor·ζ) there is **no companion line** — the whole ground
+string maps 1:1 onto the *single* line σ=½, the conductor `q = 4` supplying exactly
+the density doubling η got from its σ=1 comb. The midpoint warp of the phase-½
+carrier `sin(πy)` lands on `2^s·L(s,χ₄) = L(½,½,s)` — the Lerch specialisation, and
+the exact dual of the η-warp (§4): there the integer phase survived and the midpoint
+was annihilated; here the midpoint survives and the integer phase dies.
+
+**Why it matters.** It is the load-bearing data point that born-onto-½ is not a
+ζ/η accident: the behaviour survives — *cleaner*, in fact (one line, no split to
+bookkeep) — for a family with its own functional equation and critical line.
+
+### The closest published analogues, reproduced — `hurwitz_lerch_zeros.py`
+
+![Garunkstis–Steuding Hurwitz alpha-trajectories and the Lerch family square](bridge/figures/hurwitz_lerch_zeros.png)
+
+**What it shows.** The two nearest *published* deform-and-track studies, reproduced
+and unified. **Garunkštis–Steuding 2007** track the Hurwitz `ζ(s,α)` zeros as the
+shift `α` runs `1 → ½`: of the first eight, five are "stable" (trajectory starts
+*and* ends on σ=½, bulging off-line in between) and three are unstable, landing
+exactly on the σ=0 companion comb `2πim/ln2` — the same comb `warp_bridge.py`'s
+target carries. **Garunkštis–Tamošiūnas 2017** is the Lerch `λ=α` diagonal: ζ's
+zeros ride down onto `2^s·L(s,χ₄)`'s without ever leaving σ=½ (primitive target, no
+companion). Both live inside the **Lerch family square** `L(λ,α,s)`: the bridge's
+four objects (ζ, the half-shift, η, `2^s·L(s,χ₄)`) sit at its corners, and its
+three deformation paths are exactly the three published programs — FK's polylog
+knob (the α=1 edge), G–S's Hurwitz shift (the λ=1 edge), G–T's diagonal — each
+landing on a different companion line (σ=1, σ=0, none).
+
+**Why it matters.** These sweeps are the honest counterweight to the bridge's
+framing: they deform between two configurations that *both* already carry
+infinitely many zeros — no zero is born, and the trajectories wander **on and
+off** the line. The driver's last panel overlays a stable α-trajectory against a
+genuine `ζ^{(K)}` trajectory — on/off-½ vs. onto-½ — the taxonomy in one axis.
+
+### The reverse-direction foil — `epstein_zeros.py`
+
+![Travěnec–Šamaj Epstein pitchfork: zeros born off the critical line, migrating away](bridge/figures/epstein_zeros.png)
+
+**What it shows.** A reproduction of **Travěnec–Šamaj 2022** on the hypercubic
+Epstein zeta `Z_d(s) = Σ′ |n|^{−2s}`, with the spatial dimension `d` as a
+continuous knob (the Jacobi-theta power `ψ(t)^d` *is* the analytic continuation in
+`d`). A **pitchfork at the critical dimension `d* = 9.2455524667`** (reproduced to
+ten digits): below `d*` the lowest zero pair sits *on* the critical line σ = d/4
+and slides down it; at `d*` the pair collides at the real centre; above `d*` it
+splits into a real off-critical pair that migrates out to the strip edges
+`{0, d/2}`. An argument-principle count — zero real zeros in the strip below `d*`,
+exactly two above — certifies the split independently of any root-finder.
+
+**Why it matters.** It is the sharpest single foil for the taxonomy: a knob that
+*generates* off-critical zeros and drives them **away** from the line, the exact
+opposite arrow to the bridge's. (Epstein zeta has no Euler product, so this is a
+geometric foil about the breadth of the phenomenon, not an arithmetic sibling.)
+
+---
+
+## 8. The geometric-series miniature — `geometric_bridge.py` (Appendix B)
+
+![The geometric series bridge in elementary closed form: telescoping comb, factorizing warp](bridge/figures/geometric_bridge.png)
+
+**What it shows.** The whole construction run on the simplest possible series: the
+geometric `Σ_{n≥0} sⁿ = 1/(1−s)`, with continuous shadow `∫₀^∞ sˣ dx = −1/ln s`,
+where every step is an **elementary closed form**. The comb telescopes *exactly*
+to `1/(1−s)` (the classical `coth` partial fraction ≡ the Bernoulli generating
+function); the rate is the arc's `O(1/K)` law with `s ↦ ln s` (the height/cost
+coordinate becomes `|ln s|`, the log-distance from the pole); there is **no
+abscissa** — the interpolant converges for `|s| > 1` too, summing the divergent
+series to their analytic values (`1+2+4+⋯ = −1`, Grandi's `1−1+1−⋯ = ½`); and the
+warp **factorizes** into a single scalar `J_K → 1` — no Hurwitz zeta, no moment
+machinery. No special functions and **no zeros** anywhere.
+
+**Why it matters.** Precisely because it has no zeros, no functional equation, and
+no arithmetic, it isolates what the comb and warp actually *are*: a reshaping of
+the discrete ↔ continuous **measure**, independent of any zero story. Pole
+preservation, the `O(1/K)` rate, the no-abscissa stability, and the comb/warp
+duality all survive the strip-down to elementary functions; the zeros of the main
+arc are what this scaffold *carries*, not what it *is*. Entirely classical (Hardy's
+*Divergent Series* for the summability; the `coth`/Bernoulli identity) — an
+illustrative consistency check and expository on-ramp, the preprint's Appendix B,
+**not** a result.
+
+---
+
 ## Reproducing everything
 
 ```bash
-python repro.py        # regenerates all twelve figures above (~20 min; harmonic/warp/eta dominate)
+python repro.py        # regenerates all eighteen figures above (~22 min; the migration drivers dominate)
 pytest                 # fast self-checks (the slow high-precision suite: pytest -m slow)
 ```
 
