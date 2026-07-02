@@ -165,8 +165,9 @@ use a knob on which the convergence the classic deformation chased actually happ
    companion are absent in FK.
 5. **No spectral reading** — the two-component crystal×GUE / p=2-ghost is absent.
 
-A planned code reproduction of FK1975's picture (issue **#15**) will exhibit the
-§2.2 contrast directly.
+The code reproduction of FK1975's picture (issue **#15**, `bridge/jonquiere_zeros.py`;
+see the box in §2) exhibits the §2.2 contrast directly, and the preprint draws it as
+Appendix A's first case (`app:fk`).
 
 ---
 
@@ -435,8 +436,9 @@ behaviour is exhibited numerically (`O(1/K)` migration, GRH assumed for the targ
 usual), not proven. Its novelty is the **combination** (§4.0): no prior deform-and-track work pairs
 a structured/zeroless endpoint + zeros born from it + migration **onto** ½ for a family ≠ ζ/η. It
 uses the **bridge's** discreteness knob, so it does *not* answer §4.8's open gap #3 (a modern
-FK-style *argument-knob* study for L-functions). Kept public/exploratory; folds into the main draft
-(#5) only if a result warrants it (that draft stays ζ/η-only for now).
+FK-style *argument-knob* study for L-functions). Now folded into the preprint as Appendix A's
+`app:chi4` (#18/#5), framed there as deliberately supplementary; the main technical arc stays
+ζ/η-only.
 
 ### 4.11 Reproducing the published α-sweep analogues — Hurwitz + Lerch (issue #21, executed)
 
@@ -561,7 +563,14 @@ a result.
 
 ---
 
-## 6. New BibTeX to add (beyond `paper/references.bib`)
+## 6. BibTeX status — reconciled with `paper/references.bib`
+
+> **Status (2026-07):** all of the entries below except `GarunkstisPanavas2022` are
+> now **merged into `paper/references.bib`** and cited in the preprint. They are kept
+> here as the record of what this document's passes surfaced.
+> `GarunkstisPanavas2022` is the one deliberate omission: a zero-*distribution*
+> result, not deform-and-track (§4.3), so the preprint does not cite it; add it only
+> if the Lerch discussion ever expands in that direction.
 
 ```bibtex
 @article{FornbergKolbig1975,
@@ -624,10 +633,10 @@ a result.
 }
 ```
 
-> Already in `paper/references.bib` but **due for re-framing** as deform-and-track
-> ancestors (not only their currently-cited roles): `GarunkstisSteuding2007` (the
-> closest Hurwitz α-trajectory analogue) and `BalanzarioSanchezOrtiz2007` (the
-> reverse-direction homotopy). Guise-(c) cousins beyond η worth a one-line mention if
+> The re-framing of `GarunkstisSteuding2007` (the closest Hurwitz α-trajectory
+> analogue, not only the half-shift source) and `BalanzarioSanchezOrtiz2007` (the
+> reverse-direction homotopy) as deform-and-track ancestors is **done** in the
+> preprint (§"Relation to prior work" and Appendix A). Guise-(c) cousins beyond η worth a one-line mention if
 > the partial-sum thread is expanded: the Dirichlet λ/β partial-sum density paper
 > (Eur. J. Math. 2025, doi 10.1007/s40879-025-00821-0) and the cyclotomic Dedekind
 > partial-sum study. Campbell (2012, arXiv:1212.2246) is a recorded **negative** — cite
@@ -635,6 +644,6 @@ a result.
 
 ---
 
-*Existing verified BibTeX (30 entries) lives in `paper/references.bib`; the full
-per-claim verdicts and the ready-to-paste Rodgers–Tao contrast paragraph are in the
-two comments on issue #2.*
+*The verified BibTeX (36 entries, all cited in the preprint) lives in
+`paper/references.bib`; the full per-claim verdicts and the ready-to-paste
+Rodgers–Tao contrast paragraph are in the two comments on issue #2.*

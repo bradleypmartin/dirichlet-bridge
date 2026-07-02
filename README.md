@@ -53,6 +53,30 @@ stability out to σ<0 to show where the **trivial** zeros come from — a rising
 that carves `−2, −4, −6, …` onto the negative real axis, the first *inherited* from the bland
 endpoint's lone zero and the rest *born* as conjugate pairs that pinch onto the axis.
 
+Five further drivers carry the preprint's two appendices — the four **beyond-ζ/η**
+cases (Appendix A) and the **geometric-series miniature** (Appendix B):
+
+- `jonquiere_zeros.py` reproduces **Fornberg–Kölbig 1975**, the program's direct
+  ancestor: the polylogarithm's argument as a deformation knob, whose zero
+  trajectories only *graze* `σ = ½` before the pole emerging at `x = 1` absorbs
+  them — the sharpest contrast with the bridge's *converge-and-stay*.
+- `lfunction_bridge.py` runs the bridge's own `K`-knob + warp on the primitive
+  Dirichlet L-function `L(s,χ₄)`: zeros born onto the *single* line `σ = ½` with
+  **no companion** (primitivity — cleaner than η), the warp landing on the Lerch
+  value `2^s·L(s,χ₄)`.
+- `hurwitz_lerch_zeros.py` reproduces the closest *published* parameter-sweep
+  analogues — the Garunkštis–Steuding Hurwitz `α`-trajectories (stable zeros
+  wandering on/off ½; unstable ones landing on the σ=0 comb) and the
+  Garunkštis–Tamošiūnas Lerch `λ=α` diagonal — organized by the **Lerch family
+  square** whose corners are the bridge's four objects.
+- `epstein_zeros.py` reproduces the reverse-direction foil (**Travěnec–Šamaj
+  2022**): the Epstein dimension-knob pitchfork at `d* ≈ 9.24555`, zeros born
+  *off* the critical line `σ = d/4` and migrating *away* — the opposite arrow.
+- `geometric_bridge.py` runs the whole construction on the geometric series
+  `Σ sⁿ = 1/(1−s)`, where the comb *telescopes* and the warp *factorizes* in
+  elementary closed form — no special functions, no zeros; an illustrative
+  consistency check, not a result.
+
 ## Quickstart
 
 ```bash
@@ -63,7 +87,7 @@ pip install -r requirements.txt                  # numpy, scipy, mpmath, matplot
 pytest                       # fast suite (slow high-precision checks deselected by default)
 pytest -m slow               # the expensive end-to-end regressions
 
-python repro.py              # regenerate ALL figures from scratch (a few minutes)
+python repro.py              # regenerate ALL 18 figures from scratch (~22 min)
 python bridge/cont_eta.py    # or run one driver: it self-validates and writes bridge/figures/<name>.png
 ```
 
@@ -78,8 +102,8 @@ layout conventions.
 ## Layout
 
 ```
-bridge/        the six core drivers + six companions + vendored spectral-statistics helpers (flat; bare cross-imports)
-  figures/     generated PNGs (gitignored)
+bridge/        the six core drivers + six companions + five appendix drivers + vendored spectral-statistics helpers (flat; bare cross-imports)
+  figures/     the 18 canonical PNGs (committed; other generated output gitignored)
 data/          riemann_zeros.csv (cached non-trivial zeros)
 tests/         one test module per driver
 paper/         arXiv preprint: LaTeX source, references.bib, built PDF
@@ -91,6 +115,12 @@ conftest.py    puts bridge/ on sys.path for pytest
 The endpoints and most ingredients are classical — this package cites them rather
 than claiming them:
 
+- The **direct ancestor** of the whole deform-and-track program: **Fornberg–Kölbig**
+  (Math. Comp. 29, 1975) sweep the polylogarithm's argument `x` from `−1` to `1`
+  (endpoints `−η` and `ζ`) and follow the zero trajectories — in 1975. On their knob
+  the zeros only *graze* `σ = ½` before being absorbed into the emerging pole; the
+  bridge's harmonic-count knob is one on which that chased convergence actually
+  happens (`jonquiere_zeros.py` reproduces FK's computation and draws the contrast).
 - The half-shift `(2^s−1)ζ(s)=ζ(s,½)`, its σ=0 companion at `t=2πk/ln2`, and the
   migration of zeros onto σ=½ as a parameter varies: **Garunkštis–Steuding** (Math.
   Comp. 76, 2007), **Gonek** (Springer LNM 899, 1981).
@@ -107,6 +137,12 @@ than claiming them:
 - The de Bruijn–Newman backward-heat flow (**Rodgers–Tao**, Forum Math. Pi 8, 2020)
   *rearranges* an always-infinite zero set toward all-real — a categorically
   different deformation from this *creation-from-a-zeroless-endpoint* knob.
+- The closest published parameter-sweep analogues — **Garunkštis–Steuding** (above;
+  re-framed as the nearest deform-and-track sibling, its "stable" zeros wandering
+  on/off ½) and **Garunkštis–Tamošiūnas** (Lith. Math. J. 57, 2017; the Lerch `λ=α`
+  diagonal) — and the reverse-direction foil **Travěnec–Šamaj** (Appl. Math. Comput.
+  413, 2022; Epstein zeros born *off* the line, migrating away) are all *reproduced*
+  in-repo and distinguished in the preprint's Appendix A.
 
 The preprint (LaTeX source, the annotated `references.bib`, and the built PDF)
 lives in [`paper/`](paper/) — a computational / experimental-mathematics write-up
@@ -116,10 +152,11 @@ arXiv upload.
 
 ## Provenance
 
-This repository is the self-contained **bridge arc**, extracted from the author's
-larger research project; it carries the six core arc drivers (with four small
-companions) plus the vendored spectral-statistics helpers they depend on, and
-nothing else.
+This repository began as the self-contained **bridge arc**, extracted from the
+author's larger research project: the six core arc drivers, their companions, and
+the vendored spectral-statistics helpers they depend on. The five appendix drivers
+(the beyond-ζ/η reproductions and the geometric-series miniature) and the preprint
+were developed here.
 
 ## License
 

@@ -91,8 +91,10 @@ is classical and is cited as such; the contribution is the unifying construction
 rate law, and the spectral readings, not a new theorem about where zeros live. An
 appendix carries the picture to four families beyond $\zeta$ and $\eta$, reproducing
 the construction's published deform-and-track ancestors and running its own knob
-forward on a primitive Dirichlet $L$-function. All figures and numbers are
-reproducible from the accompanying repository.
+forward on a primitive Dirichlet $L$-function; a second appendix runs the
+construction on the geometric series, where every step reduces to an elementary
+closed form. All figures and numbers are reproducible from the accompanying
+repository.
 \end{abstract}
 
 \tableofcontents
@@ -332,6 +334,10 @@ $+\tfrac12$), and both restore full discreteness as $K\to\infty$, but by
 rate (\cref{sec:rate}), differing only in the displacement constant. A companion
 view of the warp \emph{coordinate} $x+\phi_K(x)$ itself, bending from the straight
 line into the midpoint staircase, appears in \cref{sec:warp} (\cref{fig:warpcoord}).
+Both routes also admit a fully \emph{elementary} miniature: run on the geometric
+series (\cref{app:geometric}), the comb telescopes exactly to the discrete sum and
+the warp factorizes into a single scalar, with no special functions and no zeros
+anywhere---a transparent on-ramp to either route.
 
 \begin{figure}[t]
   \centering
@@ -356,7 +362,9 @@ line into the midpoint staircase, appears in \cref{sec:warp} (\cref{fig:warpcoor
 The first route restores discreteness \emph{additively}: add the Fourier
 harmonics \eqref{eq:sawtooth} of the discreteness kernel back into the integrand,
 one at a time, and track each zero as a curve in $K$. We call the resulting
-trajectories the \emph{zero-migration map} (\cref{fig:comb}).
+trajectories the \emph{zero-migration map} (\cref{fig:comb}). (The fully
+elementary version of this route---the same comb telescoping exactly to the
+discrete sum, on the geometric series---is \cref{app:geometric}.)
 
 \paragraph{Two integral guises of one comb.}
 The discreteness correction admits two classical integral representations that we
@@ -411,7 +419,9 @@ adding harmonics to the integrand, we \emph{warp the integration variable} so th
 measure is pulled toward integer plateaus, $n^\ast = x + \varphi_K(x)$, where
 $\varphi_K$ is the $K$-harmonic truncation of the sawtooth displacement. As
 $K\to\infty$ the warp collapses each unit cell onto its \emph{midpoint}, so its
-natural target is the half-shifted Hurwitz zeta. Before the figures, we state the
+natural target is the half-shifted Hurwitz zeta. (The fully elementary version of
+this route---the warp factorizing into a single scalar, on the geometric
+series---is \cref{app:geometric}.) Before the figures, we state the
 algebra that makes this target legitimate, which is the single most likely reader
 sticking point.
 
@@ -1052,10 +1062,11 @@ family uniformly $O(1/K)$ across all routes.
 % =====================================================================
 
 Every figure in this paper is produced by a driver of the same name in the
-accompanying repository, and every driver self-validates its identities to full
+accompanying repository (the two rate-law figures by the one driver
+\texttt{rate\_law.py}), and every driver self-validates its identities to full
 precision before it plots, so each figure doubles as a numerical certificate. All
-seventeen figures---the thirteen in the body and the four of \cref{app:beyond}---are
-regenerated together by a single command:
+eighteen figures---the thirteen in the body, the four of \cref{app:beyond}, and the
+one of \cref{app:geometric}---are regenerated together by a single command:
 \begin{quote}
 \texttt{python repro.py}\quad(regenerates all figures);\qquad
 \texttt{pytest}\quad(fast self-checks; \texttt{pytest -m slow} for the

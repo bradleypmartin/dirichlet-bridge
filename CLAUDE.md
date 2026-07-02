@@ -40,7 +40,7 @@ Targets **Python 3.9** — keep code 3.9-compatible (`typing.Union`, *not* PEP 6
 
 - Setup: `python -m venv .venv` then `pip install -r requirements.txt`
   (numpy, scipy, mpmath, matplotlib, pytest — pinned).
-- Fast suite: `pytest` (93 tests, ~110 s; the slow high-precision checks are
+- Fast suite: `pytest` (142 tests, ~110 s; the slow high-precision checks are
   deselected by default via `addopts = -m "not slow"` in `pytest.ini`).
 - Slow suite: `pytest -m slow`.
 - Each driver self-validates and writes a figure, e.g.
