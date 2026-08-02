@@ -153,10 +153,11 @@ Run directly to validate + plot: writes explorations/figures/character_bridge.pn
 Runtime is minutes (migrations dominate); this driver is local/manual only -- it is
 deliberately NOT in repro.py or CI (issue #37's CI-economy note).
 """
+import itertools
 import math
 import sys
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Tuple
 
 import mpmath as mp
 
@@ -250,7 +251,8 @@ def characters(q):
 
     Finds a generator g of (Z/q)^* by brute force, builds the discrete log, and sets
     chi_j(g^t) = e^{2 pi i j t / m}. chars[0] is the principal character. Raises for
-    non-cyclic moduli (q = 8, 12, 15, ...) -- build those via `induced` instead.
+    non-cyclic moduli (q = 8, 12, 15, ...) -- use `characters_any` for those (this
+    older constructor is kept verbatim so the #37-#39 cast indices stay stable).
     """
     us = units(q)
     m = len(us)
@@ -274,6 +276,95 @@ def characters(q):
         dlog[x] = t
     return [Character(q, m, {a: j * dlog[a] % m for a in us}, f"chi_{q}^({j})")
             for j in range(m)]
+
+
+def _factorize(n):
+    # type: (int) -> List[Tuple[int, int]]
+    """Prime-power factorization [(p, e), ...] by trial division (n <= ~10^6 here)."""
+    out = []  # type: List[Tuple[int, int]]
+    d = 2
+    while d * d <= n:
+        if n % d == 0:
+            e = 0
+            while n % d == 0:
+                n //= d
+                e += 1
+            out.append((d, e))
+        d += 1
+    if n > 1:
+        out.append((n, 1))
+    return out
+
+
+def _cyclic_gen(pe):
+    # type: (int) -> Tuple[int, int]
+    """(generator, order) of the cyclic (Z/pe)^*: pe an odd prime power, 1, 2, 4."""
+    us = units(pe)
+    m = len(us)
+    for g in us:
+        x, order = 1, 0
+        for _ in range(m):
+            x = x * g % pe
+            order += 1
+            if x == 1:
+                break
+        if order == m:
+            return g, m
+    raise ValueError(f"(Z/{pe})^* is not cyclic")
+
+
+def characters_any(q):
+    """All phi(q) characters mod q, ANY modulus -- the CRT product of cyclic pieces.
+
+    (Z/q)^* = prod_p (Z/p^e)^* with each odd-prime-power factor cyclic and
+    (Z/2^e)^* = {+-1} x <5> for e >= 3 (cyclic for e <= 2): every character is a
+    product of one character per cyclic slot. Each slot g of order m_g contributes
+    exponent j_g * dlog_g(a) * (m / m_g) with m = lcm of the slot orders, summed into
+    the exact unit-group-exponent storage of `Character`. chars[0] is principal;
+    ordering is itertools.product over the slot indices (deterministic). For cyclic
+    moduli this reproduces the same character SET as `characters` (possibly in a
+    different list order -- the old constructor keeps the #37-#39 cast stable).
+    The issue #40 build item: unlocks the non-cyclic moduli q = 8, 12, 15, 16, ...
+    for the rate-vs-conductor sweep.
+    """
+    q = int(q)
+    if q <= 2:
+        return [Character(q, 1, {a: 0 for a in units(q)}, f"chi_{q}#0")]
+    # cyclic slots: (pe, order, dlog table on units(pe))
+    slots = []  # type: List[Tuple[int, int, Dict[int, int]]]
+    for p, e in _factorize(q):
+        pe = p ** e
+        if p == 2 and e >= 3:
+            half = 2 ** (e - 2)
+            dlog_sign = {}  # type: Dict[int, int]
+            dlog_five = {}  # type: Dict[int, int]
+            for i in range(2):
+                for t in range(half):
+                    v = (-1) ** i * pow(5, t, pe) % pe
+                    dlog_sign[v] = i
+                    dlog_five[v] = t
+            slots.append((pe, 2, dlog_sign))
+            slots.append((pe, half, dlog_five))
+        else:
+            g, m_g = _cyclic_gen(pe)
+            dlog = {1 % pe: 0}
+            x = 1
+            for t in range(1, m_g):
+                x = x * g % pe
+                dlog[x] = t
+            slots.append((pe, m_g, dlog))
+    m = 1
+    for _, m_g, _ in slots:
+        m = m * m_g // math.gcd(m, m_g)
+    us = units(q)
+    out = []
+    ranges = [range(m_g) for _, m_g, _ in slots]
+    for idx, js in enumerate(itertools.product(*ranges)):
+        exps = {a: sum(j * dl[a % pe] * (m // m_g)
+                       for j, (pe, m_g, dl) in zip(js, slots)) % m
+                for a in us}
+        out.append(Character(q, m, exps, f"chi_{q}#{idx}"))
+    return out
 
 
 def induced(chi, q):

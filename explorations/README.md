@@ -15,9 +15,11 @@ Drivers are local/manual only (issue #37's CI-economy note): run them directly,
 e.g. `python explorations/character_bridge.py` (minutes; writes
 `explorations/figures/character_bridge.png`),
 `python explorations/chi6_two_component.py` (seconds from the cached zero CSV;
-`--recompute-zeros` re-runs the ~1–2 min Hardy-Z walk), or
+`--recompute-zeros` re-runs the ~1–2 min Hardy-Z walk),
 `python explorations/zero_birth.py` (~10 min, the λ-flow and census dominate;
-writes `explorations/figures/zero_birth.png`).
+writes `explorations/figures/zero_birth.png`), or
+`python explorations/conductor_sweep.py` (~20 s from the CSV caches;
+`--recompute-sweep --recompute-zeros` rebuilds both in ~3 min).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -130,8 +132,8 @@ Load-bearing BibTeX for this arc is kept in `explorations/references-37.bib`.
   (issue #38; section below).
 - ~~Normalized zero-birth from the identically-zero endpoint~~ — done in
   `zero_birth.py` (issue #39; section below).
-- Rate-vs-conductor sweep: the measured `(sq/2π²)Σχ(a)a^{−s−1}` constant across
-  many q; connects to the weil-positivity-lab conductor thread (issue #40).
+- ~~Rate-vs-conductor sweep~~ — done in `conductor_sweep.py` (issue #40;
+  section below).
 
 ---
 
@@ -303,3 +305,87 @@ of the imprimitive comb ⊎ GUE union — the χ-twisted lock, the dark conducto
 and the offset-ensemble Σ²/form-factor cancellation. Sample-size caveat: the
 growing-regime Σ² reading (η's GUE-log + picket) needs a much longer zero
 sample and stays deferred.
+
+---
+
+## `conductor_sweep.py` — rate vs conductor: the comb constant swept over q ≤ 50 (issue #40)
+
+![Conductor sweep](figures/conductor_sweep.png)
+
+The systematic half of #37's prediction-2 rate question. `character_bridge.py`
+measured `L − L_comb_K ~ (sq/2π²)B(s+1,χ)/K` (with `B(s) = Σχ(a)a^{−s}` the
+one-period section) at q = 3..6; this module measures it across **every
+primitive χ mod q ≤ 50** — 470 characters, 36 moduli, both parities, real and
+complex, cyclic and non-cyclic — plus the zero-displacement statistics and the
+instant-census re-ask. The build item that unlocks it:
+`character_bridge.characters_any(q)`, a CRT-product constructor over the cyclic
+components of `(Z/q)^*` (with `{±1}×⟨5⟩` at `2^e, e ≥ 3`), exact unit-group
+exponents as before; validated against the old constructor on cyclic moduli
+(identical character sets), exact orthogonality, and primitive counts = (μ∗φ)(q)
+for all q ≤ 50.
+
+**Findings (2026-08-02):**
+
+1. **The knob's natural clock is K/q.** The comb's error series at fixed s runs
+   in q/K, not 1/K: `K(L − L_comb_K) = Δ₁ + c₁/K + c₂/K²` with `c₁/Δ₁ = O(1)`
+   roughly q-independent and `c₂/Δ₁ ≈ 0.50·q²` (median over the sweep 0.50,
+   full range 0.36–0.63). Interpretation: the k-th sawtooth harmonic resolves
+   the a/q residue lattice only once k ~ q — convergence progress is harmonics
+   *per residue class*. Practical corollaries: fixed-K measurements degrade
+   linearly in q (K = 160 gives 0.3% at q ≤ 6 but ~4.5% at q ≈ 48); 2-point
+   Richardson in 1/K is *worse* than the raw value at large q (the 1/K² term
+   flips in with doubled sign); conductor-scaled checkpoints K = (5q, 7q, 10q)
+   + 3-point Richardson eliminate both layers and land **q-uniform** residuals.
+2. **The amplitude law, confirmed conductor by conductor.** Measured
+   `lim K(L − L_comb_K)` vs `(sq/2π²)B(s+1,χ)` at s₀ = 1.3+7i: median residual
+   6.4e-4, worst 8.5e-4 over all 470 characters. The group mean over the full
+   character table mod q is *exact* by orthogonality (only a = 1 survives):
+   `⟨rate⟩_χ = q·s/2π²` — the linear-in-q spine, verified to working precision;
+   the section factor B(s+1) is the O(1) per-χ fluctuation around it.
+3. **The section factor carries the surviving-prime fingerprint.** |B(s₀+1) − 1|
+   is set by the smallest prime *not* dividing q: measured tiers p\* = 2 (odd q,
+   421 χ): mean 0.215 vs 2^{−2.3} = 0.203; p\* = 3 (38 χ): 0.081 vs 0.080;
+   p\* = 5 (q ≡ 0 mod 12, 11 χ): 0.026 vs 0.025. The ramified p | q columns are
+   deleted from the section exactly as they vanish from the explicit formula's
+   prime side (#38's dark-conductor null) — the same arithmetic read through the
+   approximation rate. This is the concrete connection to the
+   weil-positivity-lab conductor thread (its #22/#31): in a q-sweep the explicit
+   formula loses exactly the p | q prime columns, and the comb constant's
+   section factor is the rate-law face of that same dropout.
+4. **Zero displacement: linear amplitude, density tempering.** Bulk critical-line
+   samples via the #38 Hardy-Z walk generalized to every real primitive χ
+   (ε = +1 by Gauss, verified per conductor): 332 zeros across q = 3..43, each
+   census within |S(T)| noise of θ_χ/π (no +1). At each zero,
+   `|a₁| = (q|ρ|/2π²)|B(ρ+1)|/|L′(ρ)|`: median |L′| climbs ×1.7 (tracking the
+   ×1.6 growth of the local density `ln(qt/2π)/2π`) while the density-rescaled
+   `|L′|/ρ_dens` stays q-flat at 5.4 ± 0.5 — conductor-aspect GUE-flavored
+   universality, observed not assumed. Net: median |a₁| grows ×6.9 from q = 3
+   to 43, riding the tempered `q/ln(qt̄)` curve and cleanly excluding pure-linear
+   ×14.3. Zero condensation is slower at larger conductor by the linear
+   amplitude only; in resolution units (fixed K/q) it is asymptotically
+   conductor-free up to the section factor and L′ fluctuations. Spot-certified
+   end-to-end at the *non-cyclic* moduli (χ₈, χ₁₅: measured K = 45 comb roots
+   vs `a₁ = rate_comb_chi(ρ)/L′(ρ)`, rel 0.02–0.03).
+5. **The instant census is generic.** The #39 box census re-asked at q = 5, 8,
+   12, 15 (both parities, non-cyclic included): N_K = target = 11, 13, 15, 16
+   at *every* K ∈ {1, 2, 3} — without even ζ's one transient extra zero. The
+   full Riemann–von Mangoldt count is present at K = 1 at every conductor
+   tried; the K-knob is pure displacement thereafter.
+6. **Ride-alongs (the #43 closed forms across q).** L(0,χ) for the odd walk
+   family lands on the classical class-number values (1/3, 1/2, 1, 1, 2, 3, 3,
+   1 at q = 3, 4, 7, 11, 15, 23, 31, 43); the conductor-string location
+   `ln L₀/ln(q/(q−1))` parks at σ\* = 0 exactly when L₀ = 1 and jumps far right
+   for L₀ ≥ 2, while its spacing `2π/ln(q/(q−1)) ≈ 2πq` thins the string out
+   ~1/q — the conductor's own seed signature fades at large conductor.
+
+**Honest framing.** Experimental mathematics; no RH/GRH claims. The CRT
+construction, Gauss's ε = +1, and the smooth counting function are classical;
+the q-aspect growth of L′ moments is conjectural territory
+(Hughes–Keating–O'Connell-flavored) that we *measure*, not derive. What has no
+published analog we know of (per the #37 adversarial lit pass) is the finite-K
+rate object itself: the conductor-swept measurement of the comb constant, the
+q/K resolution clock, and the conductor statistics of a₁.
+
+Data caches: `data/conductor_rate_sweep.csv` (per-χ measured/predicted constant,
+residuals, section factor), `data/conductor_walk_a1.csv` (per-zero γ, |L′|, |B|,
+|a₁|). Driver ~20 s from the caches, ~3 min fresh.
