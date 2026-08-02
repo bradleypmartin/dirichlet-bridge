@@ -19,7 +19,11 @@ e.g. `python explorations/character_bridge.py` (minutes; writes
 `python explorations/zero_birth.py` (~10 min, the λ-flow and census dominate;
 writes `explorations/figures/zero_birth.png`), or
 `python explorations/conductor_sweep.py` (~20 s from the CSV caches;
-`--recompute-sweep --recompute-zeros` rebuilds both in ~3 min).
+`--recompute-sweep --recompute-zeros` rebuilds both in ~3 min), or
+`python explorations/arithmetic_clock.py` (~2 min from the caches, mostly the
+winding spot-checks — `--skip-certify` for seconds; `--recompute-kwalk --jobs 10`
+rebuilds the 400-zero K-walk in ~1 h wall, `--recompute-lamflow` the λ-flow in
+~1.5 h).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -233,12 +237,8 @@ instant-census / λ-birth split, and the conductor seed string.
 
 ### Deferred from #39 (follow-up)
 
-- **The arithmetic birth clock** (#38-session comment, point 3): run the
-  χ-twisted p = 2 resonance on the finite-K zero census per K and time
-  "arithmetic birth" (prime structure appears) against "geometric birth" (the
-  census completes — now known to be K ≈ 1, sharpening the question to: how does
-  the *resonance* converge along the O(1/K) displacement field?). Needs a few
-  hundred 2-D findroot zeros per K value; deliberately deferred for compute.
+- ~~The arithmetic birth clock~~ — done in `arithmetic_clock.py` (issue #44;
+  section below).
 
 ---
 
@@ -389,3 +389,84 @@ q/K resolution clock, and the conductor statistics of a₁.
 Data caches: `data/conductor_rate_sweep.csv` (per-χ measured/predicted constant,
 residuals, section factor), `data/conductor_walk_a1.csv` (per-zero γ, |L′|, |B|,
 |a₁|). Driver ~20 s from the caches, ~3 min fresh.
+
+---
+
+## `arithmetic_clock.py` — the arithmetic birth clock: prime resonance along the K-family (issue #44)
+
+![Arithmetic clock](figures/arithmetic_clock.png)
+
+The deferred compute half of #39 (the #38-session carryover, split out of PR
+#43 for cost). #43 timed **geometric birth** — the census is complete at K = 1,
+and the knob thereafter is pure O(1/K) displacement — so the sharpened question
+is how the **arithmetic** (the χ-twisted explicit-formula prime resonance #38
+measured on the finished zero set) converges along that displacement field. The
+heavy step walks all 400 cached χ₃ critical zeros down a K schedule by 2-D
+Muller solves of `L_comb_K` (no Hardy-Z at finite K — the family has no
+functional equation), predictor-seeded by the displacement field with adaptive
+substepping, per-K collision repair (censuses of 398–400/400 at every reported
+K; argument-principle spot-certification exact), plus a λ-flow
+re-instrumentation of the #43 birth flow. Caches in
+`data/arithmetic_clock_*.csv`; the default driver replots in ~2 min.
+
+**Findings (2026-08-02):**
+
+1. **Arithmetic birth is also instant — and refinement is O(1/K) with a
+   computable constant (Q1).** The full-census p = 2 resonance
+   `⟨cos(γ_K ln 2)⟩` is already +0.109 at K = 16 (deep pre-asymptotic, κ < 0.5
+   for most of the sample) against +0.1045 at K = ∞: every live mode has the
+   right sign and magnitude at every K measured — the knob *refines* the
+   arithmetic, it never creates it. Quantitatively, on the locked sub-census
+   (t ≤ 100, K ∈ {96, 136, 192}), the fit `K·ΔR_ω = C + c′/K` lands on the
+   predicted first-order constant `C_ω = −ω⟨sin(γω)·Im a₁⟩` at 0.5 % for
+   ω = ln 2 (fit +0.06832 vs +0.06869), 1.3 % at ln 8, 3–5 % at ln 4, ln 16 —
+   the issue's prediction 1, verified with the `a₁ = (sq/2π²)B(ρ+1)/L′(ρ)`
+   field of #43.
+2. **The resolution clock is κ = 2πK/(qt) — #40's conductor clock with height
+   in the conductor's role (Q2, sharpened).** The per-zero complex
+   amplification `A = K(s_K − ρ)/a₁` collapses across the whole (t, K) grid
+   onto one curve in κ: median |A−1| ≈ 1 for κ < 1 (zeros displaced O(a₁) but
+   *not* by a₁/K), a knee at the band edge κ ≈ 1, then an asymptotic wing
+   ~0.17/κ. Mechanism: the a = 1/q Hurwitz moment keeps interior stationary
+   phase (y\* = t/2πk ≥ 1/q) up to k ~ qt/2π, so the harmonics resolve the
+   height-t oscillation only past that Nyquist-like edge. #40's fixed-s sweep
+   sat at t ≈ 2π, exactly where q/K and qt/2πK coincide — its "measure at
+   K ∝ q" is "measure at fixed κ". The asymptotic regime is a moving front
+   t_front ≈ 2πK/q, *inside* the sample at K = 192 (t_front ≈ 402): behind it
+   the displacement law holds per-zero; ahead of it only the ensemble
+   statistics do. Walk integrity tracks the same clock: collided walks fall
+   39 → 1 from K = 16 → 192 (160 of 167 rescued by local rescans).
+3. **The conductor prime is dark at every K (Q2 answered).** |R(K)| ≤ 0.011 at
+   ln 3 and ≤ 0.015 at ln 9 at *every* K from 16 up (vs +0.105..+0.118 at
+   ln 2, sample noise 0.035): χ₃(3) = 0 needs no K → ∞ limit — the null is
+   present along the entire knob, pre-asymptotic zone included.
+4. **The convergence constant is itself an explicit-formula object — with a
+   2-adic sideband anomaly.** Swept in the test frequency, C(ω) is a line
+   spectrum: window-limited lines (lobe width ~π/T ≈ 0.006) at the odd prime
+   frequencies ln 5, ln 7, ln 11, ln 13 whose band maxima fit ONE common scale
+   × Λ(p)/√p (the χ-twisted Landau-formula amplitude) with 2–4 % residuals;
+   ln 4 lands on the same scale to 0.1 % (measured 1.388 vs 1.386). The two
+   departures are structured: the ln 2 line is *halved* (0.99 vs 1.96) and
+   ln 8 nearly extinguished (0.12 vs 0.98) — consistent with the section
+   factor `B(ρ+1) = 1 − 2^{−3/2}e^{−iγ ln 2}` inside a₁ dressing every line
+   with ±ln 2 sidebands (the missing-Euler-factor crystal, now read in the
+   convergence constants); and the conductor tower is dark — ln 3 (0.056) and
+   ln 9 (0.102) sit inside the control floor (0.03–0.26 over six off-prime
+   bands). The displacement field's arithmetic *is* the explicit formula's
+   surviving-prime set, dropout included.
+5. **The λ-handoff (Q3).** [pending the λ-flow run]
+
+**Honest framing.** Experimental mathematics; no RH/GRH claims. First-order
+zero perturbation, stationary phase, and Landau's prime-power formula (here
+χ-twisted) are classical; the K = ∞ resonance values are #38's. What has no
+published analog we know of (per the #37 adversarial lit pass) is the finite-K
+measurement itself: the resonance timeline along a discreteness knob, the
+qt/2πK resolution clock unifying #40's conductor sweep with the height axis,
+the every-K conductor null, and the a₁-weighted Landau line spectrum with its
+2-adic sideband anomaly. Sample-size caveats: N = 400 (noise 0.035 per mode);
+the locked sub-census is N = 45.
+
+Data caches: `data/arithmetic_clock_a1.csv` (per-zero a₁),
+`data/arithmetic_clock_kwalk.csv` (the walked census: n, γ, K, s_K, status),
+`data/arithmetic_clock_lamraw.csv` + `data/arithmetic_clock_lamflow.csv` (the
+K = 1 raw zeros and their λ-trajectories).
