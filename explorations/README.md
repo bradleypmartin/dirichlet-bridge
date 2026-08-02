@@ -23,7 +23,9 @@ writes `explorations/figures/zero_birth.png`), or
 `python explorations/arithmetic_clock.py` (~2 min from the caches, mostly the
 winding spot-checks — `--skip-certify` for seconds; `--recompute-kwalk --jobs 10`
 rebuilds the 400-zero K-walk in ~1 h wall, `--recompute-lamflow` the λ-flow in
-~1.5 h).
+~5 h — the warp evaluator's precision inflates with height and its grids
+rebuild per height, and the t ≤ 36 box boundary is where the single-seed
+secant polish starts losing zeros).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -427,7 +429,8 @@ re-instrumentation of the #43 birth flow. Caches in
    amplification `A = K(s_K − ρ)/a₁` collapses across the whole (t, K) grid
    onto one curve in κ: median |A−1| ≈ 1 for κ < 1 (zeros displaced O(a₁) but
    *not* by a₁/K), a knee at the band edge κ ≈ 1, then an asymptotic wing
-   ~0.17/κ. Mechanism: the a = 1/q Hurwitz moment keeps interior stationary
+   (fit 0.13/κ + 0.29/κ² past κ = 2). Mechanism: the a = 1/q Hurwitz moment
+   keeps interior stationary
    phase (y\* = t/2πk ≥ 1/q) up to k ~ qt/2π, so the harmonics resolve the
    height-t oscillation only past that Nyquist-like edge. #40's fixed-s sweep
    sat at t ≈ 2π, exactly where q/K and qt/2πK coincide — its "measure at
@@ -454,7 +457,23 @@ re-instrumentation of the #43 birth flow. Caches in
    ln 9 (0.102) sit inside the control floor (0.03–0.26 over six off-prime
    bands). The displacement field's arithmetic *is* the explicit formula's
    surviving-prime set, dropout included.
-5. **The λ-handoff (Q3).** [pending the λ-flow run]
+5. **The λ-handoff is fate-selection, not phase migration (Q3).** The raw
+   K = 1 warp census (t ≤ 36.2 box, winding-certified count 11 = 10 scanned +
+   1 winding-guided rescue of a narrow-basin zero at 0.18 + 30.88i) flows to
+   *exactly* the box's 6 seeds — the four main teeth m = 1..4 and **both**
+   conductor-string seeds (the rescued zero is the m = 2 conductor capture,
+   landing on −2.98 + 31.11i) — while the 5 surplus flows are expelled
+   leftward: Hurwitz bookkeeping 11 = 6 + 5 on the nose. The 2-adic order
+   develops by *selection*: the seed-fated cohort is already phased at λ = 1
+   (`⟨cos(γ ln 2)⟩` ≈ +0.46..+0.48, flat along the entire flow) while the
+   full tracked ensemble sits near +0.24 until the surplus leaves (+0.42 at
+   λ = 0, census 11 → 6). GUE-flavored phase disorder never "hands off" — it
+   is deported. The λ = 0 value is pure seed geometry: main teeth
+   cos(γ ln 2) ≈ +0.94..+0.99 (mean +0.97, the L₀/ln p wobble), conductor
+   seeds anti-phased (−0.44, −0.91), mean 0.421 = measured to 3 digits. At
+   N = 6 *every* frequency reads deterministic geometry (ln 3 lands at −0.605
+   by the same arithmetic) — the λ-side conductor column is geometry, not
+   statistics; no prime-3 claim.
 
 **Honest framing.** Experimental mathematics; no RH/GRH claims. First-order
 zero perturbation, stationary phase, and Landau's prime-power formula (here

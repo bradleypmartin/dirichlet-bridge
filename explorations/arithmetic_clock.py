@@ -573,11 +573,17 @@ def collapse_binned(pts, n_bins=14):
 # --------------------------------------------------------------------------
 # 7. the lambda-side: the birth flow re-instrumented for resonance
 # --------------------------------------------------------------------------
-def run_lamflow(t_max=60.0, verbose=True):
+def run_lamflow(t_max=36.0, verbose=True):
     """Raw K = 1 warp-family zeros (blind 2-D scan, the #43 box widened to
     t <= t_max) flowed to lambda -> 0; trajectories cached. The second heavy
-    step (--recompute-lamflow, ~40 min: the warp evaluator's precision knobs
-    inflate with |Im s|)."""
+    step (--recompute-lamflow, ~5 h: the warp evaluator's precision knobs
+    inflate with |Im s| and the grid rebuilds per height). Above t ~ 36 the
+    single-seed secant polish inside find_zeros starts losing zeros (the
+    zero_birth plain-secant gotcha at inflated precision) -- extending the box
+    needs a Muller-based scan first; deferred. NOTE: the committed cache also
+    carries one winding-guided rescue (idx 10 at 0.185 + 30.88i, a narrow-basin
+    zero the scan misses), so a fresh recompute re-finds 10 of the 11 and the
+    spot-certification flags the gap -- the cache is the census of record."""
     import warp_alpha as wa
     t0 = time.time()
     raw = wa.find_zeros(lambda s: zb.F_lam(s, 1, 1, CHI), (-3.2, 2.0),
@@ -594,7 +600,11 @@ def run_lamflow(t_max=60.0, verbose=True):
         w = csv.writer(fh)
         w.writerow(["idx", "lam", "sigma", "gamma"])
         for i, z0 in enumerate(raw):
-            traj = zb.flow_lambda(z0, 1, CHI)
+            # above t ~ 30 the warp evaluator's dps-15 noise floor crosses the
+            # flow's 1e-6 residual acceptance and every solve is rejected --
+            # flow at 18 digits there (the #43 box never needed it)
+            wd = 18 if float(z0.imag) > 30 else 15
+            traj = zb.flow_lambda(z0, 1, CHI, workdps=wd)
             for lam, z in traj:
                 w.writerow([i, lam] + (["nan", "nan"] if z is None else
                                        [f"{float(z.real):.9f}",
@@ -835,8 +845,9 @@ def _figure(tl, ref, counts, lock, pts, c1, c2, lam_rows, rows, a1s_by_n,
         axF.plot([0.011], [seed_row[3]], "*", ms=15, color="tab:red")
     axF.set_xscale("log")
     axF.invert_xaxis()
-    axF.set_xlabel("lambda (1 -> 0: the birth flow, stars = the seed set)")
-    axF.set_title("The lambda handoff: 2-adic lock climbs, conductor stays flat")
+    axF.set_xlabel("lambda (1 -> 0; stars = the seed set)")
+    axF.set_title("The lambda handoff: order by selection, seed values = "
+                  "geometry")
     axF.legend(fontsize=8.5)
 
     fig.suptitle("The arithmetic birth clock: chi_3 prime resonance along the "
@@ -850,7 +861,7 @@ def _figure(tl, ref, counts, lock, pts, c1, c2, lam_rows, rows, a1s_by_n,
 def _spot_certify(rows, verbose=True):
     """Census spot-certification: winding counts of L_comb_K over two bulk
     windows must equal the walked-census count there (set completeness, the
-    #43 instrument)."""
+    #43 instrument), plus the lambda-side raw K = 1 box against its cache."""
     print("\n== census spot-certification (argument principle) ==")
     ok = True
     for K, (t_lo, t_hi) in ((48, (200.31, 210.83)), (192, (540.17, 549.61))):
@@ -863,6 +874,16 @@ def _spot_certify(rows, verbose=True):
         ok &= n_wind == len(walked)
         print(f"   K={K:>4}, t in ({t_lo}, {t_hi}): winding {n_wind}, "
               f"walked {len(walked)}   {tag}")
+    if LAMRAW_CSV.exists():
+        with LAMRAW_CSV.open(encoding="utf-8") as fh:
+            n_raw = sum(1 for _ in csv.DictReader(fh))
+        n_wind = zb.winding_count(lambda s: zb.F_lam(s, 1, 1, CHI),
+                                  (-3.19, 2.01), (0.53, 36.21),
+                                  dsig=0.35, dt=0.5)
+        tag = "OK" if n_wind == n_raw else "MISMATCH"
+        ok &= n_wind == n_raw
+        print(f"   raw K=1 warp box (t <= 36.2): winding {n_wind}, "
+              f"cached {n_raw}   {tag}")
     return ok
 
 
@@ -874,8 +895,8 @@ def _main(argv=None):
                     help="rebuild the lambda-flow cache (~40 min)")
     ap.add_argument("--jobs", type=int, default=1,
                     help="worker processes for the K-walk (default 1)")
-    ap.add_argument("--t-max-lam", type=float, default=60.0,
-                    help="height ceiling for the lambda-side box (default 60)")
+    ap.add_argument("--t-max-lam", type=float, default=36.0,
+                    help="height ceiling for the lambda-side box (default 36)")
     ap.add_argument("--skip-certify", action="store_true",
                     help="skip the winding spot-checks (~2 min)")
     args = ap.parse_args(argv)
