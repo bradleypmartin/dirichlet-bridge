@@ -168,6 +168,16 @@ dependency). `tests/` — one test module per driver. `paper/` — the arXiv pre
 (#5): `main.tex`, `references.bib`, `make_arxiv.py`, built `main.pdf`; figures are
 referenced from `bridge/figures/` via `\graphicspath` (not copied).
 
+`explorations/` — **post-manuscript experimental arcs, deliberately disjoint from
+the frozen paper** (own README, figures, tests, and `references-37.bib`; nothing
+in `bridge/`, `paper/`, `RESULTS.md`, or `repro.py` references it). Its tests are
+OUTSIDE the default suite (`pytest.ini`'s `testpaths = tests`) and outside CI —
+run with `pytest explorations/tests`; its drivers are local/manual only (minutes).
+First arc: `character_bridge.py` (issue #37 — the K-knob on Dirichlet `L(s,χ)`
+via the residue-class identity `L = q^{-s} Σ_a χ(a) ζ(s,a/q)`; sub-issues
+#38/#39/#40). If an arc matures it becomes a second paper or a new appendix —
+never edits to the frozen manuscript.
+
 ## Gotchas
 - The flat `bridge/` layout is deliberate: bare imports (`import harmonic_bridge`,
   `from gue_spacing import …`) resolve because the modules are siblings, and
