@@ -13,9 +13,11 @@ pytest explorations/tests -m slow    # + migration regression, bulk zero polish
 
 Drivers are local/manual only (issue #37's CI-economy note): run them directly,
 e.g. `python explorations/character_bridge.py` (minutes; writes
-`explorations/figures/character_bridge.png`) or
+`explorations/figures/character_bridge.png`),
 `python explorations/chi6_two_component.py` (seconds from the cached zero CSV;
-`--recompute-zeros` re-runs the ~1–2 min Hardy-Z walk).
+`--recompute-zeros` re-runs the ~1–2 min Hardy-Z walk), or
+`python explorations/zero_birth.py` (~10 min, the λ-flow and census dominate;
+writes `explorations/figures/zero_birth.png`).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -126,11 +128,115 @@ Load-bearing BibTeX for this arc is kept in `explorations/references-37.bib`.
 
 - ~~Spectral statistics for imprimitive L~~ — done in `chi6_two_component.py`
   (issue #38; section below).
-- Normalized zero-birth from the identically-zero endpoint: the right K-family
-  normalization (per-K L² norm? leading harmonic?), and whether birth-K is
-  qualitatively different from ζ's (issue #39).
+- ~~Normalized zero-birth from the identically-zero endpoint~~ — done in
+  `zero_birth.py` (issue #39; section below).
 - Rate-vs-conductor sweep: the measured `(sq/2π²)Σχ(a)a^{−s−1}` constant across
   many q; connects to the weil-positivity-lab conductor thread (issue #40).
+
+---
+
+## `zero_birth.py` — zero birth from the identically-zero endpoint (issue #39)
+
+![Zero birth](figures/zero_birth.png)
+
+The deep half of #37's prediction 3. `character_bridge.py` left it open: under the
+DC-in-knob convention a non-principal `L(s,χ)` is born from the **zero function**
+(the projector), so "where are the zeros born?" needs a normalization that gives
+the K → 0 limit of the *normalized* family a well-defined zero set. This module
+answers issue #39's three questions, with the #38-session carryover notes
+(bookkeeping via a box census; the χ₆ lock question) folded in.
+
+**Findings (2026-08-01/02):**
+
+1. **The normalization question has a closed-form answer (Q1).** For K ≥ 1 the
+   DC-in-knob and DC-always-on families *coincide* — the conventions only disagree
+   about the K = 0 object — so the raw K ≥ 1 family is convention-free and scalar
+   normalizers move no zeros. The right formalization of "K → 0" is a knob
+   **amplitude** λ scaling the entire discreteness datum (DC offset, completion
+   cell, harmonics) at fixed K; then `F_K^λ/λ → D(s) = Σₐχ(a)a^{−s} + q^{−s}L(0,χ)`
+   linearly in λ (measured ratio 10.0 per λ-decade) and **independently of K** —
+   orthogonality kills the α-independent first-order content (harmonics and the
+   −1/2), leaving the completion cells + the DC ramp. Every K-family sprouts from
+   one seed set (Hurwitz's zero-convergence theorem makes "normalized zero set"
+   honest), and the λ-flow measures it: K = 1 and K = 3 zeros land on the *same*
+   seeds. The amplitude embedding is canonical, not just convenient: the rival
+   (morph the completion cell's *location*) has tangent `(1+s)q^{−s}L(0,χ)` —
+   identically zero for even χ, string-free for odd — a degenerate seed either way.
+2. **Seed geometry: a wobbling σ = 0 comb, plus the conductor's own string.** For
+   φ(q) = 2, `D = 1 − p^{−s} + q^{−s}L₀` perturbs the exact σ = 0 comb
+   `t = 2πm/ln p`: seeds sit on constant-radius circles `L₀/ln p` (≈ 0.48, 0.46
+   for q = 3, 4) around the teeth with equidistributing phases (first-order
+   predictions land within ~0.1–0.35). And because D's frequency set is
+   {ln a} ∪ {ln q}, its mean-motion density `ln q/2π` exceeds the comb's
+   `ln p/2π`: the surplus `ln(q/p)/2π` is a **sparse far-left string where the
+   conductor term q^{−s}L₀ balances the p^{−s} term** — predicted
+   σ\* = ln L₀/ln(q/p), spacing 2π/ln(q/p): q = 3 → (−2.71, 15.5), measured
+   −2.87+15.21i, −2.98+31.11i; q = 4 → (−2.41, 21.8), measured −2.38+21.59i.
+   Odd χ only (even χ have L₀ = 0). Character zeros are seeded in a ~0.45-radius
+   annulus around **σ = 0** (+ the conductor string) where ζ's comb zeros are born
+   near **σ ≈ 1–1.35** from the pole side — #37 prediction 3's "qualitatively
+   different birth story", now a measured left-edge/right-edge dichotomy.
+3. **The census: geometric birth is *instant* — a λ-phenomenon, not a
+   K-phenomenon (Q2).** The argument-principle box census (adaptive phase-winding;
+   entire-L counting with **no +1**, the #38 convention) reads, for χ₃ in the
+   standard box (t < 30.29): ground 3 → **N_K = 8 = target at every K ≥ 1, both
+   routes**. The first harmonic already carries the full Riemann–von Mangoldt
+   count (its incomplete-gamma moments are not almost-periodic, so the
+   bounded-density ground argument stops applying at K = 1), and the K-knob
+   thereafter is pure O(1/K) displacement — no births. The ln T surplus separating
+   the bounded-density ground (`ln(q−1)/2π`) from the RvM target is created
+   entirely inside K = 1, resolvable only by the amplitude knob — which is what
+   makes the λ-flow *the* birth instrument. ζ through the same instrument: 4 → 3
+   (one transient extra zero dies at K = 2, the count is otherwise instant too).
+   The λ-flow's Hurwitz bookkeeping closes the loop: 8 raw K = 1 zeros vs ~5 box
+   seeds — 5 flows land on seeds (including one raw zero at σ ≈ 0.08 flowing
+   *left* onto the conductor seed at −2.87+15.21i), and all four surplus zeros
+   exit the compact **leftward** (last tracked at σ ∈ [−3.4, −1.5] at λ = 0.012):
+   the un-seeded excess flees toward σ = −∞ past the conductor region.
+4. **The displacement law survives χ-weighting (Q2).** At a simple zero ρ,
+   `s_K − ρ ~ a₁/K` with `a₁ = (sq/2π²)B(ρ+1)/L′(ρ)` (the `rate_law.disp_coeff`
+   machinery with the χ comb constant as Δ₁): worst |K·(s_K−ρ) − a₁|/|a₁| = 3% at
+   K = 45 across χ₃ and the complex χ₅.
+5. **Ground-string geometry, certified and unified (Q3).** For q ∈ {3, 4, 6} the
+   E_χ zero condition on σ = 0 is one real phase equation
+   `t ln p + π − 2 arctan(qt/(q−2)) = 2πm` (`axis_roots`), and the argument
+   principle certifies the *full* box zero set is on the axis: box count == axis
+   count (4/7/10) over |σ| ≤ 2, t ≤ 40. For φ(q) > 2 the ground zeros scatter
+   (max|σ| 0.68–2.6, density ≈ ln(q−1)/2π) but stay on the **section skeleton**:
+   E_χ → B/2 at large t, and the measured distance to the nearest B-zero decays
+   ~1/t (median t·dist ≈ 0.7–1.0 across q = 3,4,5,7,9; one outlier max for
+   χ₇^(3) where the matching hits the σ-window edge). The unifying object is the
+   one-period section `B(s) = Σχ(a)a^{−s}`: the comb ground is
+   `B(s−1)/(q(s−1)) + B(s)/2`, the warp seed is `B(s) + q^{−s}L(0,χ)`, the rate
+   constant is `(sq/2π²)B(s+1)` — ground-and-rate data = the section at three
+   consecutive arguments, with the comb ground *collapsing onto* B's zero set and
+   the warp seeds *orbiting* it at constant radius.
+6. **χ₆: the anti-phase lock develops — it is not inherited (the #38 carryover
+   question).** The comb-bound ground zeros sit at offsets −0.85, +1.97, +0.73
+   from their final teeth (vs the 3.90 ground spacing): the lock #38 measured on
+   the finished spectrum is built *during* migration, not present at K = 0. The
+   walk also witnesses finding 3's arithmetic: 7 targets below t ≈ 24 reach only
+   6 axis roots (two walks double-land on t = 15.563) — the bounded-density
+   ground under-supplies the union by the born surplus, so the backward
+   continuation cannot be injective (η's ground↔target bijection has no χ₆
+   analog).
+
+**Honest framing.** Experimental mathematics; no RH/GRH claims. The ingredients
+are classical — `L(0,χ) = −(1/q)Σχ(a)a`, Hurwitz's theorem, mean-motion /
+almost-periodic zero counts for exponential polynomials (Jessen–Tornehave),
+argument-principle counting. What has no published analog we know of (per the #37
+adversarial lit pass) is the finite-K construction itself: the identically-zero
+endpoint's amplitude-tangent seed object, its K-independence, the measured
+instant-census / λ-birth split, and the conductor seed string.
+
+### Deferred from #39 (follow-up)
+
+- **The arithmetic birth clock** (#38-session comment, point 3): run the
+  χ-twisted p = 2 resonance on the finite-K zero census per K and time
+  "arithmetic birth" (prime structure appears) against "geometric birth" (the
+  census completes — now known to be K ≈ 1, sharpening the question to: how does
+  the *resonance* converge along the O(1/K) displacement field?). Needs a few
+  hundred 2-D findroot zeros per K value; deliberately deferred for compute.
 
 ---
 
