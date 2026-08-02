@@ -7,13 +7,15 @@ and are **excluded from the default suite** (`pytest.ini`'s `testpaths = tests`)
 run them explicitly:
 
 ```
-pytest explorations/tests            # fast (~4 s)
-pytest explorations/tests -m slow    # + the migration regression (~1 min)
+pytest explorations/tests            # fast (~5 s)
+pytest explorations/tests -m slow    # + migration regression, bulk zero polish
 ```
 
 Drivers are local/manual only (issue #37's CI-economy note): run them directly,
 e.g. `python explorations/character_bridge.py` (minutes; writes
-`explorations/figures/character_bridge.png`).
+`explorations/figures/character_bridge.png`) or
+`python explorations/chi6_two_component.py` (seconds from the cached zero CSV;
+`--recompute-zeros` re-runs the ~1–2 min Hardy-Z walk).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -122,10 +124,76 @@ Load-bearing BibTeX for this arc is kept in `explorations/references-37.bib`.
 
 ### Deferred (sub-issues of #37)
 
-- Spectral statistics for imprimitive L: crystal × GUE superposition via the
-  `eta_two_component.py` instruments (needs bulk L-zero computation).
+- ~~Spectral statistics for imprimitive L~~ — done in `chi6_two_component.py`
+  (issue #38; section below).
 - Normalized zero-birth from the identically-zero endpoint: the right K-family
   normalization (per-K L² norm? leading harmonic?), and whether birth-K is
-  qualitatively different from ζ's.
+  qualitatively different from ζ's (issue #39).
 - Rate-vs-conductor sweep: the measured `(sq/2π²)Σχ(a)a^{−s−1}` constant across
-  many q; connects to the weil-positivity-lab conductor thread.
+  many q; connects to the weil-positivity-lab conductor thread (issue #40).
+
+---
+
+## `chi6_two_component.py` — the χ₆ zero set as crystal × GUE (issue #38)
+
+![chi6 two-component spectrum](figures/chi6_two_component.png)
+
+The spectral half of #37's prediction 1: `eta_two_component.py`'s crystal × GUE
+superposition analysis generalized to the imprimitive zero set
+`L(s,χ₆) = (1+2^{−s})·L(s,χ₃)` — the σ = 0 Euler comb `t = (2m+1)π/ln 2` (η's
+period, **half-period offset**) superposed with the σ = 1/2 `L(s,χ₃)` zeros. The
+zero sample is computed blind in-module (a Hardy-Z sign walk: ε(χ₃) = +1 makes
+`Z₃(t) = e^{iθ₃(t)}L(½+it,χ₃)` real; ~400 zeros to t ≈ 550, census within
+|S(T)|-noise of θ₃/π **with no +1** — L is entire, so ζ's pole term is absent
+from the counting formula; cached in `data/chi3_zeros.csv`, spot-verified by
+2-D findroot on L itself to ~1e-13).
+
+**Findings (2026-08-01):**
+
+1. **η's p=2 lock survives, χ-twisted — two differences that cancel.** The comb
+   is offset half a period (teeth where cos(t ln 2) = −1), *and* χ₃(2) = −1
+   flips the explicit-formula p=2 coefficient, so the measured resonance
+   `⟨cos(mγ ln 2)⟩` **alternates in m** (+0.105, −0.076, +0.057, −0.038 vs
+   predicted +0.107, −0.076, +0.054, −0.038): the L-zero density peaks where
+   cos(t ln 2) = +1, and the teeth again sit at the **partner density minima**.
+   The comb's own resonance is (−1)^m exactly (odd multiples of π/ln 2 ↔ the
+   alternating χ₃(2^k) sums that imprimitivity deleted from the prime side):
+   always opposite the zeros' — the crystalline component *is* the missing
+   Euler factor, seen as a spectrum.
+2. **The conductor prime goes dark.** χ₃(3) = 0 kills the explicit-formula
+   terms at log 3 and log 9: measured |⟨cos⟩| ≤ 0.009 (noise) where ζ resonates
+   at −0.13. The character's arithmetic read directly off the zeros — a
+   falsifiable difference from η with a clean null result.
+3. **The lock at two-point level: the physical offset minimizes Σ²(L).** At
+   N ≈ 400 the number variance sits in Berry's saturated regime (χ₃-alone flat
+   ≈ 0.27, matching a matched-size ζ sample — GUE class at matched N). The
+   decisive instrument is the **comb-offset ensemble**: the union with the
+   *physical* comb tracks the zeros-alone curve (the comb adds ~no count
+   variance) and sits at the extreme low tail of the dephased ensemble
+   (essentially 0 of 32 random-offset draws fall below it, at every L), while
+   the anti-locked comb (δ = 0) and the naive independent GUE(f_L·L)+picket
+   model sit well above. The crystal fills the L-zero density minima — LENS 3's
+   one-point lock re-measured as a **negative two-point cross-covariance**,
+   consistent with the union being the *single* zero set of L(s,χ₆), whose
+   explicit formula has no p=2 terms for an independent-superposition model to
+   reproduce. Same verdict on the cross-check side: for χ₀ mod 2 (comb at
+   2πk/ln 2 ⊕ ζ zeros) the physical offset δ = 0 is *its* variance minimizer.
+4. **Form factor: the Bragg excess is cancelled.** Band-averaged K(τ) over the
+   smeared m = 1 comb band: zeros alone 0.139, union with dephased comb 0.252
+   (the expected crystalline excess), union with the physical comb 0.122 —
+   destructive interference, the Fourier face of finding 3. The χ₃ zeros alone
+   ride the GUE ramp (small-τ slope ≈ 0.7–0.9 by windowing); spacings are
+   Wigner-GUE (KS 0.08 vs Poisson 0.34) — "GUE at ½" *measured* for χ₃ rather
+   than assumed — and the union's p(s) matches the independent superposition:
+   the lock is invisible at spacing level, as in η.
+5. **Degenerate cross-check.** χ₀ mod 2 = (1−2^{−s})ζ through the same
+   pipeline reproduces `eta_two_component.py`'s numbers verbatim (−0.098 at
+   m = 1, constant sign where χ₆ alternates).
+
+**Honest framing.** Experimental mathematics; no RH/GRH claims. The measured
+objects (explicit-formula resonances, Berry saturation, superposed-spectra
+statistics) are classical individually; what is new here is the *measurement*
+of the imprimitive comb ⊎ GUE union — the χ-twisted lock, the dark conductor,
+and the offset-ensemble Σ²/form-factor cancellation. Sample-size caveat: the
+growing-regime Σ² reading (η's GUE-log + picket) needs a much longer zero
+sample and stays deferred.
