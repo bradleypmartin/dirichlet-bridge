@@ -129,7 +129,7 @@ def test_dedup_patch_flags_collisions(monkeypatch):
             (1, 11.5, 45, 0.51, 10.20, "ok"),        # collided with row 0
             (2, 13.0, 45, 0.52, 13.10, "ok")]
     monkeypatch.setattr(ac, "_local_rescue",
-                        lambda K, sc, lo, hi, taken: mp.mpc(0.5, 11.62))
+                        lambda K, sc, lo, hi, taken, **kw: mp.mpc(0.5, 11.62))
     repairs = ac.dedup_patch(rows, verbose=False)
     assert repairs == {45: (1, 1)}
     patched = [r for r in rows if r[5] == "patched"]

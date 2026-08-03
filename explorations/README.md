@@ -27,7 +27,11 @@ rebuilds the 400-zero K-walk in ~1 h wall, `--recompute-lamflow` the λ-flow in
 rebuild per height, and the t ≤ 36 box boundary is where the single-seed
 secant polish starts losing zeros), or
 `python explorations/mobius_dressing.py` (seconds; pure post-processing of the
-committed a₁ cache).
+committed a₁ cache), or
+`python explorations/conductor_clock.py` (~2 min from the caches, mostly the
+winding spot-checks — `--skip-certify` for seconds; `--recompute-zeros`
+rebuilds the two censuses in ~5 min; `--recompute-kwalk --jobs 10` rebuilds
+the q = 4 and q = 7 K-walk caches in ~20–30 min wall *each*).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -559,6 +563,12 @@ The driver self-validates 40 checks (V1 Möbius amplitudes, V2 prime-power
 vacancies, V3 the ½-law, V4 odd-line invariance, V5 the ln 4 closed form,
 V6 one-sidedness, V7 the conductor floor) — 40/40 on the committed cache.
 
+> **#48 postscript** (`conductor_clock.py`): the q-general dressing closes
+> rationally as a divisor convolution, and the χ factor *cancels* — the
+> sign-flip prediction in finding 5 (an enhancement 1 + 1/p where
+> μ(p)χ(p) = −1) is **refuted**, by the algebra and by the q = 7
+> measurement (ln 2 dressed/undressed = 0.51 at χ₇(2) = +1, not 3/2).
+
 **Honest framing.** Experimental mathematics; no RH/GRH claims. The
 classical baselines, all cited in `references-37.bib`: Landau 1912 +
 Gonek 1993 (*Contemp. Math.* 143 — the uniform version) for the unweighted
@@ -582,3 +592,91 @@ amplitudes — cite and distinguish in any write-up. Citation corrections
 logged from the pass: Gonek 1993 is *Contemp. Math.* 143, 395–413 (a common
 J.-Number-Theory miscitation), and Ng 2004's title begins "The distribution
 of the summatory function…".
+
+---
+
+## `conductor_clock.py` — the resolution clock across conductors, and the χ-cancelling dressing (issue #48)
+
+![Conductor clock](figures/conductor_clock.png)
+
+The #48 experiment: repeat #44's bulk K-walk at two more conductors and test
+the three predictions (plus #47's logged refinements). New censuses: 426
+zeros of `L(s, χ₄)` to t ≤ 550 and 474 zeros of `L(s, χ₇)` to t ≤ 550 (the
+#40 Hardy-Z walk deepened; census − θ_χ/π = +0.60 / −0.39, S(T)-sized), with
+per-conductor a₁ tables and K-walks (Layer A = the #44 schedule × q/3, so the
+κ coverage is identical by construction; the q = 7 walk stops at t ≤ 250 —
+the collapse is per-zero and the walk cost scales as q × φ(q)). Walk health:
+3,780 q = 4 rows with 4 unrecovered (102 collisions, 98 rescued), 1,632
+q = 7 rows with 10 unrecovered — collisions concentrate at the pre-asymptotic
+rungs and vanish by the top of Layer A, exactly the κ < 1 picture. Census
+spot-certification: all four winding windows (two per conductor, mid- and
+top-K) match the walked census exactly.
+
+**Findings (2026-08-03):**
+
+1. **Prediction 1 (universality): confirmed.** The `|A−1|(κ)` collapse
+   overlays across q = 3, 4, 7: pre-knee saturation at |A−1| ≈ 1, the knee
+   at κ = 1, and the q = 3 asymptote `0.13/κ + 0.29/κ²` tracking every
+   conductor's binned medians (q = 4: ×1.01–1.24 with fit c₁ = 0.119,
+   c₂ = 0.342; q = 7: ×1.02–1.30 with c₁ = 0.159, c₂ = 0.270; q = 3:
+   0.129/0.286). The resolution clock κ = 2πK/(qt) is the right variable
+   at every conductor measured.
+2. **Prediction 2 (the swap, q = 4): confirmed, and widened as #47
+   predicted.** χ₄(2) = 0 makes 2 the conductor prime, and the *entire*
+   2-divisible column of the C(ω) spectrum goes dark in one stroke — the
+   tower ln 2, ln 4, ln 8 at 0.02–0.15 of a would-be line, and the even
+   squarefree μ-lines ln 10, ln 14, ln 22 (live at q = 3) with them — while
+   ln 3, ln 5, ln 7, ln 11 sit at 0.97–1.00 of their Möbius references:
+   #44's dark conductor with the roles of 2 and 3 exchanged. In the census
+   *resonance* (the unweighted Λχ statistic) the same swap: R at
+   ln 2/ln 4/ln 8 within ±0.009 (noise 0.034) at every K, ln 3/ln 9/ln 5
+   resolved at +0.13/−0.08/+0.15.
+3. **Prediction 2b (the dressing, q = 4): the 2/3 laws land exactly.** The
+   section `B = 1 − 3^{−s}` dresses one-sidedly at +ln 3 with β = 3^{−3/2}:
+   3-divisible squarefree lines measured at 0.64–0.67 of Möbius (predicted
+   2/3), the ln 9 vacancy satellite at **0.693 of the Landau reference**
+   (predicted 2/3) and 1.04 of its closed form — the measurably-non-Landau
+   discriminator q = 3 structurally could not supply — ln 27 dark (the
+   cascade stops), odd 3-free lines untouched (0.97–1.00), nothing at
+   ln p − ln 3.
+4. **Prediction 3 (the dropout, q = 7): confirmed.** Exactly the p | q
+   columns delete: ln 7, ln 14, ln 21, ln 35, ln 49 at 0.04–0.29 of a
+   would-be line (ln 35 is the noisiest — it sits 0.029 = 5 lobe-widths
+   from the *genuine* line ln 34, whose first sidelobe contaminates the
+   standard band; the dark columns are gated on a ±0.012 band) — while
+   every line coprime to 7 lives at 0.95–1.04 of Möbius, **including the
+   composite squarefree ln 6 and ln 10 that both smaller conductors kill**.
+5. **The dressing comb at q = 7 closes rationally — and refutes #47's
+   sign-flip prediction.** At general q the section is a full comb, and the
+   dressed amplitude is the divisor convolution
+   `scale·ln n·|χ(n)|·|Σ_{a|n, a<q, (a,q)=1} μ(n/a)/a|/√n`
+   (`mobius_dressing.dressed_ref`, χ-general; reduces exactly to #47's
+   single-sideband law at q = 3). The χ factor **cancels** between each
+   satellite's section coefficient χ(a) and the direct line's
+   χ(n) = χ(a)·χ(n/a) — so #47's logged prediction that χ(2) = +1
+   conductors show 2-divisible lines *enhanced* ×3/2 is wrong: the model
+   says halved, χ-independently, and the measurement agrees — **ln 2
+   dressed/undressed = 0.51 at χ₇(2) = +1** (a factor 3 from the sign-flip
+   value). The rest of the comb lands on its rational closed forms:
+   ln 3 → 0.67 (2/3), ln 5 → 0.80 (4/5), ln 6 → 0.36 (1/3), ln 10 → 0.34
+   (0.3), ln 15 → 0.47 (7/15), and the multi-satellite vacancies ln 4,
+   ln 8, ln 9 at 0.91/1.07/0.93 of their closed forms — sitting at 0.45,
+   0.80, 0.62 of Landau (all non-Landau, unlike q = 3's masquerading ln 4).
+6. **Drift fidelity is conductor-general.** On the locked sub-census the
+   walked resonance drift matches the computable constant at every test
+   frequency — q = 4: |C_fit − C_pred| ≤ 0.007 across all seven bands,
+   q = 7: ≤ 0.021 across all six — dark ones included (the finite-sample
+   constant there is noise-sized but nonzero, and the census tracks it).
+   The conductor tower's resonance R_ω(K) never leaves the noise band at
+   any K (q = 4: |R| ≤ 0.009 vs noise 0.034 at ln 2/ln 4/ln 8; q = 7:
+   ≤ 0.011 vs 0.053 at ln 7), while the live Λχ lines are resolved above
+   it — the census never *has* the conductor arithmetic, at any resolution.
+
+**Honest framing.** Experimental mathematics; no RH/GRH claims. Classical
+baselines as in #44/#47 (Landau/Banks–Fujii lines; Titchmarsh §14.27 /
+Gonek / Ng for the 1/L′ weight; first-order perturbation). The conductor-swept
+κ collapse and the χ-general rational dressing law are, per the #37/#47
+adversarial passes, unpublished as measurements; the χ-cancellation
+observation is elementary algebra once the convolution is written down —
+its value here is that it *corrects* a prediction this project itself had
+logged, and the q = 7 run was the adjudicating measurement.

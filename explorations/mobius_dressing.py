@@ -117,15 +117,23 @@ def load_weights():
     return g, a1
 
 
-def B_factor(g):
-    """B(rho + 1) = 1 - 2^{-3/2} e^{-i gamma ln 2} on the critical line
-    (q = 3 section B(s) = 1 - 2^{-s}; zero_birth.section_B at rho + 1)."""
-    return 1.0 - BETA * np.exp(-1j * np.asarray(g) * LN2)
+def B_factor(g, chi=cb.CHI3):
+    """B(rho + 1) = sum_a chi(a) a^{-3/2} e^{-i gamma ln a} on the critical
+    line (zero_birth.section_B at rho + 1, vectorized in gamma). q = 3 gives
+    the #47 single-sideband 1 - 2^{-3/2} e^{-i gamma ln 2}; general q gives
+    the full section comb. Never vanishes at sigma = 3/2: the a >= 2 tail is
+    bounded by sum a^{-3/2} - 1 < 1 for every q <= 7 section, so the division
+    in `undress` is safe."""
+    g = np.asarray(g, dtype=float)
+    out = np.zeros(g.shape, dtype=complex)
+    for a in cb.units(chi.q):
+        out += complex(chi(a)) * a ** -1.5 * np.exp(-1j * g * math.log(a))
+    return out
 
 
-def undress(g, a1):
+def undress(g, a1, chi=cb.CHI3):
     """a_1' = a_1 / B(rho+1): the pure s/L' (Perron-of-1/L) weight."""
-    return np.asarray(a1) / B_factor(g)
+    return np.asarray(a1) / B_factor(g, chi)
 
 
 # --------------------------------------------------------------------------
@@ -165,26 +173,27 @@ def mu_of(n):
     return -out if m > 1 else out
 
 
-def chi3_of(n):
-    """chi_3(n) as a float sign (character_bridge.CHI3 is exact +-1/0)."""
-    return float(cb.CHI3(n))
+def chi_weight(n, chi=cb.CHI3):
+    """|chi(n)| as a float: 1 on units mod q, 0 on the ramified columns."""
+    return float(abs(chi(n)))
 
 
-def fit_scale(g, a1p):
-    """One common amplitude scale, fitted on the odd-prime anchor lines where
-    the Moebius and Landau spectra coincide (ln p |mu(p)| = Lambda(p))."""
+def fit_scale(g, a1p, anchors=None):
+    """One common amplitude scale, fitted on odd-prime anchor lines where the
+    Moebius and Landau spectra coincide (ln p |mu(p)| = Lambda(p)); pass
+    conductor-appropriate `anchors` (primes coprime to q) beyond q = 3."""
     num = den = 0.0
-    for p in PRIMES:
+    for p in (PRIMES if anchors is None else anchors):
         mx, _wm = band_max(g, a1p, math.log(p))
         num += mx
         den += math.log(p) / math.sqrt(p)
     return num / den
 
 
-def mobius_ref(n, scale):
+def mobius_ref(n, scale, chi=cb.CHI3):
     """The Moebius-spectrum line amplitude scale * ln n |mu(n) chi(n)|/sqrt n
     (the -omega prefactor in C supplies the ln n)."""
-    return scale * math.log(n) * abs(mu_of(n) * chi3_of(n)) / math.sqrt(n)
+    return scale * math.log(n) * abs(mu_of(n)) * chi_weight(n, chi) / math.sqrt(n)
 
 
 def landau_ref(n, scale):
@@ -193,16 +202,32 @@ def landau_ref(n, scale):
     return scale * ac._von_mangoldt(n) / math.sqrt(n)
 
 
-def dressed_ref(n, scale):
-    """The dressed-model line amplitude: the Moebius measure convolved with
-    delta - beta delta_{+ln2}. Odd n keep their Moebius amplitude; even n = 2m
-    carry |mu(n)chi(n)/sqrt(n) - beta mu(m)chi(m)/sqrt(m)|, which collapses to
-    beta |mu(m)chi(m)|/sqrt(m) -- the exact-1/2 law on squarefree even lines,
-    the beta/sqrt2 vacancy satellite at ln 4, dark ln 8/ln 16."""
-    if n % 2:
-        return mobius_ref(n, scale)
-    m = n // 2
-    return scale * math.log(n) * BETA * abs(mu_of(m) * chi3_of(m)) / math.sqrt(m)
+def dressed_ref(n, scale, chi=cb.CHI3):
+    """The dressed-model line amplitude: the Moebius line measure convolved
+    with the FULL section comb B(rho+1) = sum_a chi(a) a^{-3/2} e^{-i gamma
+    ln a} (a over the units 1 <= a < q). The a-term shifts the parent line
+    ln(n/a) up onto ln n with coefficient chi(a)/a; chi(a) chi(n/a) = chi(n)
+    factors out of every term, so the amplitude closes rationally and
+    chi-INDEPENDENTLY inside the |.|:
+
+        scale * ln n * |chi(n)| * | sum_{a | n, 1 <= a < q, (a, q) = 1}
+                                    mu(n/a) / a |  / sqrt(n).
+
+    q = 3 reproduces #47 exactly: odd lines untouched (only a = 1 divides),
+    even squarefree lines at |mu(n) + mu(n/2)/2| = 1/2 of Moebius, the ln 4
+    vacancy satellite |mu(2)|/2 = 1/2 (= Landau by the p = 2 identity), ln 8
+    dark. The chi-cancellation is the correction to #47's logged sign-flip
+    prediction (|mu(2)chi(2) - 1/2|): the satellite coefficient chi(a) and
+    the direct line's chi(n) = chi(a) chi(n/a) share the character factor, so
+    the suppression NEVER flips to an enhancement -- adjudicated by the q = 7
+    measurement in conductor_clock.py."""
+    if chi_weight(n, chi) == 0.0:
+        return 0.0
+    tot = 0.0
+    for a in range(1, chi.q):
+        if n % a == 0 and math.gcd(a, chi.q) == 1:
+            tot += mu_of(n // a) / a
+    return scale * math.log(n) * abs(tot) / math.sqrt(n)
 
 
 # --------------------------------------------------------------------------
