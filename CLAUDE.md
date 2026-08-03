@@ -205,7 +205,8 @@ never edits to the frozen manuscript.
 - `_private/` is a gitignored local stash for full-text papers (`_private/papers/`)
   and scratch material we keep organized but never commit (copyright + bulk).
   Reproductions cite the paper; they don't ship it. The FK1975 PDF lives there
-  (on the Windows machine; `_private/` may be absent on other checkouts).
+  (a per-machine stash — copy it in on a fresh checkout; gitignored, so absent
+  until you do).
 
 ## Status & open work (issues in this repo)
 The original arc (#1 epic; #2 literature; #3 extraction; #4 presentation &
