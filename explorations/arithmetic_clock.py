@@ -121,49 +121,49 @@ _RESID_OK = 1e-8      # acceptance residual for the walk's Muller solves
 # --------------------------------------------------------------------------
 # 1. the clock variable and the displacement field
 # --------------------------------------------------------------------------
-def kappa_of(K, t):
+def kappa_of(K, t, q=Q):
     """The resolution-clock variable kappa = 2 pi K/(q t): harmonics per residue
     class per unit height. kappa ~ 1 is the a = 1/q moment's stationary-phase
     band edge; the O(1/K) displacement law is the kappa >> 1 asymptote."""
-    return 2.0 * math.pi * float(K) / (Q * float(t))
+    return 2.0 * math.pi * float(K) / (q * float(t))
 
 
-def K_of_kappa(kap, t):
+def K_of_kappa(kap, t, q=Q):
     """The smallest integer K whose clock reads at least kappa at height t."""
-    return max(1, int(math.ceil(kap * Q * float(t) / (2.0 * math.pi))))
+    return max(1, int(math.ceil(kap * q * float(t) / (2.0 * math.pi))))
 
 
-def local_spacing(t):
+def local_spacing(t, q=Q):
     """The mean zero spacing 2 pi/ln(q t/2 pi) at height t (RvM density)."""
-    return 2.0 * math.pi / math.log(max(Q * float(t) / (2.0 * math.pi), 1.5))
+    return 2.0 * math.pi / math.log(max(q * float(t) / (2.0 * math.pi), 1.5))
 
 
-def a1_of(gamma, workdps=18):
+def a1_of(gamma, workdps=18, chi=CHI):
     """disp_coeff_chi at rho = 1/2 + i gamma (the comb-route first-order
     displacement coefficient), at walk-grade precision."""
     with mp.workdps(workdps):
-        return complex(zb.disp_coeff_chi(mp.mpc(0.5, gamma), CHI))
+        return complex(zb.disp_coeff_chi(mp.mpc(0.5, gamma), chi))
 
 
-def a1_table(gammas, verbose=False):
-    """[(gamma, a_1)] for the whole zero sample, cached in A1_CSV."""
-    if A1_CSV.exists():
+def a1_table(gammas, verbose=False, chi=CHI, path=A1_CSV):
+    """[(gamma, a_1)] for the whole zero sample, cached in `path`."""
+    if path.exists():
         out = []
-        with A1_CSV.open(encoding="utf-8") as fh:
+        with path.open(encoding="utf-8") as fh:
             for r in csv.DictReader(fh):
                 out.append((float(r["gamma"]),
                             complex(float(r["a1_re"]), float(r["a1_im"]))))
         if len(out) == len(gammas):
             return out
-    out = [(float(g), a1_of(g)) for g in gammas]
-    A1_CSV.parent.mkdir(exist_ok=True)
-    with A1_CSV.open("w", encoding="utf-8", newline="") as fh:
+    out = [(float(g), a1_of(g, chi=chi)) for g in gammas]
+    path.parent.mkdir(exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["n", "gamma", "a1_re", "a1_im"])
         for i, (g, a1) in enumerate(out, start=1):
             w.writerow([i, f"{g:.12f}", f"{a1.real:.8e}", f"{a1.imag:.8e}"])
     if verbose:
-        print(f"   a_1 table: {len(out)} zeros -> {A1_CSV.name}")
+        print(f"   a_1 table: {len(out)} zeros -> {path.name}")
     return out
 
 
@@ -186,25 +186,25 @@ def _muller(fn, seed, ftol, max_jump):
     return mp.mpc(zz)
 
 
-def _walk_step(z, K_from, K_to, a1, ftol, max_jump, depth=3):
+def _walk_step(z, K_from, K_to, a1, ftol, max_jump, depth=3, chi=CHI):
     """One K step of the walk, first-order predictor seed + adaptive substepping:
     on failure insert the geometric-mean K and recurse (the flow_lambda pattern).
     In the pre-asymptotic zone (kappa < 1) the true motion outruns the a_1/K
     predictor by the amplification A(kappa); substeps keep each hop local."""
     seed = z + mp.mpc(a1) * (mp.mpf(1) / K_to - mp.mpf(1) / K_from)
-    zz = _muller(lambda s: cb.L_comb_K(s, K_to, CHI), seed, ftol, max_jump)
+    zz = _muller(lambda s: cb.L_comb_K(s, K_to, chi), seed, ftol, max_jump)
     if zz is not None or depth == 0:
         return zz
     K_mid = int(round(math.sqrt(K_from * K_to)))
     if K_mid in (K_from, K_to):
         return None
-    zm = _walk_step(z, K_from, K_mid, a1, ftol, max_jump, depth - 1)
+    zm = _walk_step(z, K_from, K_mid, a1, ftol, max_jump, depth - 1, chi)
     if zm is None:
         return None
-    return _walk_step(zm, K_mid, K_to, a1, ftol, max_jump, depth - 1)
+    return _walk_step(zm, K_mid, K_to, a1, ftol, max_jump, depth - 1, chi)
 
 
-def walk_zero(gamma, a1, Ks, workdps=15):
+def walk_zero(gamma, a1, Ks, workdps=15, chi=CHI):
     """The descendant of rho = 1/2 + i gamma through the K schedule (descending).
 
     Seeds the top-K solve at rho + a_1/K (the asymptotic predictor -- the top of
@@ -215,18 +215,18 @@ def walk_zero(gamma, a1, Ks, workdps=15):
     [(K, s_K or None)] descending in K.
     """
     rho = mp.mpc(0.5, gamma)
-    max_jump = 0.6 * local_spacing(gamma)
+    max_jump = 0.6 * local_spacing(gamma, chi.q)
     out = []  # type: List[Tuple[int, Optional[mp.mpc]]]
     z = None
     K_prev = None
     with mp.workdps(workdps):
         ftol = mp.mpf(10) ** (-(workdps - 4))
         for K in sorted(Ks, reverse=True):
-            fn = lambda s, K=K: cb.L_comb_K(s, K, CHI)
+            fn = lambda s, K=K: cb.L_comb_K(s, K, chi)
             if z is None:
                 zz = _muller(fn, rho + mp.mpc(a1) / K, ftol, max_jump)
             else:
-                zz = _walk_step(z, K_prev, K, a1, ftol, max_jump)
+                zz = _walk_step(z, K_prev, K, a1, ftol, max_jump, chi=chi)
                 if zz is None:
                     zz = _muller(fn, rho + mp.mpc(a1) / K, ftol, max_jump)
             out.append((K, zz))
@@ -245,11 +245,14 @@ def walk_schedule(idx, gamma):
 
 
 def _walk_worker(job):
-    """Multiprocessing worker: one zero's full walk -> flat CSV-ready rows."""
-    idx, gamma, a1_re, a1_im = job
+    """Multiprocessing worker: one zero's full walk -> flat CSV-ready rows.
+
+    Jobs carry the explicit K schedule and the character (picklable: exact
+    integer exponents only), so one worker serves every conductor."""
+    idx, gamma, a1_re, a1_im, Ks, chi = job
     a1 = complex(a1_re, a1_im)
     rows = []
-    for K, s_K in walk_zero(gamma, a1, walk_schedule(idx, gamma)):
+    for K, s_K in walk_zero(gamma, a1, Ks, chi=chi):
         if s_K is None:
             rows.append((idx, gamma, K, float("nan"), float("nan"), "lost"))
         else:
@@ -260,13 +263,13 @@ def _walk_worker(job):
 # --------------------------------------------------------------------------
 # 3. census repair: per-K dedup of collided walks + local rescue scans
 # --------------------------------------------------------------------------
-def _local_rescue(K, sig_c, t_lo, t_hi, taken, workdps=15):
+def _local_rescue(K, sig_c, t_lo, t_hi, taken, workdps=15, chi=CHI):
     """Recover a walk's lost root: |L_comb_K| minima on a local grid over
     (sig_c -+ 1.1) x (t_lo, t_hi), Muller-polished, excluding roots already
     `taken`. Returns the recovered root or None."""
     with mp.workdps(workdps):
         ftol = mp.mpf(10) ** (-(workdps - 4))
-        fn = lambda s: cb.L_comb_K(s, K, CHI)
+        fn = lambda s: cb.L_comb_K(s, K, chi)
         sig_grid = [sig_c - 1.1 + 0.2 * i for i in range(12)]
         t_grid = [t_lo + 0.08 + 0.12 * j
                   for j in range(int((t_hi - t_lo - 0.16) / 0.12) + 1)]
@@ -290,7 +293,7 @@ def _local_rescue(K, sig_c, t_lo, t_hi, taken, workdps=15):
     return None
 
 
-def dedup_patch(rows, verbose=True):
+def dedup_patch(rows, verbose=True, chi=CHI):
     """Set-integrity pass per K: walks that collided onto one root (possible in
     the deep pre-asymptotic zone, where displacements reach the mean spacing)
     are split -- the farther source zero keeps 'dup' status and gets a local
@@ -317,10 +320,11 @@ def dedup_patch(rows, verbose=True):
                       if i != lose and rows[i][5] == "ok"]
             g = rows[lose][1]
             below = max([w.imag for w in others if w.imag < za.imag - 1e-6],
-                        default=g - 1.2 * local_spacing(g))
+                        default=g - 1.2 * local_spacing(g, chi.q))
             above = min([w.imag for w in others if w.imag > za.imag + 1e-6],
-                        default=g + 1.2 * local_spacing(g))
-            zz = _local_rescue(K, 0.5, below, above, [complex(w) for w in others])
+                        default=g + 1.2 * local_spacing(g, chi.q))
+            zz = _local_rescue(K, 0.5, below, above,
+                               [complex(w) for w in others], chi=chi)
             if zz is None:
                 rows[lose] = rows[lose][:5] + ("dup",)
             else:
@@ -337,13 +341,9 @@ def dedup_patch(rows, verbose=True):
 # --------------------------------------------------------------------------
 # 4. the K-walk runner and its cache
 # --------------------------------------------------------------------------
-def run_kwalk(jobs=1, verbose=True):
-    """Walk every cached chi_3 zero down its K schedule, repair the census, and
-    cache the rows. The heavy step (--recompute-kwalk); ~1-2 h serial at
-    jobs=1, ~/jobs with multiprocessing."""
-    gammas = c6.load_chi3_zeros()
-    a1s = a1_table(gammas, verbose=verbose)
-    jobsq = [(i, g, a1.real, a1.imag) for i, (g, a1) in enumerate(a1s)]
+def run_kwalk_jobs(jobsq, path, jobs=1, chi=CHI, verbose=True):
+    """The conductor-general K-walk core: run the job list (each job carries its
+    own K schedule and chi), repair the census, and cache the rows at `path`."""
     t0 = time.time()
     rows = []  # type: List[Tuple]
     if jobs > 1:
@@ -353,17 +353,17 @@ def run_kwalk(jobs=1, verbose=True):
                 rows.extend(rr)
                 if verbose and (i + 1) % 25 == 0:
                     print(f"   walked {i + 1}/{len(jobsq)} zeros "
-                          f"({time.time() - t0:.0f} s)")
+                          f"({time.time() - t0:.0f} s)", flush=True)
     else:
         for i, job in enumerate(jobsq):
             rows.extend(_walk_worker(job))
             if verbose and (i + 1) % 25 == 0:
                 print(f"   walked {i + 1}/{len(jobsq)} zeros "
-                      f"({time.time() - t0:.0f} s)")
+                      f"({time.time() - t0:.0f} s)", flush=True)
     rows.sort(key=lambda r: (r[0], -r[2]))
-    dedup_patch(rows, verbose=verbose)
-    KWALK_CSV.parent.mkdir(exist_ok=True)
-    with KWALK_CSV.open("w", encoding="utf-8", newline="") as fh:
+    dedup_patch(rows, verbose=verbose, chi=chi)
+    path.parent.mkdir(exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["n", "gamma", "K", "sigma_K", "gamma_K", "status"])
         for r in rows:
@@ -374,14 +374,25 @@ def run_kwalk(jobs=1, verbose=True):
     if verbose:
         n_bad = sum(r[5] in ("lost", "dup") for r in rows)
         print(f"   K-walk: {len(rows)} rows ({n_bad} unrecovered) in "
-              f"{time.time() - t0:.0f} s -> {KWALK_CSV.name}")
+              f"{time.time() - t0:.0f} s -> {path.name}")
     return rows
 
 
-def read_kwalk():
+def run_kwalk(jobs=1, verbose=True):
+    """Walk every cached chi_3 zero down its K schedule, repair the census, and
+    cache the rows. The heavy step (--recompute-kwalk); ~1-2 h serial at
+    jobs=1, ~/jobs with multiprocessing."""
+    gammas = c6.load_chi3_zeros()
+    a1s = a1_table(gammas, verbose=verbose)
+    jobsq = [(i, g, a1.real, a1.imag, walk_schedule(i, g), CHI)
+             for i, (g, a1) in enumerate(a1s)]
+    return run_kwalk_jobs(jobsq, KWALK_CSV, jobs=jobs, chi=CHI, verbose=verbose)
+
+
+def read_kwalk(path=KWALK_CSV):
     """The cached walk rows: [(n, gamma, K, sigma_K, gamma_K, status)]."""
     rows = []
-    with KWALK_CSV.open(encoding="utf-8") as fh:
+    with path.open(encoding="utf-8") as fh:
         for r in csv.DictReader(fh):
             rows.append((int(r["n"]), float(r["gamma"]), int(r["K"]),
                          float(r["sigma_K"]), float(r["gamma_K"]), r["status"]))
@@ -408,19 +419,20 @@ def field_prediction(gammas, a1s, omega, K):
     return float(np.mean(np.cos((g + ia / K) * omega)))
 
 
-def timeline(rows, a1s_by_n, Ks=None, t_max=None):
+def timeline(rows, a1s_by_n, Ks=None, t_max=None, freqs=None):
     """The resonance table: {K: {label: (measured, field_pred, linear_pred)}}
     plus the K = inf reference {label: R_inf} and the census size per K.
 
     `measured` runs over the walked census (ok + patched rows) at each K;
     the two predictions run over the SAME source-zero subset, so a handful of
     unrecovered walks cannot masquerade as resonance drift."""
+    freqs = TEST_FREQS if freqs is None else freqs
     Ks = sorted(set(r[2] for r in rows)) if Ks is None else Ks
     src = sorted({(r[0], r[1]) for r in rows
                   if t_max is None or r[1] <= t_max})
     g_src = np.array([g for _n, g in src])
     ref = {label: c6.prime_resonance(g_src, omega)
-           for label, omega, _n in TEST_FREQS}
+           for label, omega, _n in freqs}
     out = {}
     counts = {}
     for K in Ks:
@@ -433,7 +445,7 @@ def timeline(rows, a1s_by_n, Ks=None, t_max=None):
         a1 = [a1s_by_n[r[0]] for r in sel]
         out[K] = {}
         counts[K] = len(sel)
-        for label, omega, _n in TEST_FREQS:
+        for label, omega, _n in freqs:
             r_inf = c6.prime_resonance(g0, omega)
             out[K][label] = (c6.prime_resonance(gK, omega),
                              field_prediction(g0, a1, omega, K),
@@ -441,20 +453,23 @@ def timeline(rows, a1s_by_n, Ks=None, t_max=None):
     return out, ref, counts
 
 
-def locked_fit(rows, a1s_by_n):
-    """The Q1 verdict: on the locked sub-census (t <= FIT_T_MAX, all FIT_KS past
+def locked_fit(rows, a1s_by_n, fit_Ks=None, fit_t_max=None, freqs=None):
+    """The Q1 verdict: on the locked sub-census (t <= fit_t_max, all fit_Ks past
     kappa ~ 1.9), fit K Delta R = C + c'/K and compare the intercept to the
     computable C_omega. Returns {label: (C_fit, C_pred, slope)}."""
-    byK = {K: {r[0]: r for r in rows if r[2] == K and r[1] <= FIT_T_MAX
-               and r[5] in ("ok", "patched")} for K in FIT_KS}
+    fit_Ks = FIT_KS if fit_Ks is None else fit_Ks
+    fit_t_max = FIT_T_MAX if fit_t_max is None else fit_t_max
+    freqs = TEST_FREQS if freqs is None else freqs
+    byK = {K: {r[0]: r for r in rows if r[2] == K and r[1] <= fit_t_max
+               and r[5] in ("ok", "patched")} for K in fit_Ks}
     common = sorted(set.intersection(*(set(d) for d in byK.values())))
     g0 = np.array([next(r[1] for r in rows if r[0] == n) for n in common])
     a1 = [a1s_by_n[n] for n in common]
     out = {}
-    for label, omega, _n in TEST_FREQS:
+    for label, omega, _n in freqs:
         r_inf = c6.prime_resonance(g0, omega)
         xs, ys = [], []
-        for K in FIT_KS:
+        for K in fit_Ks:
             gK = np.array([byK[K][n][4] for n in common])
             xs.append(1.0 / K)
             ys.append(K * (c6.prime_resonance(gK, omega) - r_inf))
@@ -533,7 +548,7 @@ def c_band_table(gammas, a1s, half=0.02, dw=4e-4):
 # --------------------------------------------------------------------------
 # 6. instruments -- the resolution-clock collapse
 # --------------------------------------------------------------------------
-def collapse_points(rows, a1s_by_n):
+def collapse_points(rows, a1s_by_n, q=Q):
     """[(t, K, kappa, A)] with A = K(s_K - rho)/a_1 the complex amplification,
     over every ok walk row (patched rows are census repairs, not trajectories --
     their per-zero identity is exactly what was in doubt, so they stay out)."""
@@ -545,7 +560,7 @@ def collapse_points(rows, a1s_by_n):
         if a1 == 0:
             continue
         A = K * complex(sig - 0.5, gK - g) / a1
-        pts.append((g, K, kappa_of(K, g), A))
+        pts.append((g, K, kappa_of(K, g, q), A))
     return pts
 
 
