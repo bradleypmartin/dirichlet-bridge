@@ -18,8 +18,10 @@ Why it sits in this repo (the honest-framing payoff)
 ----------------------------------------------------
 FK's deformation is the cleanest *foil* for our K-harmonic knob. In their flow
 the moving zeros only *transiently brush* the critical line Re s = 1/2 and are
-then ejected -- they spiral around a zeta zero and ultimately migrate toward the
-emerging pole at s=1 (FK Figs. 6-7; mechanism: the x->1 expansion Eq. 26 carries
+then ejected -- the P=0 class runs to the emerging pole at s=1, while the P>=1
+class brushes a zeta zero and spirals out (this driver's spiral panel; FK report
+it too ultimately ends at s=1, beyond the x-window run here)
+(FK Figs. 6-7; mechanism: the x->1 expansion Eq. 26 carries
 a branch term Gamma(1-s)(-log x)^{s-1} that winds for sigma<1, and F is entire
 for |x|<1 so the pole only emerges at x=1). They *set out toward* critical-line
 convergence but could not reach it. Our K-knob, by contrast, makes the zeros
@@ -86,8 +88,8 @@ def F_sum(x, s, terms=4000):
 def _terms_for(lx, denom):
     """Number of expansion terms to keep so (|log x|/denom)^M < 10^{-(dps+4)}."""
     r = float(abs(lx)) / denom
-    if r >= 0.3:                         # only used for |x| close to 1, so r is small
-        return 80
+    if r >= 0.3:                         # unreachable via F_track (|x| <= 0.8 => r <= 0.071);
+        return 80                        # the flat 80 honours the contract only to dps ~ 36
     return max(6, int(math.ceil((mp.mp.dps + 4) / -math.log10(r))) + 2)
 
 
@@ -197,7 +199,7 @@ def comb_point(m):
 # zero trajectory tracing (Newton continuation in x)
 # --------------------------------------------------------------------------
 # Roots good to this tolerance are ample for tracing/plotting; mpmath's default
-# (~1e-34 at dps=30) is tighter than the secant reaches on these flat trajectories.
+# (eps*2^10 ~ 2e-28 at dps=30) is tighter than the secant reaches on these flat trajectories.
 _TRACE_TOL = mp.mpf("1e-18")
 
 
@@ -310,12 +312,12 @@ def count_zeros(x, sig_lo, sig_hi, t_lo, t_hi, npts=300):
 # asymptote counting constants (FK Eqs. 39-40)
 # --------------------------------------------------------------------------
 def alpha_plus():
-    """alpha+ = (2 - 2 log2 - gamma) / 2pi = 0.00580756...  (FK Eq. 40)."""
+    """alpha+ = (2 - 2 log2 - gamma) / 2pi = 0.00580756...  (FK Eqs. 39-40)."""
     return (2 - 2 * LOG2 - GAMMA) / (2 * PI)
 
 
 def alpha_minus():
-    """alpha- = (log2 - gamma) / 2pi = 0.01845107...  (FK Eq. 40)."""
+    """alpha- = (log2 - gamma) / 2pi = 0.01845107...  (FK Eqs. 39-40)."""
     return (LOG2 - GAMMA) / (2 * PI)
 
 
@@ -410,8 +412,9 @@ def _main():
         tr = trace_zero(P, N, +1, "0.02", "1e-6", nst)
         hit_class.append((P, N, tr))
         end = tr[-1][1]
-        print(f"   P={P} N={N}: lands at s=({float(mp.re(end)):.4f},"
-              f"{float(mp.im(end)):.4f})  (a zeta zero on sigma=1/2)")
+        print(f"   P={P} N={N}: sits at s=({float(mp.re(end)):.4f},"
+              f"{float(mp.im(end)):.4f})  (~2e-6 from a zeta zero -- a transient"
+              f" brush, not a landing; see the spiral below)")
 
     # ---- 5. the money figure: s0+(x,1,1) brush + spiral about s1 ----
     print("\n== s0+(x,1,1): brush of sigma=1/2 at s1, then spiral (Figs. 6-7) ==")

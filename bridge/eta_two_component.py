@@ -5,8 +5,9 @@ Gram-phase duality. The eta interpolant's ground string splits onto TWO lines:
 
   * sigma = 1  -- the prefactor (1 - 2^{1-s}) zeros: a PERFECT ARITHMETIC COMB,
                   teeth at  t = 2 pi k / ln2,  period 2 pi/ln2 ~ 9.0647, perfectly rigid;
-  * sigma = 1/2 -- the genuine zeta zeros: a GUE-random sequence, packing  log2(t/2pi)
-                  per comb tooth (the ratio of the two counting densities).
+  * sigma = 1/2 -- the genuine zeta zeros: empirically GUE (the Montgomery-Odlyzko
+                  law), packing  log2(t/2pi) per comb tooth (the ratio of the two
+                  counting densities).
 
 So the eta zero set, projected onto the t-axis, is a RIGID CRYSTALLINE COMB superposed
 with a GUE sequence -- a genuine two-component spectrum. This module asks the fine-structure
@@ -27,12 +28,17 @@ LENS 2 -- the rigidity (two-point, long range).  The number variance Sigma^2(L) 
   -- i.e. the comb does NOT change the long-range rigidity CLASS, it just adds a bounded
   backbone. At the bulk/smooth level the union is the independent superposition the
   one-point picture suggested ("GUE + rigid backbone", number variances ADD).
+  (A sharper small-N version of this test -- a dephased-offset-ensemble null asking
+  whether the physical comb phase minimizes Sigma^2 -- is developed downstream in
+  explorations/chi6_two_component.py.)
 
 LENS 3 -- the p=2 resonance (the headline; the components are NOT independent).  The comb
   teeth sit at  t = 2 pi k/ln2, so as a point process the comb's spectral content lives at
   the angular frequencies  omega = m * ln2,  m in Z -- which are EXACTLY the p = 2
   prime-power frequencies  log(2^m). And by the explicit formula the zeta-zero density
-  carries an oscillation at every prime-power frequency,
+  carries -- in the smoothed/averaged sense; the formula is distributional, which is why
+  the measured statistic below is a finite-window average -- an oscillation at every
+  prime-power frequency,
 
       rho_osc(T) = -(1/pi) sum_p sum_k (log p) p^{-k/2} cos(k T log p),
 

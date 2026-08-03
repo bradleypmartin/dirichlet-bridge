@@ -3,7 +3,9 @@ prime face (large u) of one Fourier transform.
 
 VENDORED NOTE (this repo): copied from the originating research project as a
 dependency of `eta_two_component.py`, which uses only `gue_form_factor` (and
-`spectral_rigidity` additionally imports `goe_form_factor`). The high-window
+`spectral_rigidity` additionally imports `goe_form_factor`);
+`explorations/chi6_two_component.py` further calls `spectral_form_factor`,
+`bin_form_factor` and `small_tau_slope`. The high-window
 CSVs below are parent-project artifacts, NOT shipped here (their absence is
 handled gracefully); this file does run standalone on the cached 2000 zeros.
 Kept whole so the vendored code matches its source; see CLAUDE.md "Gotchas".

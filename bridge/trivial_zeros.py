@@ -33,9 +33,9 @@ Two things make the order counterintuitive (and pretty):
   * **The first trivial zero -2 is INHERITED, not born.** The dip on (-2,0) is bounded
     on the right not by a zero but by the pole side; raising the endpoint's lone zero
     (s=-1 of 1/(s-1)+1/2) just slides it leftward, and it limits onto -2 as
-    -2 + |a_1|/K with a_1 = -2/(2 pi^2 zeta'(-2)) = 3.327 (`inherited_branch`,
-    `disp_coeff_trivial`). The bland integral's single zero is the seed of the whole
-    trivial string.
+    -2 + |a_1|/K with a_1 = -2/(2 pi^2 zeta'(-2)) = 3.328 (`inherited_branch`,
+    `disp_coeff_trivial`). The bland integral's single zero seeds the -2 branch; every
+    later trivial zero arrives by its own conjugate-pair pinch (next bullet).
 
   * **Depth beats shallowness: the deep pairs are born FIRST.** A pair is uncovered when
     the tide drops below the dip depth |zeta(midpoint)|, i.e. at
@@ -43,7 +43,8 @@ Two things make the order counterintuitive (and pretty):
         K_pinch  ~  |s_mid| / (2 pi^2 |zeta(s_mid)|),   s_mid = -(4j+1)   (`pinch_K_law`)
 
     and |zeta(-(2m+1))| = |B_{2m+2}|/(2m+2) grows *factorially*, so the deep dips are
-    bottomless and their pairs are present already at K ~ 1, while the SHALLOWEST dip --
+    bottomless and their pairs arrive early -- by K ~ 8 for the {-12,-14} pair (j=3)
+    and essentially at K = 1 from j >= 4 on -- while the SHALLOWEST dip --
     the first one, |zeta(-5)| ~ 0.004 -- is the last to clear: the {-4,-6} pair is not
     born until K ~ 62. Born from both ends, the negative axis fills in toward the
     middle; the hardest trivial zeros to resolve are -4 and -6.
@@ -70,11 +71,14 @@ a_1 = -Delta_1(rho)/target'(rho) -- applies verbatim with target = zeta and rho 
                                =   (-2n) / (2 pi^2 zeta'(-2n)).
 
 a_1 is real here (everything is real on the axis) and its magnitude peaks in the middle
-(|a_1| at -2,-4,-6,-8,-10 is 3.3, 25, 52, 49, 27): the same "hardest in the middle"
-the pinch picture shows, read off the single displacement coefficient the rest of the
-bridge already uses. What is genuinely new on this axis is the *birth* event -- the
-conjugate-pair pinch and its valley-depth birth-K law -- which the non-trivial families
-never undergo (they are born immediately at K=1 and only migrate).
+(|a_1| at -2,-4,-6,-8,-10 is 3.3, 25, 52, 49, 27): a "hardest in the middle" that
+rhymes with the pinch picture, though the two rankings differ -- |a_1| peaks at -6/-8
+(displacement), while the pinch/birth-K law makes {-4,-6} the last-born -- overlapping
+at -6, read off the single displacement coefficient the rest of the bridge already
+uses. What is genuinely new on this axis is the *birth* event -- the conjugate-pair
+pinch and its valley-depth birth-K law -- which the non-trivial zeta family never
+undergoes (born at K=1, it only migrates; eta's ground string is present already
+at K=0).
 
 Run directly to validate + plot: writes bridge/figures/trivial_zeros.png.
 """
@@ -183,7 +187,7 @@ def inherited_branch(schedule=None):
 
     Seeds at K=0 with `endpoint_zero` (s=-1) and walks K upward, each solve seeded by the
     previous root. The branch is real throughout and limits onto -2 as -2 + |a_1|/K
-    (a_1 = disp_coeff_trivial(1) = 3.327). Returns a list of (K, s) in increasing K.
+    (a_1 = disp_coeff_trivial(1) = 3.328). Returns a list of (K, s) in increasing K.
     """
     sched = sorted(schedule if schedule is not None else _INHERIT_SCHEDULE)
     z = mp.mpc(endpoint_zero(), 0)
@@ -337,7 +341,7 @@ def pinch_K_measured(j, k_lo=2, k_hi=None):
 # --------------------------------------------------------------------------
 def _print_inherited():
     print("== the FIRST trivial zero -2 is inherited: continue the endpoint zero (-1) up in K ==")
-    print("   K      s_K (real)     -2 + a_1/K (a_1 = 3.327)")
+    print("   K      s_K (real)     -2 + a_1/K (a_1 = 3.328)")
     a1 = float(disp_coeff_trivial(1).real)
     for K, z in inherited_branch():
         pred = "   --   " if K == 0 else f"{-2 + a1 / K:+8.4f}"

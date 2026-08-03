@@ -24,7 +24,7 @@ The two routes
     the rigorous backbone).
 
 **A unification this module makes explicit.** For zeta the two routes are not just
-co-convergent, they are *identical term by term* (`test_routes_identical`): the
+co-convergent, they are *identical term by term* (`test_routes_identical_term_by_term`): the
 k-th sawtooth mode  s/(pi k) S(2 pi k, s+1)  equals the k-th Bose term
 i int_0^inf [(1+ix)^{-s} - (1-ix)^{-s}] e^{-2 pi k x} dx. The Euler-Maclaurin comb
 and the Abel-Plana comb are one harmonic decomposition in two integral guises, so
@@ -41,7 +41,8 @@ h(x) = cos(pi x) x^{-s}, so int_1^inf h dx = F(s)) gives
 the sawtooth modes D_k living at the *odd* multiples (2k +/- 1) pi -- the eta comb's
 fundamental is the cos(pi x) already inside F. The **ground state K = 0 is
 -F(s) + 1/2**. Note the +1/2: it is the n=1 half-weight, and it is *load-bearing* --
-it moves the ground-state zeros off the F-zero string (where F = 0, Re ~ 1.8)
+it moves the ground-state zeros off the F-zero string (where F = 0, Re ~ 2.0 at
+these heights, drifting toward 3/2)
 down to Re ~ 0.7 (where F = 1/2) *before any harmonic is switched on*. So the
 continuous endpoint's zeros are the zeros of the integrand F, an upstream landmark;
 the bridge's own K=0 zeros are a different, already-closer string. (The half-weight
@@ -58,8 +59,10 @@ The deliverable -- the zero-migration map (`migrate`, the _main figure/table)
 large K = the true zero, where the interpolant ~ the real object, then step K
 downward). The findings:
 
-  * zeta^{(K)}: the endpoint 1/(s-1)+1/2 is zeroless, so the zeros are *born* -- the
-    very first harmonic (K=1) creates them out near Re ~ 1-1.35; further harmonics
+  * zeta^{(K)}: the endpoint 1/(s-1)+1/2 has no complex zeros (its lone zero is real,
+    s = -1 -- the seed of the trivial string, trivial_zeros.py), so the nontrivial
+    zeros are *born* -- the very first harmonic (K=1) creates them near Re ~ 1.2 at
+    gamma = 14, decreasing with height (0.87 by gamma = 41); further harmonics
     slide them onto Re = 1/2. Approach is O(1/K) and mostly monotone, but some zeros
     overshoot below 1/2 at small K and climb back (e.g. the gamma=21.022 zero).
 
@@ -202,7 +205,7 @@ def migrate(fn, z_true, schedule=None, max_jump=6.0):
     zero is within O(1/K) of z_true), then walks K downward, each solve seeded by the
     previous root. Returns a list of (K, s) in *increasing* K; s is None where the
     continuation lost the zero (jumped > max_jump, escaped to Im <= 1, or no root --
-    e.g. the zeta endpoint K=0 is zeroless, so a zeta trajectory terminates at K=1).
+    e.g. the zeta endpoint K=0 has no complex zeros, so a zeta trajectory terminates at K=1).
     """
     sched = sorted(schedule if schedule is not None else K_SCHEDULE)
     z = mp.mpc(z_true)

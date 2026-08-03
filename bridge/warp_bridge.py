@@ -20,7 +20,9 @@ warp's natural target is a *half-shifted* zeta.
 
 Because phi_K has period 1, the period-by-period decomposition collapses to a single
 proper integral of the Hurwitz zeta (valid for all sigma incl. sigma <= 0: zeta(s, a)
-is analytic in s apart from the simple pole at s = 1, which is the bridge's own pole):
+is analytic in s apart from the simple pole at s = 1, which is the bridge's own pole --
+NB the *literal* x-integral converges only for sigma > 1; below that, this Hurwitz
+form IS its analytic continuation, cross-checked against `warp_raw` where both exist):
 
     warp_K(s, K) = int_0^1 zeta(s, 1 + u + phi_K(u)) du            (`warp_hurwitz`)
 
@@ -62,7 +64,7 @@ the additive comb, imported from harmonic_bridge):
 
   * a companion family, the zeros of the prefactor 2^s - 1 at t = 2 pi k/ln2, migrates
     onto **sigma = 0** -- the mirror image, across sigma = 1/2 by the functional
-    equation, of the additive comb's eta companion on sigma = 1, at the *same* heights. (`PREF_HEIGHTS`.)
+    equation, of the additive comb's eta companion on sigma = 1, at the *same* heights. (`pref_heights`.)
 
 So the warp is **not** the same bridge as the comb: it secretly targets the half-shifted
 Hurwitz zeta(s, 1/2), carrying the sigma=0 prefactor companion the additive comb lacks.
@@ -139,11 +141,13 @@ def warp_phi(u, K):
 #
 # CAUTION (the issue #49 error-lobe lesson): the guard constants below were tuned and
 # validated at this module's ambient dps = 30, whose ~15 spare digits absorb any shortfall
-# in the ramp. Evaluating inside a LEANER mp.workdps (ambient ~15-18) opens jagged error
-# lobes wherever the ceil-quantized guard dips under the true need: measured absolute
-# errors reach 2e-2 over |Im s| ~ 40-77 and 84-89 at ambient 18, while neighboring
-# heights sit at 1e-14. Keep lean-ambient work at >= 24 digits above |Im s| ~ 38
-# (see explorations/lambda_census.band_dps for the measured policy).
+# in the ramp. Evaluating inside a LEANER mp.workdps erodes that margin -- the exposure
+# was measured on the #49 census's lam-evaluator (a composite BUILT ON this ramp), where
+# ambient 18 opened jagged error lobes at isolated heights (2e-4 at t~52, 2e-2 at t~65,
+# 5e-4..9e-3 over t~84-89) while neighboring heights sat at 1e-14. warp_K itself probes
+# clean at ambient 18 at those heights (<=1e-10); the lesson is that the ramp's headroom,
+# not any single caller, is what lean ambients consume. Keep lean-ambient work at >= 24
+# digits above |Im s| ~ 38 (see explorations/lambda_census.band_dps for the measured policy).
 _GL_DEGREE = 8        # base GaussLegendre degree: nodes ~ 3*2^(degree-1) = 384 (>= ~8/oscillation to K~45)
 _M = 14               # direct cells m=1..M; the moment tail (ratio ~ (1/M)^j) covers m>M
 _GUARD_ONSET = 40.0   # |Im s| below which the base dps / Jmax=60 / degree=8 already converge
@@ -337,6 +341,9 @@ def count_on_lines(fn, t_max, sig_box=(-0.35, 1.0), t_min=2.0, lines=(0.0, 0.5),
 
     Uses warp_alpha.find_zeros (the local-minimum-seeded box finder; imported lazily because
     warp_alpha imports *this* module at load, so a top-level import here would be circular).
+    The grid defaults (dsig=0.25, dt=0.55) are validated to T ~ 40; above t ~ 36 the
+    single-seed secant polish can drop packed zeros (the #49 lesson -- see
+    explorations/lambda_census.find_zeros_muller for the robust replacement).
     Returns (counts, off, zeros): counts[L] = #zeros within tol_line of line L; off = the
     zeros further than tol_line from every line; zeros = the full (Im, Re)-sorted locus. This
     is the *measured* side of the bijection -- no family is assumed, each zero is classified by
