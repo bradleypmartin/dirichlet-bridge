@@ -337,7 +337,7 @@ line into the midpoint staircase, appears in \cref{sec:warp} (\cref{fig:warpcoor
 Both routes also admit a fully \emph{elementary} miniature: run on the geometric
 series (\cref{app:geometric}), the comb telescopes exactly to the discrete sum and
 the warp factorizes into a single scalar, with no special functions and no zeros
-anywhere---a transparent on-ramp to either route.
+to track---a transparent on-ramp to either route.
 
 \begin{figure}[t]
   \centering
@@ -1454,10 +1454,14 @@ there the claim is a computational demonstration, not a theorem.
 The four cases above are \emph{lateral} moves---other Dirichlet-type objects with
 their own zeros. This last appendix is a \emph{vertical} one: the same construction
 run on the simplest possible summand, the geometric series, where every step collapses
-to an \emph{elementary closed form} and there are \textbf{no special functions and no
-zeros} anywhere. Nothing here is new mathematics---the one identity that does the work
-is the classical $\coth$ partial fraction, and the summation of divergent series to
-their analytic values is textbook Abel/Euler summability \citep[cf.][]{Hardy1949}. Its
+to an \emph{elementary closed form}, there are \textbf{no special functions}, and the
+endpoints carry \textbf{no zeros} ($-1/\ln s$ and $1/(1-s)$ never vanish; a finite-$K$
+comb picks up one stray real zero, $g_0(e^2)=0$, which drifts to $+\infty$ with $K$ and
+carries no arithmetic). Nothing here is new mathematics---the one identity that does the
+work is the classical $\coth$ partial fraction, and the summation of divergent series to
+their analytic values is classical \citep[cf.][]{Hardy1949}: Grandi's series by textbook
+Abel summability, $1+2+4+\cdots=-1$ by the analytic continuation that lies beyond the
+classical regular methods. Its
 purpose is a fully transparent \emph{consistency check} of the apparatus, and it renders
 the arc's subtlest point---convergence \emph{beyond} the classical domain
 (\cref{sec:stability})---completely elementary.
@@ -1506,8 +1510,10 @@ $O(1/K)$ error law,
 \end{equation}
 with the ``height/cost'' coordinate now $|\ln s|$---the log-distance of $s$ from the
 pole---in place of $|s|\sim t$. And, exactly as in \cref{sec:stability}, each $g_K$ is
-meromorphic on all of $\mathbb{C}$ with a single pole at $s=1$: there is \emph{no
-abscissa of convergence}. So \eqref{eq:geom-comb} converges for $|s|>1$ as well,
+meromorphic on the cut plane $\mathbb{C}\setminus(-\infty,0]$ with a single pole at
+$s=1$ (the $\ln s$ inside carries a branch point at $s=0$, with an $O(1/K)$ monodromy
+about it that vanishes only in the limit $1/(1-s)$): on the principal branch there is
+\emph{no abscissa of convergence}. So \eqref{eq:geom-comb} converges for $|s|>1$ as well,
 summing the \emph{divergent} series to its analytic value---$1+2+4+\dots=-1$, Grandi's
 $1-1+1-\dots=\tfrac12$ (\cref{fig:geometric}, right)---the elementary face of the
 ``$\zeta^{(K)}$ converges left of every abscissa'' phenomenon.
@@ -1535,7 +1541,7 @@ $\leftrightarrow$ discrete is one comb read in either direction.
   \centering
   \includegraphics[width=0.96\textwidth]{geometric_bridge.png}
   \caption{The geometric series in miniature (\texttt{geometric\_bridge.py}).
-  \emph{Left:} with no zeros to move, the \emph{value} $g_K(s)$ migrates from the
+  \emph{Left:} with no zero string to move, the \emph{value} $g_K(s)$ migrates from the
   continuous shadow ($K=0$, squares) onto the discrete sum $1/(1-s)$ (stars); at
   $s=-1$ it slides down $\Re=\tfrac12$ from $\iu/\pi$ to Grandi's $\tfrac12$.
   \emph{Centre:} the comb error is $O(1/K)$ for every $s$, tracking
