@@ -136,6 +136,14 @@ def warp_phi(u, K):
 # |Im s| ~ 300 and stays accurate (degrading gracefully, no blow-up) well beyond -- slower
 # there (~2 s/eval at |Im s|=300) but correct. Below |Im s| = 40 nothing changes (wp=dps,
 # Jmax=60, degree=8); the worst case is just under a degree threshold (~2e-8 near |Im s|=150).
+#
+# CAUTION (the issue #49 error-lobe lesson): the guard constants below were tuned and
+# validated at this module's ambient dps = 30, whose ~15 spare digits absorb any shortfall
+# in the ramp. Evaluating inside a LEANER mp.workdps (ambient ~15-18) opens jagged error
+# lobes wherever the ceil-quantized guard dips under the true need: measured absolute
+# errors reach 2e-2 over |Im s| ~ 40-77 and 84-89 at ambient 18, while neighboring
+# heights sit at 1e-14. Keep lean-ambient work at >= 24 digits above |Im s| ~ 38
+# (see explorations/lambda_census.band_dps for the measured policy).
 _GL_DEGREE = 8        # base GaussLegendre degree: nodes ~ 3*2^(degree-1) = 384 (>= ~8/oscillation to K~45)
 _M = 14               # direct cells m=1..M; the moment tail (ratio ~ (1/M)^j) covers m>M
 _GUARD_ONSET = 40.0   # |Im s| below which the base dps / Jmax=60 / degree=8 already converge
