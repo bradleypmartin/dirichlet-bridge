@@ -599,7 +599,9 @@ def run_lamflow(t_max=36.0, verbose=True):
     inflate with |Im s| and the grid rebuilds per height). Above t ~ 36 the
     single-seed secant polish inside find_zeros starts losing zeros (the
     zero_birth plain-secant gotcha at inflated precision) -- extending the box
-    needs a Muller-based scan first; deferred. NOTE: the committed cache also
+    needs a Muller-based scan first; built in #49 (lambda_census.py, which
+    owns the t <= 120 census; this cache stays the #44 record). NOTE: the
+    committed cache also
     carries one winding-guided rescue (idx 10 at 0.185 + 30.88i, a narrow-basin
     zero the scan misses), so a fresh recompute re-finds 10 of the 11 and the
     spot-certification flags the gap -- the cache is the census of record."""
