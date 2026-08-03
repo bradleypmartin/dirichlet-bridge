@@ -16,8 +16,10 @@ doubles as a numerical certificate.
 
 The knob throughout is **`K`**, the number of Fourier harmonics of the
 discreteness kernel (the Euler–Maclaurin sawtooth ≡ Abel–Plana comb) that we keep.
-`K = 0` is a bland, **zeroless** continuous endpoint; `K → ∞` is the genuine
-Dirichlet object, with the non-trivial zeros condensed onto their lines.
+`K = 0` is a bland continuous endpoint — free of complex zeros on the ζ side, a
+structured off-critical string for the mean-zero families (η, χ₄; see below);
+`K → ∞` is the genuine Dirichlet object, with the non-trivial zeros condensed
+onto their lines.
 
 ---
 
@@ -78,17 +80,19 @@ drawn separately by `warp_coordinate.py`, §3.)
 the discreteness sawtooth back into the integrand, one at a time, and track each
 zero as a curve in `K` — the **zero-migration map**. Two equivalent routes are
 shown to agree term-by-term: the Euler–Maclaurin sawtooth `B̃₁(x) = {x} − ½` and
-the Abel–Plana Bose comb `1/(e^{2πx}−1)`. For ζ, the zeroless endpoint
-`1/(s−1) + ½` means the zeros are literally **born** as the first harmonic switches
-on, then slide onto `σ = ½`. For η, the `K = 0` ground string **splits**: half the
+the Abel–Plana Bose comb `1/(e^{2πx}−1)`. For ζ, the endpoint `1/(s−1) + ½` has no
+complex zeros (its lone zero is real, `s = −1` — the trivial-string seed of the
+stability section), so the non-trivial zeros are literally **born** as the first
+harmonic switches on, then slide onto `σ = ½`. For η, the `K = 0` ground string **splits**: half the
 zeros onto `σ = ½` (the genuine ζ zeros) and half onto `σ = 1` (the zeros of the
 `1 − 2^{1−s}` prefactor, at `t = 2πm/ln2`).
 
 **Why it matters.** This is the bridge's core mechanism made literal and the
 zero-*birth* event made visible. The split is a near-**bijection of densities**:
 `(t/2π)ln(t/2πe)` [critical line] + `(t ln2/2π)` [prefactor] sums to exactly the
-continuous endpoint's Riemann–von Mangoldt density — so no zeros are created or
-destroyed in the η migration, they are sorted onto two lines (the counting check
+continuous endpoint's Riemann–von Mangoldt density — consistent with no zeros created or
+destroyed in the η migration (the counts balance; the tracked trajectories confirm it
+zero-by-zero over the measured window), just sorted onto two lines (the counting check
 in the driver witnesses this).
 
 ---
@@ -406,7 +410,7 @@ stay.
 
 ### The bridge's own knob on `L(s,χ₄)` — `lfunction_bridge.py`
 
-![The K-knob and warp on the primitive Dirichlet L-function L(s,chi4): born onto a single line](bridge/figures/lfunction_bridge.png)
+![The K-knob and warp on the primitive Dirichlet L-function L(s,chi4): migrating onto a single line](bridge/figures/lfunction_bridge.png)
 
 **What it shows.** The bridge's `K`-knob and warp run on a genuine **primitive
 Dirichlet L-function**, `L(s,χ₄) = 1 − 3^{−s} + 5^{−s} − ⋯` (the odd character mod
@@ -416,13 +420,15 @@ oscillatory integral `G(s) = ∫₁^∞ sin(πx/2)·x^{−s} dx`, carrying an of
 Riemann–von Mangoldt string drifting to σ = 3/2 (§1's laws at frequency π/2). The
 comb migrates that string onto σ=½ at `O(1/K)`; because `L(s,χ₄)` is primitive (it
 does not factor as prefactor·ζ) there is **no companion line** — the whole ground
-string maps 1:1 onto the *single* line σ=½, the conductor `q = 4` supplying exactly
+string maps 1:1 onto the *single* line σ=½ (measured over the tracked window, like
+the warp bijection), the conductor `q = 4` supplying exactly
 the density doubling η got from its σ=1 comb. The midpoint warp of the phase-½
 carrier `sin(πy)` lands on `2^s·L(s,χ₄) = L(½,½,s)` — the Lerch specialisation, and
 the exact dual of the η-warp (§4): there the integer phase survived and the midpoint
 was annihilated; here the midpoint survives and the integer phase dies.
 
-**Why it matters.** It is the load-bearing data point that born-onto-½ is not a
+**Why it matters.** It is the load-bearing data point that arrival-onto-½ (here
+η-type migration from a structured string, not birth) is not a
 ζ/η accident: the behaviour survives — *cleaner*, in fact (one line, no split to
 bookkeep) — for a family with its own functional equation and critical line.
 
@@ -436,11 +442,14 @@ shift `α` runs `1 → ½`: of the first eight, five are "stable" (trajectory st
 *and* ends on σ=½, bulging off-line in between) and three are unstable, landing
 exactly on the σ=0 companion comb `2πim/ln2` — the same comb `warp_bridge.py`'s
 target carries. **Garunkštis–Tamošiūnas 2017** is the Lerch `λ=α` diagonal: ζ's
-zeros ride down onto `2^s·L(s,χ₄)`'s without ever leaving σ=½ (primitive target, no
-companion). Both live inside the **Lerch family square** `L(λ,α,s)`: the bridge's
+zeros ride down onto `2^s·L(s,χ₄)`'s — never leaving σ=½ in the tracked
+trajectories (G–T prove *symmetry about* the line; staying on it is the measured
+observation) — primitive target, no companion. Both live inside the **Lerch family square** `L(λ,α,s)`: the bridge's
 four objects (ζ, the half-shift, η, `2^s·L(s,χ₄)`) sit at its corners, and its
 three deformation paths are exactly the three published programs — FK's polylog
-knob (the α=1 edge), G–S's Hurwitz shift (the λ=1 edge), G–T's diagonal — each
+knob (the α=1 edge — the same argument `z`, though swept along the unit circle
+rather than FK's real diameter), G–S's Hurwitz shift (the λ=1 edge), G–T's
+diagonal — each
 landing on a different companion line (σ=1, σ=0, none).
 
 **Why it matters.** These sweeps are the honest counterweight to the bridge's
@@ -465,7 +474,8 @@ exactly two above — certifies the split independently of any root-finder.
 
 **Why it matters.** It is the sharpest single foil for the taxonomy: a knob that
 *generates* off-critical zeros and drives them **away** from the line, the exact
-opposite arrow to the bridge's. (Epstein zeta has no Euler product, so this is a
+opposite arrow to the bridge's. (Generic Epstein zeta has no Euler product — the
+`d=1,2` closed forms `2ζ(2s)`, `4ζ(s)β(s)` are the exceptions — so this is a
 geometric foil about the breadth of the phenomenon, not an arithmetic sibling.)
 
 ---
@@ -483,7 +493,9 @@ coordinate becomes `|ln s|`, the log-distance from the pole); there is **no
 abscissa** — the interpolant converges for `|s| > 1` too, summing the divergent
 series to their analytic values (`1+2+4+⋯ = −1`, Grandi's `1−1+1−⋯ = ½`); and the
 warp **factorizes** into a single scalar `J_K → 1` — no Hurwitz zeta, no moment
-machinery. No special functions and **no zeros** anywhere.
+machinery. No special functions, and **no zeros** at the endpoints or in the limit
+(a finite-`K` comb picks up one stray real zero — `g₀` vanishes at `s = e²` — that
+runs off to `+∞` as `K` grows, carrying no arithmetic).
 
 **Why it matters.** Precisely because it has no zeros, no functional equation, and
 no arithmetic, it isolates what the comb and warp actually *are*: a reshaping of

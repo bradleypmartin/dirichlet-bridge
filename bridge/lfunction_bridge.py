@@ -4,8 +4,9 @@ The headline fork-2 experiment (issue #20, epic #16). Every earlier stage of the
 discrete <-> continuous bridge worked on zeta or eta. Here we take the SAME machinery --
 the harmonic-truncation K-knob (the Euler-Maclaurin sawtooth == Abel-Plana comb,
 harmonic_bridge.py) and the nonlinear warp (warp_bridge.py / warp_eta.py) -- and apply
-it to a genuine primitive Dirichlet L-function, the first `zeroless-endpoint -> born ->
-onto sigma=1/2` test for a family beyond zeta/eta (LITERATURE.md sec4).
+it to a genuine primitive Dirichlet L-function, the first full `endpoint -> migrate ->
+onto sigma=1/2` test for a family beyond zeta/eta (the endpoint is eta-type STRUCTURED,
+not zeroless -- see "the design crux" below; LITERATURE.md sec4).
 
     L(s, chi_4) = sum_{n>=1} chi_4(n) n^{-s} = 1 - 3^{-s} + 5^{-s} - 7^{-s} + ...
 
@@ -34,7 +35,8 @@ prefactor x zeta), so there is **no companion line**. Where eta split its ground
 onto sigma=1/2 U sigma=1, chi_4's whole string lands on the single line sigma=1/2. The
 densities even match on the nose: G's string has density (t/2pi) ln(2t/pi e), and that IS
 the L(s, chi_4) zero density (conductor q=4 supplies the doubling eta got from its comb),
-so the migration is a 1:1 map of the ground string onto the critical line -- no split.
+so the migration is a 1:1 map of the ground string onto the critical line -- no split
+(measured over the tracked window, like warp_bridge's bijection).
 
 The K-knob (the additive comb) -- the headline
 ----------------------------------------------
@@ -46,7 +48,7 @@ B~_1(x) = {x} - 1/2 = -sum_k sin(2 pi k x)/(pi k) truncated at K harmonics:
 f(1)/2 = sin(pi/2)/2 = 1/2 the load-bearing half-weight (as in eta_K), and D_k the k-th
 sawtooth mode of f' living at the ODD-QUARTER frequencies (2k +/- 1/2) pi (chi_4's carrier
 sin(pi x/2) has fundamental pi/2, so its comb sits at 2k +/- 1/2, where eta's sat at 2k +/- 1).
-The K=0 anchor G + 1/2 is the ground string (Re ~ 0.8-0.96, pulled off G's Re ~ 1.7 string
+The K=0 anchor G + 1/2 is the ground string (Re ~ 0.78-0.96, pulled off G's Re ~ 1.7 string
 by the half-weight, exactly as in eta_K). As K grows the zeros migrate onto sigma=1/2 --
 ALL of them, one clean line -- at O(1/K) (rate_law.py's constant s/2 pi^2 governs it, the
 shared sawtooth tail).
@@ -128,6 +130,8 @@ def L_chi4(s):
     L(1, chi_4) = 4^{-1}(psi(3/4) - psi(1/4)) = pi/4 (Leibniz) there.
     """
     s = mp.mpc(s)
+    # inside the 1e-12 window the exact s=1 limit is returned for every s (error
+    # O(|s-1|)); outside it the zeta difference cancels the removable singularity
     if abs(s - 1) < mp.mpf("1e-12"):
         return mp.power(4, -s) * (mp.digamma(mp.mpf(3) / 4) - mp.digamma(mp.mpf(1) / 4))
     return mp.power(4, -s) * (mp.zeta(s, mp.mpf(1) / 4) - mp.zeta(s, mp.mpf(3) / 4))
@@ -208,6 +212,8 @@ def _polish_G(t_seed):
         z = mp.findroot(G, mp.mpc(sigma_law(t_seed), t_seed))
     except (ValueError, ZeroDivisionError):
         return None
+    # accept a root only if its residual sits 8 digits below the AMBIENT dps (1e-22 at
+    # this module's dps=30) -- the gate silently tracks mp.mp.dps, like cont_eta._polish
     if abs(G(z)) < mp.mpf(10) ** (-mp.mp.dps + 8) and z.imag > 1:
         return z
     return None
@@ -495,7 +501,7 @@ def _print_comb_migration():
         cells = "".join(f"{float(d[k].real):<7.3f}" if k in d else "  --   " for k in hdrK)
         print(f"   1/2+{g:8.4f}i   {cells}")
         trajs.append((g, traj))
-    print("   (K=0 = the G+1/2 ground string, Re ~ 0.8-1.0;  K=45 -> sigma=1/2, one clean line)")
+    print("   (K=0 = the G+1/2 ground string, Re ~ 0.78-0.96;  K=45 -> sigma=1/2, one clean line)")
     return trajs
 
 
@@ -505,7 +511,9 @@ def _print_rate_constant():
     chi_4's comb shares the *identical* leading constant with the zeta and eta combs -- the
     sawtooth tail sum_{k>K} 1/(pi k)^2 ~ 1/(pi^2 K) is weighted by the sign-carrier at the integer
     endpoint x=1, and sin(pi/2) = 1 there, just as zeta has 1 and eta has |cos pi| = 1. So no new
-    rate constant is needed; rate_law.rate_comb applies verbatim.
+    rate constant is needed for THIS carrier comb; rate_law.rate_comb applies verbatim. (The
+    constant belongs to the comb ORGANIZATION, not to L(s, chi_4): the residue-class comb for
+    the same L gets a q-dependent constant -- explorations/character_bridge.py, issue #37.)
     """
     print("\n== O(1/K) rate -- REUSING rate_law: K(L - L_comb_K) -> rate_comb(s) = s/2 pi^2 ==")
     print("   s                   K     |K(L - L_comb_K)|    |rate_comb| = |s/2 pi^2|")

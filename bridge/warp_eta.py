@@ -66,7 +66,8 @@ Evaluators (mirroring warp_bridge: fast primary + transparent cross-checks)
   * warp_eta_alpha -- the fast grid + cos-weighted binomial-moment evaluator (the
     warp_bridge.warp_K machinery with the cell sign (-1)^m, the moments weighted by cos(pi g),
     and the ALTERNATING tail -eta(s+j) in place of zeta(s+j)). Valid for all sigma; reuses
-    warp_bridge's |Im s|-scaled working precision / moment count / GL degree.
+    warp_bridge's |Im s|-scaled working precision / moment count / GL degree -- and so
+    inherits its CAUTION too: the guard constants presume warp_bridge's ambient dps = 30.
   * warp_eta_lerch -- the transparent reference int_0^1 cos(pi g) (-Phi(-1, s, 1+g)) du via the
     Lerch transcendent (mp.lerchphi at z = -1, the alternating Hurwitz zeta); agrees with the
     fast form to ~1e-16.
@@ -234,7 +235,8 @@ def comb_heights(t_max):
 
 
 # K schedule for the migration (warp_eta_alpha is the fast evaluator; K=45 lands the zeros
-# within ~2e-2 of their lines, like warp_bridge).
+# within ~2e-2 of their lines, like warp_bridge). A hand-kept literal copy of
+# warp_bridge.K_SCHEDULE -- edits there must be mirrored here.
 K_SCHEDULE = [1, 2, 3, 4, 5, 7, 9, 12, 16, 21, 27, 35, 45]
 
 

@@ -3,7 +3,9 @@ spectrum vs Riemann zeros.
 
 VENDORED NOTE (this repo): copied from the originating research project as a
 dependency of `eta_two_component.py`, which uses only `load_riemann_zeros` and
-`unfold_riemann_zeros`. The Maass arc below needs
+`unfold_riemann_zeros`; `explorations/chi6_two_component.py` additionally uses
+the Wigner-GUE/Poisson pdfs+cdfs and the spacing helpers
+(`nearest_neighbour_spacings`, `rescale_to_unit_mean`). The Maass arc below needs
 `data/maass_eigenvalues_psl2z.csv`, which is NOT shipped here -- running this
 file as a script will fail at that load. Kept whole so the vendored code
 matches its source; see CLAUDE.md "Gotchas".

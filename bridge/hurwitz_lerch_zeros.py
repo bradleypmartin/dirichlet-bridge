@@ -29,12 +29,15 @@ three deformation paths between them are exactly the three published deform-and-
   * the  lambda = 1  edge (alpha: 1 -> 1/2) is the **Garunkstis-Steuding Hurwitz shift**;
     its "unstable" zeros land on the  sigma = 0  companion comb  s = 2 pi i m / log 2  (the same
     comb warp_bridge.py's half-shift target carries).
-  * the  alpha = 1  edge (lambda: 1 -> 1/2) is the **Fornberg-Kolbig polylog argument knob**
-    (jonquiere_zeros.py) in disguise -- z = e^{2 pi i lambda} sweeps the unit circle from 1 to -1,
-    and F(-1, s) = -eta; its companion comb sits on  sigma = 1  (the eta prefactor 1 - 2^{1-s}).
+  * the  alpha = 1  edge (lambda: 1 -> 1/2) drives the **same polylog argument z as the
+    Fornberg-Kolbig knob** (jonquiere_zeros.py) between the same endpoints -- but along the unit
+    circle (z = e^{2 pi i lambda}, |z| = 1, from 1 to -1) rather than FK's real diameter
+    (-1, 1), so the zero trajectories differ even though F(-1, s) = -eta closes the same pair;
+    its companion comb sits on  sigma = 1  (the eta prefactor 1 - 2^{1-s}).
   * the diagonal  lambda = alpha (1 -> 1/2) is **Garunkstis-Tamosiunas**; it lands on the primitive
     L(s, chi_4) (issue #20, lfunction_bridge.py), which is PRIMITIVE, so there is **no companion**
-    -- the zeros stay glued to sigma = 1/2 the whole way.
+    -- measured here, the three tracked zeros never leave sigma = 1/2 (G-T prove *symmetry
+    about* the line, not location on it; the glue is this driver's observation).
 
 So the same family knits together all three published ancestors and the bridge's own objects, with
 the companion line (sigma = 0 / sigma = 1 / none) reading off which edge you took.
@@ -111,9 +114,11 @@ def lerch(lam, alpha, s):
 
     z = e^{2 pi i lambda}. GOTCHA: at *exact* z = 1 mpmath special-cases lerchphi(1, s, a) =
     zeta(s, a) correctly -- but e^{2 pi i lam} at integer lam never rounds to exactly 1 (it is
-    1 + O(1e-33)j at dps=30), and for z that close to 1 (but != 1) lerchphi silently returns
-    wildly wrong values for sigma <= 1, with no exception. So splice in the Hurwitz zeta
-    whenever z is numerically 1. The Lerch analog of lfunction_bridge's L(1, chi_4) = pi/4
+    1 + O(mp.eps)j, measured 3.4e-31 at dps=30), and for z that close to 1 (but != 1) lerchphi
+    silently returns wildly wrong values for sigma <= 1, with no exception. So splice in the
+    Hurwitz zeta whenever z is numerically 1. NB the 1e-18 splice threshold below presumes
+    ambient dps >~ 20: at dps=15, |z-1| ~ 2.4e-16 MISSES the splice and the garbage flows
+    through silently. The Lerch analog of lfunction_bridge's L(1, chi_4) = pi/4
     splice, but sharper: the failure mode is silent garbage, not an inf.
     """
     lam = mp.mpf(lam)
@@ -145,6 +150,8 @@ def L_chi4(s):
     (Same evaluator as lfunction_bridge.L_chi4, kept local so this driver is standalone.)
     """
     s = mp.mpc(s)
+    # inside the 1e-12 window the exact s=1 limit is returned for every s (error
+    # O(|s-1|)); outside it the zeta difference cancels the removable singularity
     if abs(s - 1) < mp.mpf("1e-12"):
         return mp.power(4, -s) * (mp.digamma(mp.mpf(3) / 4) - mp.digamma(mp.mpf(1) / 4))
     return mp.power(4, -s) * (mp.zeta(s, mp.mpf(1) / 4) - mp.zeta(s, mp.mpf(3) / 4))
@@ -165,8 +172,9 @@ UNIFICATION = [
 # 3. zero-trajectory tracing (Newton continuation in a parameter)
 # --------------------------------------------------------------------------
 # Roots good to this tolerance are ample for tracing/plotting; mpmath's default (eps*2^10
-# ~ 2e-28 at dps=30) is tighter than the secant reaches on these flat trajectories (cf
-# jonquiere_zeros).
+# ~ 2e-28 at dps=30) is tighter than the secant reaches on these flat trajectories. NB two
+# decades looser than jonquiere/epstein's 1e-18 -- a deliberate divergence, validated by
+# this module's traces; do not "harmonize" it without re-running them.
 _TRACE_TOL = mp.mpf("1e-16")
 
 
@@ -175,7 +183,8 @@ def trace_zero(make_fn, params, s0, tol=_TRACE_TOL, max_jump=3.0):
 
     Seeded at s0 for params[0], each subsequent solve reuses the previous root. Returns
     [(p, s), ...]; stops (returning what it has) if a step fails to converge or the root jumps
-    by more than `max_jump` (a branch hop -- gotcha C.3 / findroot raising on flat trajectories).
+    by more than `max_jump` (a branch hop onto a neighboring trajectory, or findroot
+    raising on a flat one).
     """
     s = mp.mpc(s0)
     out = []  # type: List[Tuple[object, mp.mpc]]

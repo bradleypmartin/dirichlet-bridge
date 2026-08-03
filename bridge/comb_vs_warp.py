@@ -32,8 +32,9 @@ NONLINEAR in phi_K. As K -> infinity, x + phi_K(x) -> floor(x) + 1/2, so each un
 collapses onto its midpoint and w_K -> (floor(x)+1/2)^{-s}, a midpoint staircase -- the route
 that lands on the half-shifted zeta(s, 1/2) of warp_bridge.
 
-Both start at the *same* bland endpoint: at K = 0, phi_0 = 0, so b_0 = w_0 = x^{-s} and both
-objects are 1/(s-1) (the comb's with its +1/2). Restoring harmonics then pulls them apart --
+Both start from the *same* bland integrand: at K = 0, phi_0 = 0, so b_0 = w_0 = x^{-s}.
+The two OBJECTS differ by a boundary constant -- the comb's is 1/(s-1) + 1/2 (the n=1
+half-weight), the warp's the bare 1/(s-1). Restoring harmonics then pulls them apart --
 by ADDITION on the left, by COMPOSITION on the right. (`warp_coordinate.py` draws the warp
 *coordinate* n* = x + phi_K; this driver draws the two *integrands* the routes integrate.)
 

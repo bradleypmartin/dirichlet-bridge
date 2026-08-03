@@ -28,7 +28,8 @@ cancellation leaves a clean two-term reduction (`F_asym`):
 
 The first term is the bland continuous pole; the second is the oscillatory term
 that carries the zeros. Setting F = 0 and balancing magnitude vs phase gives three
-laws, all confirmed numerically to 3-5 digits over 8 < t < 160:
+laws, confirmed numerically over 8 < t < 160 (2-3 digits for the sigma-law, 3 for
+spacing, 4-5 for the counting constant):
 
   * real-part law  (`sigma_law`):  pi^{sigma-1} sqrt(2 pi) t^{3/2-sigma} = 2, i.e.
         sigma(t) = (3/2 ln t - 1/2 ln 2pi) / ln(t/pi)   ->  3/2   (logarithmically).

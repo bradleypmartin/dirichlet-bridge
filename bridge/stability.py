@@ -21,25 +21,33 @@ every harmonic preserves it.
 
 So "where is it stable?" has an unusual answer that inverts the Dirichlet intuition:
 
-  * Re(s) is essentially FREE. zeta^{(K)} converges to zeta(s) at the same O(1/K) rate at
-    sigma = -2 as at sigma = 2 (panel a). There is no half-plane boundary; the curves for
-    sigma in {-2, -1/2, 1/2, 2} lie on top of each other. (Contrast: the zeta series needs
-    sigma>1, the eta series sigma>0 -- both shaded for reference.)
+  * Re(s) is essentially FREE at the plotted heights. zeta^{(K)} converges to zeta(s) at
+    the same O(1/K) rate at sigma = -2 as at sigma = 2 (panel a): the error constant is
+    ~ |s|/(2 pi^2), so once t >= 14 the height term dominates and the curves for
+    sigma in {-2, -1/2, 1/2, 2} lie on top of each other (at small t or much larger
+    |sigma| the |s| dependence would separate them). There is no half-plane boundary.
+    (Contrast: the zeta series needs sigma>1, the eta series sigma>0 -- both shaded for
+    reference.)
 
-  * HEIGHT t = Im(s) is the cost. The leading rate constant is Delta_1 = s/(2 pi^2)
-    (rate_law.rate_comb), so the fixed-K error grows ~ |s| ~ t: deeper up the strip needs
-    proportionally more harmonics (panel b, overlaid with the |s|/(2 pi^2 K) law). This is
+  * HEIGHT t = Im(s) is the cost. The leading rate constant is rate_constant = s/(2 pi^2)
+    (= rate_law.rate_comb, same target-minus-object sign convention), so the fixed-K error
+    grows ~ |s| ~ t: deeper up the strip needs proportionally more harmonics (panel b,
+    overlaid with the |s|/(2 pi^2 K) law -- which tracks while K >~ |s|: error/law is 1.05
+    at the panel's right edge (t=105, K=40), drifts to ~1.6 by t=300 at K=40, and returns
+    to 1.02 there at K=200). This is
     the convergence-side face of the birth-K / catch-K law (rate_law.catch_K): higher,
     denser zeros take more harmonics to resolve. It depends on t (and on |s|), not on a
     vertical line in sigma.
 
-The only genuine limit is finite precision, and it too is set by HEIGHT, not Re(s): at very
-large t the closed-form moments carry e^{pi t/2}-scale cancellations, so a fixed working
-precision eventually floors (the warp evaluator documents this biting near |Im s| ~ 110 and
-fixes it by scaling dps / term-count / grid with |Im s|; see warp_bridge). But the O(1/K)
-convergence is so slow that at moderate t and dps=30 that floor sits far below the achievable
-error -- zeta^{(K)} descends cleanly with no creep through K in the hundreds (panel b stays on
-the law). In EXACT arithmetic there is no divergence at any K: more harmonics always help.
+The only genuine limit is finite precision, and even that is generous here: the COMB's
+closed-form moments show no measurable height-driven precision loss (relative error
+<= 1e-13 at dps=15 out to t = 10^4 -- the incomplete-gamma factors evaluate to relative
+accuracy). The e^{pi t/2}-scale cancellation floor belongs to the WARP evaluator
+(binomial-tail amplification, biting near |Im s| ~ 110 and fixed by scaling dps /
+term-count / grid with |Im s|; see warp_bridge). zeta^{(K)} descends cleanly with no
+creep through K in the hundreds (panel b stays on the law). In EXACT arithmetic there is
+no divergence at any K, and at leading order more harmonics always help (the asymptotic
+1/K law does not promise monotonicity at every finite K; none was observed).
 
 Run directly to validate + plot: writes bridge/figures/stability.png.
 """
@@ -63,11 +71,13 @@ PI = mp.pi
 
 
 def rate_constant(s):
-    """The comb leading rate constant Delta_1 = s/(2 pi^2): zeta(s)-zeta^{(K)}(s) ~ -Delta_1/K.
+    """The comb leading rate constant s/(2 pi^2): zeta(s) - zeta^{(K)}(s) ~ rate_constant/K.
 
-    The same closed form as rate_law.rate_comb; reproduced here so this stability companion
-    has no heavy cross-imports. Its magnitude ~ |s| ~ t is exactly why HEIGHT, not Re(s),
-    sets how many harmonics a given accuracy needs.
+    The same closed form AND the same target-minus-object sign convention as
+    rate_law.rate_comb (in rate_law's Delta-notation the object-minus-target Delta_1 is
+    the NEGATIVE of this); reproduced here so this stability companion has no heavy
+    cross-imports. Its magnitude ~ |s| ~ t is exactly why HEIGHT, not Re(s), sets how
+    many harmonics a given accuracy needs.
     """
     return mp.mpc(s) / (2 * PI**2)
 

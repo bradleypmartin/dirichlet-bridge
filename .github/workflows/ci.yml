@@ -13,7 +13,7 @@ jobs:
         include:
           - { os: ubuntu-latest,  python: "3.9"  }   # the declared floor
           - { os: ubuntu-latest,  python: "3.12" }   # ceiling of the pinned wheels
-          - { os: windows-latest, python: "3.9"  }   # the dev platform (paths, encodings)
+          - { os: windows-latest, python: "3.9"  }   # historical dev platform; the paths/encodings seat
           - { os: macos-latest,   python: "3.12" }   # arm64 runners ship no 3.9 build
     runs-on: ${{ matrix.os }}
     steps:

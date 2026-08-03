@@ -41,8 +41,9 @@ Per-machine venv (gitignored):
 
 - Setup: `python -m venv .venv` then `pip install -r requirements.txt`
   (numpy, scipy, mpmath, matplotlib, pytest — pinned).
-- Fast suite: `pytest` (142 tests, ~95 s; the slow high-precision checks are
-  deselected by default via `addopts = -m "not slow"` in `pytest.ini`).
+- Fast suite: `pytest` (142 tests, ~1–2 min machine-dependent; the slow
+  high-precision checks are deselected by default via `addopts = -m "not slow"`
+  in `pytest.ini`).
 - Slow suite: `pytest -m slow`.
 - Each driver self-validates and writes a figure, e.g.
   `python bridge/cont_eta.py` → `bridge/figures/cont_eta.png`.
@@ -76,7 +77,9 @@ for pytest.
   `η=(1−2^{1-s})ζ`, reproducing the σ=½ ∪ σ=1 split by a second route. Reuses the
   `warp_bridge` moment machinery (cos-weighted moments + alternating `−η` tail).
 - `rate_law.py` — the unified `O(1/K)` rate / birth-`K` law; the Gram's-law
-  vertical-axis duality.
+  vertical-axis duality; plus the three "loose ends" (the `C_warp` closed form, the
+  Montgomery a-values, the FE-mirror break) with their own second figure
+  `rate_law_loose_ends.png`.
 - `stability.py` — the stability corollary of the rate law: each finite-`K`
   interpolant is meromorphic on all of ℂ (no abscissa; converges at σ<0), and the
   cost is **height** `t`, not `Re s` (error ∼ `|s|/(2π²K)`).
@@ -113,7 +116,8 @@ for pytest.
   (Lerch tie-in), load-bearing `+2^s`, single line (2^s never vanishes). Documented aside: warping
   the *genuine* χ₄ carrier `sin(πx/2)` at midpoints lands on a **mod-8** character
   `2^s(√2/2)L(s,χ₋₈)` (a period-q carrier's half-integer samples reveal period-2q). Reuses
-  `harmonic_bridge` (Smom/Cmom, migrate) + `warp_bridge` (grid+moment machinery; sin-weighted).
+  `harmonic_bridge` (Smom/Cmom, migrate) + `warp_bridge` (grid+moment machinery; sin-weighted)
+  + `rate_law` (the `O(1/K)` constant and the figure's rate line).
 - `hurwitz_lerch_zeros.py` — reproduces the closest **published** deform-and-track analogues
   (issue #21): **Garunkštis–Steuding 2007** (track `ζ(s,α)` zeros as the shift `α:1→½`; the
   "stable zero" = trajectory starts+ends on `σ=½`, vs the "unstable" ones landing on the `σ=0`
@@ -124,7 +128,8 @@ for pytest.
   (`σ=0` companion), the `α=1` edge is Fornberg–Kölbig's polylog knob (`jonquiere_zeros.py`;
   `σ=1` companion), the diagonal is G–T (no companion). Contrasts the *parameter*-sweep (wanders
   on/off ½ between two zero-rich ends) with our K-knob (born onto ½ from a zeroless endpoint,
-  reusing `harmonic_bridge.zeta_K`). Evaluator gotcha: `lerchphi` diverges at `z→1`, spliced with
+  reusing `harmonic_bridge.zeta_K`). Evaluator gotcha: `lerchphi` returns silent garbage at
+  `z→1` (no exception, wildly wrong values for `σ≤1`), spliced with
   the Hurwitz zeta. Self-contained (only `harmonic_bridge` for the K-knob contrast panel).
 - `epstein_zeros.py` — the **reverse-direction foil** (issue #22): reproduces **Travěnec–Šamaj
   2022** (dimension knob; Bétermin–Šamaj–Travěnec 2021 shape knob is the cited companion) on the
@@ -154,12 +159,16 @@ for pytest.
   (`app:geometric`). Self-contained (no bridge cross-imports).
 - `eta_two_component.py` — the η zeros as a crystal × GUE spectrum; the p=2-ghost.
   Reads `data/riemann_zeros.csv`.
-- vendored helpers used only by `eta_two_component`: `gue_spacing` (→
-  `maass_loader`), `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`.
+- vendored helpers used by `eta_two_component` — and, more deeply, by
+  `explorations/chi6_two_component.py` (a second consumer since 2026-08): `gue_spacing`
+  (→ `maass_loader`), `spectral_rigidity`, `zero_form_factor`, `cone_log_prime`.
+  Any prune must be scoped against BOTH consumers (explorations' tests are outside
+  the default suite, so a bridge-only prune passes CI while breaking them).
 - `figstyle.py` — shared Matplotlib font bump (`figstyle.enlarge()`); each driver
   calls it before plotting so the embedded figures stay legible when scaled down in
   the preprint. The dense/long-title figures (`rate_law`, `eta_two_component`,
-  `warp_coordinate`, `warp_eta`, `comb_vs_warp`, `jonquiere_zeros`, `geometric_bridge`)
+  `warp_coordinate`, `warp_eta`, `comb_vs_warp`, `jonquiere_zeros`, `geometric_bridge`,
+  `trivial_zeros`, `epstein_zeros`, `lfunction_bridge`, `hurwitz_lerch_zeros`)
   override `axes.titlesize`/`figure.titlesize` locally so titles don't overrun. Changing
   sizes here means re-running `python repro.py`.
 
@@ -169,13 +178,19 @@ dependency). `tests/` — one test module per driver. `paper/` — the arXiv pre
 referenced from `bridge/figures/` via `\graphicspath` (not copied).
 
 `explorations/` — **post-manuscript experimental arcs, deliberately disjoint from
-the frozen paper** (own README, figures, tests, and `references-37.bib`; nothing
-in `bridge/`, `paper/`, `RESULTS.md`, or `repro.py` references it). Its tests are
-OUTSIDE the default suite (`pytest.ini`'s `testpaths = tests`) and outside CI —
-run with `pytest explorations/tests`; its drivers are local/manual only (minutes).
-First arc: `character_bridge.py` (issue #37 — the K-knob on Dirichlet `L(s,χ)`
-via the residue-class identity `L = q^{-s} Σ_a χ(a) ζ(s,a/q)`; sub-issues
-#38/#39/#40). If an arc matures it becomes a second paper or a new appendix —
+the frozen paper** (own README, figures, tests, and `references-37.bib`; no *code*
+dependency runs from `bridge/`, `paper/`, `RESULTS.md`, or `repro.py` into it —
+though comments may point there for lessons learned, e.g. `warp_bridge`'s CAUTION
+→ `lambda_census.band_dps`; explorations imports bridge/ freely the other way).
+Its tests are OUTSIDE the default suite (`pytest.ini`'s `testpaths = tests`) and
+outside CI — run with `pytest explorations/tests`; its drivers are local/manual
+only (minutes). Eight modules to date spanning the #37→#49 arcs: the character-comb
+K-knob (`character_bridge`, #37), χ₆ spectral stats (`chi6_two_component`, #38),
+zero birth from the identically-zero endpoint (`zero_birth`, #39), the q/K
+conductor sweep (`conductor_sweep`, #40), the arithmetic birth clock
+(`arithmetic_clock`, #44), the Möbius dressing (`mobius_dressing`, #47), the
+conductor clock (`conductor_clock`, #48), and the λ-census (`lambda_census`, #49).
+If an arc matures it becomes a second paper or a new appendix —
 never edits to the frozen manuscript.
 
 ## Gotchas
@@ -189,7 +204,8 @@ never edits to the frozen manuscript.
 - Only `riemann_zeros.csv` is needed at runtime; the Maass eigenvalue CSV is not.
 - `_private/` is a gitignored local stash for full-text papers (`_private/papers/`)
   and scratch material we keep organized but never commit (copyright + bulk).
-  Reproductions cite the paper; they don't ship it. The FK1975 PDF lives there.
+  Reproductions cite the paper; they don't ship it. The FK1975 PDF lives there
+  (on the Windows machine; `_private/` may be absent on other checkouts).
 
 ## Status & open work (issues in this repo)
 The original arc (#1 epic; #2 literature; #3 extraction; #4 presentation &

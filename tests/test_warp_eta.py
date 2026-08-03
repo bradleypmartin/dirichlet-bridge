@@ -22,6 +22,7 @@ from __future__ import annotations
 import mpmath as mp
 import pytest
 
+import harmonic_bridge as hb
 import warp_eta as we
 
 # short continuation schedule for the migration tests (warp_eta_alpha is the fast evaluator).
@@ -99,8 +100,8 @@ def test_fast_matches_raw_integral():
 @pytest.mark.slow
 def test_zeta_zeros_climb_to_half():
     """zeta zero 1/2+14.13i: warp_eta_K migrates it onto sigma = 1/2 (the genuine zeta zero)."""
-    t = dict((K, zz) for K, zz in we.hb.migrate(we.warp_eta_K, mp.mpc(0.5, 14.134725),
-                                                schedule=SHORT) if zz is not None)
+    t = dict((K, zz) for K, zz in hb.migrate(we.warp_eta_K, mp.mpc(0.5, 14.134725),
+                                             schedule=SHORT) if zz is not None)
     assert 32 in t
     assert abs(float(t[32].real) - 0.5) < 0.06               # climbed onto the critical line
 
@@ -109,8 +110,8 @@ def test_zeta_zeros_climb_to_half():
 def test_prefactor_comb_climbs_to_one():
     """The prefactor zero at t = 2 pi/ln2 (~9.06) migrates onto sigma = 1 (the eta comb)."""
     pref_t = 2 * float(mp.pi) / float(mp.log(2))             # ~ 9.0647
-    t = dict((K, zz) for K, zz in we.hb.migrate(we.warp_eta_K, mp.mpc(1.0, pref_t),
-                                                schedule=SHORT) if zz is not None)
+    t = dict((K, zz) for K, zz in hb.migrate(we.warp_eta_K, mp.mpc(1.0, pref_t),
+                                             schedule=SHORT) if zz is not None)
     assert 32 in t
     assert abs(float(t[32].real) - 1.0) < 0.06               # -> sigma = 1
     assert abs(float(t[32].imag) - pref_t) < 0.2             # stays at the comb height

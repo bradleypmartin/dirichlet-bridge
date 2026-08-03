@@ -117,8 +117,14 @@ bridge/        the six core drivers + six companions + five appendix drivers + v
 data/          riemann_zeros.csv (cached non-trivial zeros)
 tests/         one test module per driver
 paper/         arXiv preprint: LaTeX source, references.bib, built PDF
+explorations/  post-manuscript experimental arcs -- disjoint from the paper; own README, tests (not in the default suite) and figures
 conftest.py    puts bridge/ on sys.path for pytest
 ```
+
+The frozen study above never depends on `explorations/`; that directory hosts
+follow-on experiments (see [`explorations/README.md`](explorations/README.md))
+that may become a second paper, and its tests run separately
+(`pytest explorations/tests`).
 
 ## Relation to known work (prior art it is distinct *from*)
 

@@ -97,3 +97,8 @@ There is one test module per driver under `tests/`. If a driver writes a new
 figure, add it to the `DRIVERS` table in `repro.py` (stem, figure filename(s),
 runtime note) and, if it should be committed and embedded, add a `!`-exception for
 it in `.gitignore` and a section in `RESULTS.md`.
+
+(Everything above describes the frozen `bridge/` study. Post-manuscript
+experimental work lives in `explorations/` — its own README, drivers, and a
+second test tree run separately via `pytest explorations/tests`, outside the
+default suite and CI.)

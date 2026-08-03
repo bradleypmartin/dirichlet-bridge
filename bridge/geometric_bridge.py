@@ -4,8 +4,11 @@ A deliberately elementary companion to the arc (issue #30 / epic #29). Everythin
 bridge does with zeta -- the bland continuous endpoint that keeps the pole, the harmonic
 comb that restores discreteness, the nonlinear warp, the O(1/K) rate, the no-abscissa
 stability -- is here reproduced on the simplest possible Dirichlet-type object, the
-**geometric series**, where every step is a *closed form in elementary functions* and there
-are **no special functions and no zeros** at all.
+**geometric series**, where every step is a *closed form in elementary functions*, there
+are **no special functions**, and the endpoints carry **no zeros** (the shadow -1/ln s and
+the limit 1/(1-s) never vanish; a finite-K comb interpolant does pick up stray real zeros
+-- g_0 = -1/ln s + 1/2 vanishes at s = e^2 -- but they carry no arithmetic and drift off
+as K grows, nothing like the zeta arc's zero-birth).
 
 Honest framing (read this first)
 --------------------------------
@@ -13,7 +16,11 @@ Nothing in this module is new mathematics. The one identity that does the work i
 classical partial-fraction (Mittag-Leffler) expansion of the hyperbolic cotangent -- equivalently
 the generating function of the Bernoulli numbers -- and the fact that the finite-K interpolants
 sum the *divergent* geometric series (1+2+4+... = -1, Grandi 1-1+1-... = 1/2) to their analytic
-values is textbook Abel/Euler summability (Hardy, *Divergent Series*, 1949; DLMF Ch. 24, Sec. 2.10).
+values is classical divergent-series territory (Hardy, *Divergent Series*, 1949; DLMF Ch. 24,
+Sec. 2.10) -- Grandi's series by textbook Abel summability, while 1+2+4+... = -1 sits beyond
+every classical regular method (s = 2 is even outside the Mittag-Leffler star) and is the
+rational function's analytic continuation, Hardy's own opening example of a "sum" only
+continuation assigns.
 The module's only purpose is **illustrative**: it is a fully-transparent consistency check of the
 whole apparatus, and it makes the arc's subtlest point -- convergence *beyond the classical domain*
 -- completely elementary. It has no zeros, so it advances none of the zero-birth/migration story;
@@ -53,8 +60,10 @@ So the error is exactly the arc's O(1/K) law with that substitution (`rate_cost`
     |g_K(s) - 1/(1-s)| = |ln s|/(2 pi^2) (1/K - 1/(2K^2) + ...).
 
 The "height / cost" coordinate that was |s| ~ t for zeta is |ln s| here (log-distance of s from
-the pole/unit circle). And -- the stability corollary, made trivial -- every g_K is meromorphic on
-all of C (one pole at s=1), so there is **no abscissa**: g_K converges for |s|>1 too, summing the
+the pole/unit circle). And -- the stability corollary, made trivial -- every g_K is meromorphic
+on the cut plane C \ (-inf, 0] (one pole at s=1; the ln s inside carries a branch point at s=0,
+with an O(1/K) monodromy about it that vanishes only in the K->inf limit 1/(1-s)), so on the
+principal branch there is **no abscissa**: g_K converges for |s|>1 too, summing the
 divergent series to their analytic values (`no_abscissa` in __main__). The classical |s|<1 domain
 is irrelevant to the interpolants.
 
@@ -121,8 +130,9 @@ def harm(s, k):
 def geom_K(s, K):
     """g_K(s) = -1/ln s + 1/2 - sum_{k=1}^K harm(s,k).  K=0: shadow+1/2;  K->inf: 1/(1-s).
 
-    Inlines `harm` with L = ln s computed once (the per-term reference is `harm`); valid for
-    all s != 0, 1 -- meromorphic on all of C, so there is no abscissa of convergence.
+    Inlines `harm` with L = ln s computed once (the per-term reference is `harm`); valid on
+    the principal branch for all s != 0, 1 (the branch point at s = 0 is the price of ln s),
+    so there is no abscissa of convergence.
     """
     s = mp.mpc(s)
     L = mp.log(s)
@@ -188,7 +198,11 @@ def warp_J(s, K, offset=mp.mpf("-0.5")):
 
 
 def warp_K(s, K):
-    """Integer-pinning warp  int_0^inf s^{x-1/2+phi_K} dx = (1/(1-s)) . J_K(s,K) -> 1/(1-s)."""
+    """Integer-pinning warp  int_0^inf s^{x-1/2+phi_K} dx = (1/(1-s)) . J_K(s,K) -> 1/(1-s).
+
+    (The literal integral converges only for |s| < 1, like `warp_raw`; elsewhere this
+    product form is its continuation.)
+    """
     return discrete(s) * warp_J(s, K, mp.mpf("-0.5"))
 
 

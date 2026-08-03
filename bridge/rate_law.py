@@ -61,9 +61,10 @@ This ONE formula covers all five zero families (`ROUTES`), each just a different
 
 The SIGN of Re a_1 is the approach side (Re a_1 > 0: from above; < 0: from below). For
 the comb it ALTERNATES with the zero (the phase of 1/zeta'(rho) wanders), so some comb
-zeros descend onto 1/2 from above and some from below; for the warp it is uniformly < 0
-(from below). That is the "comb descends / warp climbs" contrast, sharpened: not a
-blanket direction but the sign of a computable coefficient.
+zeros descend onto 1/2 from above and some from below; for the warp it is < 0 at every
+tracked zero (from below; measured, not proved). That is the "comb descends / warp
+climbs" contrast, sharpened: not a blanket direction but the sign of a computable
+coefficient.
 
 Overshoot, the sub-leading correction (`disp_coeff2`)
 ----------------------------------------------------
@@ -76,47 +77,39 @@ and ends on the side sign(Re a_1); so
     comb overshoots (crosses 1/2)  <=>  Re a_1(rho) < 0   (`overshoots`)
 
 -- born above, must dive below to reach its from-below limit. The WARP zeros are born
-*below* 1/2 (sigma at K=1 is 0.03 -> 0.22) AND end below (Re a_1 < 0 uniformly), so they
-never cross: warp NEVER overshoots. That is the comb-overshoot / warp-no-overshoot
-asymmetry, resolved.
+*below* 1/2 (sigma at K=1 scatters over 0.03-0.22, no height trend) AND end below
+(Re a_1 < 0 at every tracked zero), so none of them crosses: the warp never overshoots
+(measured over the same tracked set as the sign uniformity it rests on). That is the
+comb-overshoot / warp-no-overshoot asymmetry, resolved.
 
 Birth-K law (`catch_K`)
 -----------------------
 "Which K first catches gamma_n" (lands its zero within eps of the limiting line):
-|Re a_1|/K < eps, so  catch_K(rho, eps) = |Re a_1(rho)|/eps. Since |a_1| ~
-|rho|/(2 pi^2 |target'(rho)|) and |target'| grows only polylogarithmically, catch_K grows
-(on average -- it fluctuates with |zeta'(rho)|) with the height gamma: higher zeros, being
-denser by the Riemann-von Mangoldt law (local spacing 2 pi/ln(t/pi)), need more
-harmonics to resolve. (`catch_K`)
+|Re a_1|/K < eps, so  catch_K(rho, eps) = |Re a_1(rho)|/eps -- an estimated threshold
+from the leading term, not a monotone law. Since |a_1| ~ |rho|/(2 pi^2 |target'(rho)|)
+and |target'| grows only polylogarithmically ON AVERAGE (pointwise it fluctuates
+hugely -- that is loose end 2 below), catch_K grows on average with the height gamma:
+higher zeros, being denser by the Riemann-von Mangoldt law (mean spacing
+2 pi/ln(t/2pi)), need more harmonics to resolve. (`catch_K`)
 
 Vertical migration: the Gram phase  arg(a_1) ~ pi delta_n
 ---------------------------------------------------------
 a_1 is COMPLEX; its imaginary part is the vertical (Im s) migration Im(s_K - rho) ~
 Im(a_1)/K (`vertical_side`). For the comb, the Hardy Z-function collapses the whole
-displacement angle to the zero's position in its Gram interval. With
-zeta'(rho) = -i e^{-i theta(gamma)} Z'(gamma) and sign Z'(gamma_n) = (-1)^{n-1},
-
-    Re a_1 ~ cos(pi delta_n),   Im a_1 ~ sin(pi delta_n),
-    delta_n = theta(gamma_n)/pi - (n-2)   (Gram-interval position, `gram_position`).
-
-A Gram-REGULAR zero has delta_n in (0,1), so sin(pi delta_n) > 0 ALWAYS -> Im a_1 > 0
-(vertical pinned UP), while cos(pi delta_n) changes sign at delta_n = 1/2 -> Re a_1
-ALTERNATES (the 'comb approach side alternates', now explained: the zero sits in the
-early/late half of its Gram interval). This is the **axis-duality** sharpened: the comb
-pins the VERTICAL axis (Im a_1 > 0) and lets the horizontal wander; the warp pins the
-HORIZONTAL (Re a_1 < 0 uniformly) and lets the vertical oscillate (`vertical_side`
-over warp_zeta takes both signs -- the warp inherits the wandering phase of its non-closed-
-form C_warp, so there is no comb-style arithmetic rule for it).
-
-The headline: comb Im a_1 > 0 is **NOT universal** -- it is exactly **Gram's law**. Im a_1
-flips negative precisely when Gram's law fails (delta_n leaves (0,1)); the first three are
-the 127th, 136th, 196th zeros (gamma ~ 282.47, 295.57, 391.46), n=127 being the classically
-first Gram's-law failure. There |Im a_1| ~ |sin(pi delta_n)| is tiny (the soft sign, the
-zero nearly ON a Gram point), so those zeros are the slowest to settle their vertical
-approach. The convention-free criterion sign(Im a_1) = sign((-1)^n sin theta(gamma_n))
-matches over n=1..200 with zero exceptions. So the bridge's vertical migration is a
-**Gram's-law detector**. (Needs zeros up to gamma ~ 400 to see -- comb-only, so the
-high-tau warp caveats do not bite the comb result.)
+displacement angle to the zero's Gram-interval position delta_n:  Re a_1 ~
+cos(pi delta_n),  Im a_1 ~ sin(pi delta_n)  (derivation and conventions in
+`gram_position`). The headline: comb Im a_1 > 0 is **NOT universal** -- it is exactly
+**Gram's law**, flipping negative precisely at the Gram-law failures (first at the
+127th zero, gamma ~ 282.47, then the 136th and 196th). There |Im a_1| is tiny (the
+soft sign, the zero nearly ON a Gram point), so those zeros are the slowest to settle
+the SIDE of their vertical approach (the sign is soft, not the size). The
+convention-free criterion sign(Im a_1) = sign((-1)^n sin theta(gamma_n)) matches over
+n=1..200 with zero exceptions: the bridge's vertical migration is a **Gram's-law
+detector**. The axis-duality sharpened: the comb pins the VERTICAL (Im a_1 > 0 while
+Gram-regular) and lets the horizontal wander; the warp pins the HORIZONTAL (Re a_1 < 0,
+measured) and lets the vertical oscillate -- it inherits the wandering phase of its
+non-closed-form C_warp, so there is no comb-style arithmetic rule for it. (Needs zeros
+up to gamma ~ 400 to see -- comb-only, so the high-tau warp caveats do not bite.)
 
 The continuous-eta sigma_law sub-leading (an open item)
 -------------------------------------------------------
@@ -129,44 +122,27 @@ result that closes the open item: refine F, not the balance.
 
 Three rate-law loose ends
 -------------------------
-1. A CLOSED FORM for the warp constant C_warp (`c_warp_closed`). The 1/K warp constant is
-   rate_warp_bulk (the global quadratic) + a Gibbs BOUNDARY LAYER. Near each cell edge the
-   sawtooth tail r_K does not shrink; it relaxes through the Gibbs profile
-   P(v) = (1/pi)(pi/2 - Si(2 pi v)), v = K u  (P(0)=1/2 -> argument 1; P(inf)=0 -> 3/2), so
-   each O(1/K)-wide edge contributes at the same 1/K order. Combining both edges (the linear
-   +-P counterterms cancel):
+1. A CLOSED FORM for the warp constant C_warp (`c_warp_closed`): rate_warp_bulk (the
+   global quadratic) plus a Gibbs BOUNDARY-LAYER integral -- each O(1/K)-wide cell edge
+   relaxes through the Gibbs profile P(v) at the same 1/K order. The quadratic
+   subtraction that makes the integrand O(P^4), and why the naive linear-counterterm
+   guess overshoots ~2-3x, are derived in `c_warp_closed`. C_warp is a prime-FREE,
+   purely analytic object -- the SAME Gibbs layer that under-resolves the moment grid
+   at high tau, and (item 3) the term that breaks the sigma=1/sigma=0 FE mirror.
 
-       C_warp(s) = rate_warp_bulk(s)
-         + Int_0^inf [zeta(s,3/2-P) + zeta(s,3/2+P) - 2 zeta(s,3/2) - P^2 s(s+1)zeta(s+2,3/2)] dv.
-
-   The -P^2 zeta_aa'' is the QUADRATIC the bulk already counts: subtracting it both avoids
-   double-counting AND makes the integrand O(P^4) ~ 1/v^4 (converged by v ~ 20). The naive
-   linear-counterterm-only guess double-counts and overshoots ~2-3x. C_warp is a prime-FREE,
-   purely analytic object -- the SAME Gibbs layer that under-resolves the moment grid at
-   high tau, and (item 3) the term that breaks the sigma=1/sigma=0 FE mirror.
-
-2. catch_K <-> |zeta'(rho)|, the Montgomery a-values (`montgomery_a`, `catch_K(mode=...)`,
-   `catch_K_normalized`). a_1 = rho/(2 pi^2 zeta'(rho)) carries 1/|zeta'(rho)|, and by the
-   Hardy-Z reduction |zeta'(rho)| = |Z'(gamma)| EXACTLY. So the height-normalized
-   catch_K(mode='abs') = |a_1|/eps is EXACTLY 1/|zeta'(rho)| -- the Montgomery a-value
-   reciprocal: which zeros are hardest to resolve is set by |zeta'|, and the small-|zeta'|
-   (near-degenerate) zeros are slowest (corr(|zeta'|, relative spacing) ~ 0.74 over the first 80
-   zeros: small |zeta'| <=> closely-spaced pair). The DEFAULT mode='re' (the birth-K) carries
-   a SECOND fluctuation: |Re a_1| = |rho|/(2 pi^2 |Z'|) |cos pi delta_n|, the Gram factor
-   (|cos arg a_1| ~ |cos pi delta_n| to < 0.01 by gamma ~ 60). So 'abs' isolates the Montgomery
-   a-values; 're' adds the Gram modulation -- the two pick DIFFERENT hardest zeros (small-|zeta'|
-   vs small-|zeta'| AND mid-Gram-interval delta_n ~ 1/2).
+2. catch_K <-> |zeta'(rho)|, the Montgomery a-values (`montgomery_a`, `catch_K`,
+   `catch_K_normalized`). By the Hardy-Z reduction |zeta'(rho)| = |Z'(gamma)| EXACTLY,
+   so catch_K(mode='abs') is the Montgomery a-value reciprocal 1/|zeta'(rho)|
+   (small |zeta'| <=> closely-spaced pair; corr ~ 0.74 over the first 80 zeros), while
+   the default mode='re' adds the Gram factor |cos pi delta_n| -- the two modes pick
+   DIFFERENT hardest zeros (the split is laid out in `catch_K`'s docstring).
 
 3. The FE-mirror companions only SHARE HEIGHTS (`fe_mirror`). The sigma=1 eta prefactor
-   (1-2^{1-s}=0) and sigma=0 warp companion (2^s-1=0) are exact s<->1-s images as zero SETS
-   (heights +-2 pi k/ln2, the p=2 comb) -- but their migration dynamics are NOT mirrors.
-   In a_1 = -Delta_1/target': target' = ln2 zeta(rho) has the same form on both lines (at the
-   FE-conjugate arguments 1+it_k vs it_k), but Delta_1 differs in KIND -- eta's is the closed
-   additive-comb constant -rho/2 pi^2 (Re == -1/2 pi^2, a rigid line), warp's is the non-closed
-   Gibbs constant C_warp(rho) (Re wanders 0.40 -> 1.64). The mirror breaks entirely in Delta_1,
-   for an analytic (boundary-layer = C_warp) not arithmetic reason -- dovetailing the Gram
-   phase (warp Im a_1 has no arithmetic rule) and the two-component spectrum (mirror-exact
-   zero sets, broken dynamics).
+   and sigma=0 warp companion are exact s<->1-s images as zero SETS (heights
+   +-2 pi k/ln2, the p=2 comb) -- but the migration dynamics are NOT mirrors: the break
+   is entirely Delta_1 (eta's rigid closed-form -rho/2 pi^2 vs the warp's wandering
+   C_warp), an analytic not arithmetic reason; the comparison is spelled out in
+   `fe_mirror`.
 
 Run directly to validate + plot: writes bridge/figures/rate_law.png + rate_law_loose_ends.png.
 """
@@ -314,8 +290,10 @@ def c_warp_closed(s, Vmax=30):
 # the five zero families: (target', Delta_1) per route  ->  a_1 = -Delta_1/target'
 # --------------------------------------------------------------------------
 # Each entry maps a route name to callables (target_deriv(rho), delta1(rho)). target' is
-# evaluated at the relevant zero (a zeta-zero, an eta-prefactor zero, or a 2^s-1 companion),
-# using target(rho)=0 to drop the vanishing product-rule term.
+# evaluated at the relevant zero (a zeta-zero, an eta-prefactor zero, a 2^s-1 companion --
+# or a trivial zero -2n: trivial_zeros.disp_coeff_trivial reuses the comb_zeta route
+# verbatim on the negative real axis), using target(rho)=0 to drop the vanishing
+# product-rule term.
 ROUTES = ("comb_zeta", "comb_eta", "eta_pref", "warp_zeta", "warp_pref")
 
 
@@ -434,7 +412,7 @@ def catch_K(route, rho, eps=0.05, mode="re", **kw):
     mode='abs': |a_1|/eps -- carries ONLY 1/|zeta'(rho)| (the Montgomery a-value), so it ranks
     zeros purely by |zeta'| (small-|zeta'| = hardest). The two modes pick DIFFERENT 'hard'
     populations: small-|zeta'| (mode='abs') vs small-|zeta'| AND mid-Gram-interval delta_n ~ 1/2
-    (mode='re'). Both grow on average with height (denser zeros, spacing 2 pi/ln(t/pi)).
+    (mode='re'). Both grow on average with height (denser zeros, spacing 2 pi/ln(t/2pi)).
     """
     a1 = disp_coeff(route, rho, **kw)
     mag = abs(a1) if mode == "abs" else abs(a1.real)

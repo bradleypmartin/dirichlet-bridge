@@ -49,11 +49,14 @@ IS the midpoint warp's `warp_half_K`); at alpha = 1 it is 1^{-s} = 1 and zeta(s,
 
 THE PAYOFF -- clean vertical strings only at alpha in {0, 1/2, 1} (Davenport-Heilbronn)
 --------------------------------------------------------------------------------------
-The migration target is the completed Hurwitz zeta(s, alpha). Its zeros lie on clean
-vertical lines **iff** zeta(s, alpha) factors as P(2^s, 3^s, ...)*L(s, chi) (a polynomial
-in prime-powers times a single Dirichlet L). By Saias-Weingartner (Acta Arith. 140, 2009)
-a periodic-coefficient Dirichlet series NOT of that form has ~T zeros in *every* strip up
-past sigma = 1 -- scattered, off any line. zeta(s, alpha) is a finite combination of
+The migration target is the completed Hurwitz zeta(s, alpha). Its zeros CAN cluster onto
+clean vertical lines only when zeta(s, alpha) factors as P(2^s, 3^s, ...)*L(s, chi) (a
+polynomial in prime-powers times a single Dirichlet L -- the P lines unconditional, the
+L factor's sigma = 1/2 line as measured / under GRH). For rational alpha this is
+Saias-Weingartner (Acta Arith. 140, 2009): a periodic-coefficient Dirichlet series NOT
+of that form has ~T zeros in *every* strip up past sigma = 1 -- scattered, off any line
+(irrational alpha, outside S-W's periodic setting, is covered by Davenport-Heilbronn /
+Cassels below). zeta(s, alpha) is a finite combination of
 Dirichlet L-functions for rational alpha = p/q; it degenerates to a single P*L only at
 
   * alpha = 1   -> zeta(s, 1)   = zeta(s)              -> zeros on sigma = 1/2 (plain zeta);
@@ -117,7 +120,9 @@ def warp_phi_alpha(u, K, alpha):
 # once, precompute psi = u + (alpha-1/2) + phi_K(u) and per-(K,alpha) logs/moments, then
 # evaluate any s by the binomial-moment expansion of int_1^inf = sum_{m>=1} int_0^1. Reuses
 # warp_bridge's shared helpers (_gl_nodes / _moment_logs_mus / _moment_series) and its |Im s|-
-# scaled working precision / moment-term count / GL degree, so this inherits the high-tau fix.
+# scaled working precision / moment-term count / GL degree, so this inherits the high-tau fix
+# -- AND the paired fragility: those guard constants presume warp_bridge's ambient dps = 30
+# (see the CAUTION block there; lean ambients erode the ramp's headroom the same way here).
 _GRID = {}            # (K, round(alpha,12), degree, prec) -> (logs[m-1][i] = log(m+psi_i), mus[j])
 
 
@@ -192,6 +197,11 @@ def find_zeros(fn, sig_range, t_range, dsig=0.30, dt=0.6, workdps=18,
     the solve converges in a few steps without escaping. Roots are polished at reduced
     precision `workdps` (zeros want location, not 30 digits), kept if inside the padded box
     with |fn| < tol, and deduped within `dedupe`. Returns the list sorted by (Im, Re).
+
+    Height horizon (the #49 lesson, learned downstream): above t ~ 36 the single-seed
+    secant polish starts dropping packed zeros -- fine for this module's t <= 38 panels,
+    but census-grade work up there wants the Muller local-triple
+    (explorations/lambda_census.find_zeros_muller).
     """
     (smin, smax), (tmin, tmax) = sig_range, t_range
     zeros = []  # type: List[mp.mpc]

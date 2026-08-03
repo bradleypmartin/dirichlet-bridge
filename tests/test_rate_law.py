@@ -405,7 +405,7 @@ def test_vertical_migration_matches_im_a1():
                 if zz is not None)
     assert 32 in traj
     actual = float((traj[32] - rho).imag)
-    assert actual > 0                                       # ascends onto gamma from above
+    assert actual > 0                                       # sits above gamma, descends onto it
     assert abs(actual - float((a1 / 32).imag)) < 5e-3
 
 
