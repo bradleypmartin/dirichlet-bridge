@@ -31,7 +31,10 @@ committed a₁ cache), or
 `python explorations/conductor_clock.py` (~2 min from the caches, mostly the
 winding spot-checks — `--skip-certify` for seconds; `--recompute-zeros`
 rebuilds the two censuses in ~5 min; `--recompute-kwalk --jobs 10` rebuilds
-the q = 4 and q = 7 K-walk caches in ~20–30 min wall *each*).
+the q = 4 and q = 7 K-walk caches in ~20–30 min wall *each*), or
+`python explorations/lambda_census.py` (seconds from the caches;
+`--recompute-scan --recompute-flows --jobs 10` rebuilds the certified t ≤ 120
+census and its λ-flows, ~1–2 h wall).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -592,6 +595,100 @@ amplitudes — cite and distinguish in any write-up. Citation corrections
 logged from the pass: Gonek 1993 is *Contemp. Math.* 143, 395–413 (a common
 J.-Number-Theory miscitation), and Ng 2004's title begins "The distribution
 of the summatory function…".
+
+---
+
+## `lambda_census.py` — the λ-census at scale: the seed-fated fraction law (issue #49)
+
+![Lambda census](figures/lambda_census.png)
+
+The heaviest of the #44 follow-ups (split out of PR #46), deferred for compute
+AND a machinery build. #44's λ-side verdict at t ≤ 36.2 (N = 11 flows → 6
+seeds) was **fate-selection** — the seed-fated cohort is already 2-adically
+phased at λ = 1 — but with 6 seeds every λ = 0 instrument reads deterministic
+geometry; the statistical questions needed the t ≤ 120 box (N = 59 flows,
+21 seeds).
+
+**The machinery** (the two #44 blockers, plus three more the census forced —
+details in the module docstring):
+
+1. **The certified Muller scan.** `find_zeros_muller` (Muller local-triple
+   polish + escape clamp, replacing `warp_alpha.find_zeros`' stall-prone
+   single-seed secant) runs per t-window and is **certified by the argument
+   principle** (`certify_window`; deficits → refined rescans → the every-node
+   `rescue_deficits` hunt). Validation: the t ≤ 36.2 box reproduces the
+   committed 11-zero census exactly, including both zeros the #44 scan needed
+   help with. The final t ≤ 120 run certifies **all 15 windows with zero
+   refinement rounds**.
+2. **dps-bucketed moment grids** (`zero_birth._bucket_dps`): the λ-evaluator's
+   grids keyed on exact working precision and rebuilt at every new height;
+   bucketing (steps of 5, evaluated at the bucket ceiling, moment headroom)
+   makes one grid serve an ~11-unit t window.
+3. **The ambient-18 error lobes** (`band_dps`): the warp evaluator's
+   |Im s|-guard ramp was tuned at the manuscript arc's ambient dps 30; at the
+   census's lean ambient 18, measured |F| errors reach 2e-2 in jagged lobes
+   (t ≈ 40–77 and 84–89) while other heights sit at 1e-14. All census work
+   above t = 38 runs at ambient 24 (≤ 1e-8 everywhere probed).
+4. **Set-integrity repair** (`repair_flows`): trajectory basin hops (the
+   default jump gate exceeds the zero spacing above t ~ 90) produced double
+   landings on 12 of 21 seeds. The #44 jump-gate policy (0.6× local spacing)
+   plus argument-principle repair (one flow per zero, one landing per simple
+   seed; merge losers re-solved locally, double landings adjudicated by the
+   quadratic λ → 0 extrapolant) brings residual collisions to **zero**.
+5. **Tail adjudication** (`resolve_tails`): flows unresolved at the schedule
+   floor extend to λ = 0.002 at +4 digits (G = F/λ amplifies the evaluator
+   floor), where capture and flight visibly separate.
+
+With all five, the full pipeline (certified scan + seed set + 59 flows +
+repair + instruments) runs in **~12 minutes at --jobs 10** — the issue had
+budgeted an overnight run.
+
+**Findings (2026-08-03):**
+
+1. **The census is exact bookkeeping.** 59 zeros certified to t = 120.3
+   (winding = scan in every window; RvM smooth count 58.7); 21 seeds
+   certified (13 main-comb + 8 conductor-string; mean-motion ln q/2π × T
+   = 20.7). The flow decomposition: 19 seed captures + 40 expulsions, 39 of
+   40 expelled flows last tracked at σ < −0.5 fleeing left.
+2. **The seed-fated fraction follows the parameter-free law.** Whole box:
+   19/59 = 0.322 vs the integrated law ln q/ln(qt/2π) = 0.352 — within 0.5σ
+   (binomial noise 0.062) — and the per-window curve falls with height as the
+   law predicts (1.000 → ~0.2–0.3 across 15 windows). The measurement
+   convention is conservative: two seats contested at λ = 0 by two flows each
+   were adjudicated to one owner, the loser counted not-seed-fated, and two
+   seeds go unclaimed — so 0.322 is a floor, with the law's 0.352 inside the
+   convention band. #44's single data point (6/11 = 0.545 vs 0.546) is the
+   curve's first point.
+3. **Fate is statistically readable at birth (the #44 question, answered at
+   scale).** The seed-fated cohort's ⟨cos(γ ln 2)⟩ = +0.612 ± 0.133 at λ = 1
+   vs −0.070 ± 0.104 for the expelled — a ~4σ cohort separation present at
+   birth and **flat along the entire flow** (0.61–0.65 at every λ), while the
+   expelled cohort hovers at noise. A single cos(γ ln 2) threshold reads a
+   flow's fate at 0.83 accuracy. Selection, not migration, at 5× the #44
+   sample.
+4. **The conductor string is load-bearing at scale.** 7 of the 19 captures
+   land on far-left conductor-string seeds (σ ≈ −2.2..−3.0) — the ln(q/p)/2π
+   surplus channel carries over a third of the census, and several of its
+   captures were resolvable only by the λ-tail extension (the capture basin
+   at the schedule floor is thin at σ ≈ −2.5). The two unclaimed seeds are
+   the contested main tooth at 0.35 + 99.8i (its λ = 0 seat was adjudicated
+   to no one) and the conductor seed at −2.91 + 123.7i just above the flow
+   box top.
+
+**Honest framing.** Experimental mathematics; no RH/GRH claims. The RvM
+density, mean-motion counts for exponential polynomials, and Hurwitz's
+zero-convergence theorem are classical. What has no published analog we know
+of (per the #37 adversarial lit pass) is the finite-K family's amplitude-flow
+census itself: the certified raw-census → seed-set flow at scale, the
+measured seed-fated fraction against the ln q/ln(qt/2π) law, and the
+phase-at-birth fate statistics. Caveats: N = 59 (±0.06 fraction noise); the
+λ = 0 adjudication convention is conservative as described; χ₃ only (the
+q-dependence of the law is tested only through the t-dependence at q = 3).
+
+Data caches: `data/lambda_census_raw.csv` (the certified census),
+`data/lambda_census_windows.csv` (the certification report),
+`data/lambda_census_seeds.csv` (the certified seed set),
+`data/lambda_census_flow.csv` (the repaired trajectories).
 
 ---
 

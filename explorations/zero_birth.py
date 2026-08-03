@@ -275,6 +275,25 @@ def rival_tangent(s, chi):
 # (character_bridge.L_warp_K); lam -> 0 is the projector limit.
 _GRID_LAM = {}   # (K, lam, alpha, degree, prec) -> (logs, mus)
 
+# The #49 grid-bucketing fix. _moment_dps grows ~0.45 guard digit per unit
+# height past |Im s| = 40, and the grid cache keys on the exact working
+# precision -- so above t ~ 40 every ~2 units of height used to rebuild every
+# (K, lam, alpha) grid, and the rebuilds dominated the lam-census cost.
+# Rounding the working dps UP to its bucket ceiling makes one grid serve an
+# ~11-unit t window; the extra guard digits only help, and the moment series
+# still breaks at the AMBIENT base_dps, so results are unchanged at tolerance.
+_DPS_BUCKET = 5
+# Within a bucket the height-scaled Jmax still creeps by a few terms; build
+# grids with this much moment headroom so the creep never forces a rebuild.
+_JMAX_HEADROOM = 24
+
+
+def _bucket_dps(dps):
+    """Round a working dps up to the next _DPS_BUCKET multiple (its bucket
+    ceiling), so the moment-grid key -- which includes mp.mp.prec -- is shared
+    by every height in the bucket instead of changing with each one."""
+    return _DPS_BUCKET * int(math.ceil(dps / float(_DPS_BUCKET)))
+
 
 def _grid_lam(K, lam, alpha, degree, Jmax=60):
     key = (K, round(float(lam), 12), round(float(alpha), 12), degree, mp.mp.prec)
@@ -284,17 +303,19 @@ def _grid_lam(K, lam, alpha, degree, Jmax=60):
         c = mp.mpf(alpha) - mp.mpf("0.5")
         lam = mp.mpf(lam)
         psis = [u + lam * (c + wb.warp_phi(u, K)) for u in us]
-        _GRID_LAM[key] = wb._moment_logs_mus(us, ws, psis, Jmax)
+        _GRID_LAM[key] = wb._moment_logs_mus(us, ws, psis,
+                                             Jmax + _JMAX_HEADROOM)
     return _GRID_LAM[key]
 
 
 def warp_component_lam(s, K, lam, alpha):
     """int_1^inf (x + lam((alpha - 1/2) + phi_K(x)))^{-s} dx, all sigma, via the
     binomial-moment expansion (warp_bridge machinery; inherits the |Im s|-scaled
-    precision knobs). lam = 1 equals warp_alpha.warp_alpha; lam = 0 is 1/(s-1)."""
+    precision knobs, dps-bucketed -- see _bucket_dps). lam = 1 equals
+    warp_alpha.warp_alpha; lam = 0 is 1/(s-1)."""
     s = mp.mpc(s)
     base_dps = mp.mp.dps
-    with mp.workdps(wb._moment_dps(s)):
+    with mp.workdps(_bucket_dps(wb._moment_dps(s))):
         degree = wb._gl_degree(s)
         logs, mus = _grid_lam(K, lam, alpha, degree, wb._moment_jmax(s))
         result = wb._moment_series(s, logs, mus, degree, base_dps)
@@ -332,11 +353,16 @@ _RESID_OK = 1e-6      # acceptance residual: the fast evaluator's dps-15 noise
 #                       to ~1e-5 from a 1e-6 residual -- ample for tracking
 
 
-def _clamped_root(fn, z, max_jump, ftol):
+def _clamped_root(fn, z, max_jump, ftol, muller=False):
     """findroot with an escape clamp: a diverging secant iterate out at large
     |Im s| is EXPENSIVE (the moment machinery inflates its precision knobs with
     |Im s|), so any iterate leaving the 3*max_jump neighborhood aborts the solve
-    immediately via ValueError instead of wandering. Returns the root or None."""
+    immediately via ValueError instead of wandering. Returns the root or None.
+
+    muller=True swaps the plain-secant start (whose default second iterate
+    x0 + 1/4 stalls between packed zeros -- the migrate_robust gotcha) for a
+    Muller local triple around z: the #49 census default. The secant default
+    keeps the #39/#44 committed caches bit-reproducible."""
     lim = 3 * max_jump
 
     def g(s):
@@ -345,7 +371,12 @@ def _clamped_root(fn, z, max_jump, ftol):
         return fn(s)
 
     try:
-        zz = mp.findroot(g, z, tol=ftol, maxsteps=25)
+        if muller:
+            h = mp.mpc("1e-3", "1e-3")
+            zz = mp.findroot(g, (z, z + h, z - mp.conj(h)), solver="muller",
+                             tol=ftol, maxsteps=25)
+        else:
+            zz = mp.findroot(g, z, tol=ftol, maxsteps=25)
     except (ValueError, ZeroDivisionError):
         return None
     if abs(zz - z) > max_jump or abs(fn(zz)) > _RESID_OK:
@@ -353,23 +384,27 @@ def _clamped_root(fn, z, max_jump, ftol):
     return mp.mpc(zz)
 
 
-def _flow_step(z, K, chi, lam_from, lam_to, max_jump, ftol, depth=3):
+def _flow_step(z, K, chi, lam_from, lam_to, max_jump, ftol, depth=3,
+               muller=False):
     """One lam step of the flow, with adaptive substepping: on failure (jump,
     escape, or non-convergence -- e.g. through a near-collision where the motion
     outruns the schedule) insert the geometric-mean lam and recurse."""
     fn = (lambda s: G_lam(s, K, lam_to, chi)) if lam_to > 0 \
         else (lambda s: seed_D(s, chi))
-    zz = _clamped_root(fn, z, max_jump, ftol)
+    zz = _clamped_root(fn, z, max_jump, ftol, muller)
     if zz is not None or depth == 0:
         return zz
     lam_mid = math.sqrt(lam_from * lam_to) if lam_to > 0 else lam_from / 3
-    zm = _flow_step(z, K, chi, lam_from, lam_mid, max_jump, ftol, depth - 1)
+    zm = _flow_step(z, K, chi, lam_from, lam_mid, max_jump, ftol, depth - 1,
+                    muller)
     if zm is None:
         return None
-    return _flow_step(zm, K, chi, lam_mid, lam_to, max_jump, ftol, depth - 1)
+    return _flow_step(zm, K, chi, lam_mid, lam_to, max_jump, ftol, depth - 1,
+                      muller)
 
 
-def flow_lambda(z0, K, chi, schedule=None, max_jump=2.0, workdps=15):
+def flow_lambda(z0, K, chi, schedule=None, max_jump=2.0, workdps=15,
+                muller=False):
     """Trajectory of a zero of the raw K-family as the knob amplitude lam -> 0.
 
     Seeds findroot at lam = 1 from z0 (a zero of the raw family), then walks lam
@@ -377,6 +412,7 @@ def flow_lambda(z0, K, chi, schedule=None, max_jump=2.0, workdps=15):
     `migrate`, with lam for K, plus escape clamps and adaptive lam-substepping.
     Returns [(lam, s or None)] in DEscending lam; ends with (0.0, seed) resolved
     on the seed object D itself. A None entry ends the trajectory (honest loss).
+    muller=True uses the packed-zero-safe local-triple solver per step (#49).
     """
     sched = sorted(schedule if schedule is not None else LAM_SCHEDULE, reverse=True)
     z = mp.mpc(z0)
@@ -387,9 +423,10 @@ def flow_lambda(z0, K, chi, schedule=None, max_jump=2.0, workdps=15):
         for lam in sched + [0.0]:
             if lam_prev is None:        # first entry: a direct polish from z0
                 zz = _clamped_root(lambda s: G_lam(s, K, lam, chi), z,
-                                   max_jump, ftol)
+                                   max_jump, ftol, muller)
             else:
-                zz = _flow_step(z, K, chi, lam_prev, lam, max_jump, ftol)
+                zz = _flow_step(z, K, chi, lam_prev, lam, max_jump, ftol,
+                                muller=muller)
             out.append((lam, zz))
             if zz is None:
                 break
