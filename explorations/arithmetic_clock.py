@@ -479,6 +479,10 @@ def locked_fit(rows, a1s_by_n):
 # conductor tower ln 3, ln 9 DARK at the control floor: chi_3(3^k) = 0 kills
 # the channel exactly as in the explicit formula. Lines are window-limited
 # (lobe width ~ pi/T ~ 0.006 at T ~ 550), so band maxima, not point values.
+# #47 POSTSCRIPT (mobius_dressing.py): the anomaly is resolved -- the
+# 1/L'-weighted line set is MOEBIUS mu(n)chi(n) (coinciding with Landau on
+# primes, empty at prime powers), and the "sidebands" are the exact one-sided
+# B-dressing; the Landau reading below survives only as the prime-line foil.
 C_BAND_NS = [("ln2", 2), ("ln4", 4), ("ln8", 8), ("ln3", 3), ("ln9", 9),
              ("ln5", 5), ("ln7", 7), ("ln11", 11), ("ln13", 13)]
 C_CONTROLS = [0.90, 1.25, 1.50, 1.87, 2.01, 2.25]   # off ln(n) for all n <= 16

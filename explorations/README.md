@@ -25,7 +25,9 @@ winding spot-checks — `--skip-certify` for seconds; `--recompute-kwalk --jobs 
 rebuilds the 400-zero K-walk in ~1 h wall, `--recompute-lamflow` the λ-flow in
 ~5 h — the warp evaluator's precision inflates with height and its grids
 rebuild per height, and the t ≤ 36 box boundary is where the single-seed
-secant polish starts losing zeros).
+secant polish starts losing zeros), or
+`python explorations/mobius_dressing.py` (seconds; pure post-processing of the
+committed a₁ cache).
 
 If an arc here matures, the intended landing zone is a **second paper or a new
 appendix**, never edits to the frozen manuscript.
@@ -489,3 +491,94 @@ Data caches: `data/arithmetic_clock_a1.csv` (per-zero a₁),
 `data/arithmetic_clock_kwalk.csv` (the walked census: n, γ, K, s_K, status),
 `data/arithmetic_clock_lamraw.csv` + `data/arithmetic_clock_lamflow.csv` (the
 K = 1 raw zeros and their λ-trajectories).
+
+Follow-ups filed from this arc: the C(ω) sideband anomaly is **resolved** in
+`mobius_dressing.py` (issue #47; section below); the conductor sweep of the
+resolution clock (#48) and the λ-census at scale (#49) remain open.
+
+---
+
+## `mobius_dressing.py` — the C(ω) spectrum is Möbius, and the section dresses it (issue #47)
+
+![Mobius dressing](figures/mobius_dressing.png)
+
+The near-free follow-up split out of #44: is the 2-adic anomaly in the C(ω)
+line spectrum (ln 2 halved, ln 4 Landau-perfect, ln 8 extinguished) the section
+factor `B(ρ+1) = 1 − 2^{−3/2}e^{−iγ ln 2}` inside a₁ dressing the lines? Pure
+post-processing of the committed a₁ cache — seconds, no zero computation.
+Answer: **yes — and dividing B out does not restore a Landau spectrum; it
+reveals the spectrum was never Landau.**
+
+**Findings (2026-08-02):**
+
+1. **The undressed spectrum is Möbius, not Landau.** With `a₁′ = a₁/B(ρ+1)`
+   (B closed-form per γ) the weight is ∝ `s/L′(ρ)` — the Perron kernel of
+   `1/L = Σ μ(n)χ(n)n^{−s}`, i.e. the explicit formula for the χ-twisted
+   Mertens function `M_χ(x) = Σ_ρ x^ρ/(ρL′(ρ))` (Titchmarsh §14.27's
+   L-analog; Gonek/Ng's discrete moments `Σ x^ρ/ζ′(ρ)`). Measured: **all
+   fourteen squarefree bands** n = 2, 5, 7, 10, 11, 13, 14, 17, 19, 22, 23,
+   26, 34, 35 sit at 0.96–1.16 of `scale·ln n·|μ(n)χ₃(n)|/√n`, while the
+   prime-power bands ln 4, ln 8, ln 16 are **dark** (0.06/0.13/0.32 of their
+   Landau references) and the conductor bands stay at the floor. On primes
+   `Λ(p) = ln p·|μ(p)|` — the two spectra *coincide on every prime line*, so
+   #44's odd-prime anchor fit could not discriminate; the discriminators are
+   exactly the bands #44 flagged as anomalous, plus its stray ln 10 peak
+   (a genuine μ-line: Λ(10) = 0 but μ(10)χ₃(10) = +1).
+2. **The dressing law is a one-sided +ln 2 shift with coefficient
+   β = 2^{−3/2} — and an exact-½ suppression.** `a₁ = B·a₁′` convolves the
+   Möbius line measure with `δ − β·δ_{+ln 2}` (upward only: the measure's
+   line content sits in the conjugate channel, and nothing appears at
+   ln p − ln 2 — measured ≤ the control floor in both spectra). On the comb
+   this halves **every even squarefree line exactly**:
+   `|μ(2)χ₃(2)/√2 − β|/(1/√2) = 1/2`, measured 0.50–0.54 across
+   n = 2, 10, 14, 22, 26, 34 — while every odd line is untouched (0.92–1.02),
+   including the 2-free composite ln 35.
+3. **#44's "ln 4 on the Landau scale to 0.1 %" is unmasked as a p = 2
+   algebraic identity, not evidence of a Λ-spectrum.** The dressed ln 4 line
+   is the ln 2 line's satellite landing in the μ(4) = 0 *vacancy*, amplitude
+   `scale·ln 4·β/√2` — which equals the Landau reference `scale·Λ(4)/2`
+   **identically** (satellite/Landau = 2/p, = 1 only at p = 2). Measured at
+   0.993 of the closed form. ln 8 is the satellite of an *empty* parent
+   (μ(4) = 0), and the cascade stops after one step (B has a single
+   sideband): ln 8, ln 16 dark in both spectra, as measured.
+4. **What the phases certify.** The ½-law and the vacancy amplitude are
+   *relative*-phase measurements (parent vs satellite, forced real-positive
+   by the data). The *absolute* sign of each line against μ(n)χ₃(n) is not
+   resolved at this window: T ≈ 550 makes a sub-resolution band-center offset
+   rotate the quadrature by ~1 rad, and measured sin-quadrature signs agree
+   with μχ only 7/13 — consistent with scrambling, reported as a null.
+5. **Falsifiable predictions logged for #48 (the conductor sweep).** For a
+   φ(q) = 2 modulus with section prime p_B = q − 1: dressing frequency
+   ln p_B, β = p_B^{−3/2}, even-line suppression
+   `|μ(p_B)χ(p_B) − 1/p_B|` (an *enhancement* 1 + 1/p_B where
+   μ(p_B)χ(p_B) = −1), and the vacancy satellite at ln p_B² sits at 2/p_B of
+   the Landau reference — Landau-exact only at p_B = 2. At q = 4 (p_B = 3):
+   ln 3m lines suppressed to 2/3, ln 9 satellite at 2/3 of Landau.
+
+The driver self-validates 40 checks (V1 Möbius amplitudes, V2 prime-power
+vacancies, V3 the ½-law, V4 odd-line invariance, V5 the ln 4 closed form,
+V6 one-sidedness, V7 the conductor floor) — 40/40 on the committed cache.
+
+**Honest framing.** Experimental mathematics; no RH/GRH claims. The
+classical baselines, all cited in `references-37.bib`: Landau 1912 +
+Gonek 1993 (*Contemp. Math.* 143 — the uniform version) for the unweighted
+Λ-line spectrum, with the χ-twist published as Banks arXiv:2302.07073
+Thm 1.2 (also Fujii 1989/90); Titchmarsh Thm 14.27 (with Odlyzko–te Riele
+1985's numerical tradition) for the x-domain `M(x) = Σ_ρ x^ρ/(ρζ′(ρ))`
+formula our weight is the kernel of; Gonek 1989 / Hughes–Keating–O'Connell
+2000 / Milinovich–Ng 2012 for the unweighted negative discrete moments, with
+the Dirichlet version `Σ|L′(ρ,χ)|^{−2}` brand-new (Pearce-Crump,
+arXiv:2606.25094, June 2026); Conrey–Ghosh–Gonek 1998 for
+Dirichlet-polynomial-twisted discrete moments (the nearest machinery to the
+section dressing). The adversarial pass (2026-08-02, sub-agent, verdicts
+below) found **no published analog** of (a) the μ(n)-line reading of a
+1/L′-weighted zero sum as a measured spectrum, (b) its χ-twist, or (c) the
+section-dressing law — the nearest classical μ-from-zeros statement is the
+**Linnik–Sprindžuk theorem** (Sprindžuk 1975; Kaczorowski–Perelli 2008),
+which reads μ(k)/φ(k) off an *unweighted* zero-sum limit at a rational
+twist: no 1/L′ weight, a parameter limit rather than a frequency spectrum,
+and μ entering through Ramanujan-sum coefficients rather than per-line
+amplitudes — cite and distinguish in any write-up. Citation corrections
+logged from the pass: Gonek 1993 is *Contemp. Math.* 143, 395–413 (a common
+J.-Number-Theory miscitation), and Ng 2004's title begins "The distribution
+of the summatory function…".
