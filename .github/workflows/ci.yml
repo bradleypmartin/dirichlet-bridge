@@ -1,9 +1,25 @@
 name: tests
 
+# paths-ignore: the matrix exercises bridge/ + tests/ only, so skip it for
+# changes confined to the disjoint explorations/ arc (own test tree, run
+# locally via `pytest explorations/tests`), the paper, or prose docs --
+# Actions hours are the scarce resource. NB a PR touching ONLY ignored paths
+# gets no run at all; if a required status check is ever configured on main,
+# such PRs would wait forever on it -- keep checks non-required or trim this.
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'explorations/**'
+      - 'paper/**'
+      - '**.md'
+      - 'LICENSE'
   pull_request:
+    paths-ignore:
+      - 'explorations/**'
+      - 'paper/**'
+      - '**.md'
+      - 'LICENSE'
 
 jobs:
   pytest:

@@ -309,15 +309,18 @@ def count_zeros(x, sig_lo, sig_hi, t_lo, t_hi, npts=300):
 
 
 # --------------------------------------------------------------------------
-# asymptote counting constants (FK Eqs. 39-40)
+# asymptote counting constants. FK Eq. 39 is the counting law
+# N+-(T) - A+-(T) = alpha+- T + O(sqrt T); Eq. 40 gives BOTH closed forms and
+# values (checked against the PDF, p. 599: "they agree ... with the values (40)").
+# NB FK's Eq. 41 variants (P=0 / N=1 counted) have opposite sign -- not these.
 # --------------------------------------------------------------------------
 def alpha_plus():
-    """alpha+ = (2 - 2 log2 - gamma) / 2pi = 0.00580756...  (FK Eqs. 39-40)."""
+    """alpha+ = (2 - 2 log2 - gamma) / 2pi = 0.00580756...  (FK Eq. 40)."""
     return (2 - 2 * LOG2 - GAMMA) / (2 * PI)
 
 
 def alpha_minus():
-    """alpha- = (log2 - gamma) / 2pi = 0.01845107...  (FK Eqs. 39-40)."""
+    """alpha- = (log2 - gamma) / 2pi = 0.01845107...  (FK Eq. 40)."""
     return (LOG2 - GAMMA) / (2 * PI)
 
 
